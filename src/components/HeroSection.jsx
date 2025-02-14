@@ -25,10 +25,10 @@ const HeroSection = () => {
 					Надёжно. Быстро. Профессионально.
 				</p>
 				<Link
-					to='/contact'
+					to='/catalog'
 					className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-full'
 				>
-					Узнать больше
+					Смотреть Каталог
 				</Link>
 			</div>
 		</section>
