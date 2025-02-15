@@ -530,6 +530,8 @@ const Catalog = () => {
 		if (page < totalPages) setPage(page + 1)
 	}
 
+	console.log(carList)
+
 	return (
 		<div className='p-4'>
 			{/* Фильтры */}

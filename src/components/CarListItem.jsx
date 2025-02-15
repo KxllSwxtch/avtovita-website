@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
 const CarListItem = ({ car }) => {
 	const formattedPrice = (
@@ -12,6 +13,7 @@ const CarListItem = ({ car }) => {
 	const carYear = car.year.split('-')[0]
 	const carMonth = car.year.split('-')[1]
 	const formattedCarDate = `${carMonth}/${carYear}`
+	const carId = car.link.split('/').pop() // Получаем ID из URL
 
 	return (
 		<div className='relative bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden'>
@@ -53,14 +55,13 @@ const CarListItem = ({ car }) => {
 						Цена в Корее
 						<br /> {formattedPrice} ₩
 					</span>
-					<a
-						href={car.link}
+					<Link
+						to={`/car/${carId}`}
 						target='_blank'
-						rel='noopener noreferrer'
-						className='text-sm text-blue-600 hover:underline'
+						className='text-blue-500 hover:underline'
 					>
-						Подробнее
-					</a>
+						Подробнее →
+					</Link>
 				</div>
 			</div>
 
