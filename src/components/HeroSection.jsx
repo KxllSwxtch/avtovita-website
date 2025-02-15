@@ -19,7 +19,7 @@ const HeroSection = () => {
 			{/* Контент */}
 			<div className='relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4'>
 				<h1 className='text-4xl md:text-6xl font-bold mb-4'>
-					Экспорт автомобилей из Южной Кореи
+					Продажа и экспорт автомобилей из Южной Кореи
 				</h1>
 				<p className='text-lg md:text-2xl mb-8'>
 					Надёжно. Быстро. Профессионально.

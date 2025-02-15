@@ -77,7 +77,7 @@ const CarDetails = () => {
 	if (loading) return <Loader />
 
 	return (
-		<div className='container mx-auto p-4 max-w-4xl'>
+		<div className='container mx-auto p-4 max-w-4xl mt-30'>
 			{images.length > 0 && (
 				<div className='mb-6'>
 					<Slider

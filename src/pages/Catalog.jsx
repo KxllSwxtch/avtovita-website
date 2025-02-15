@@ -514,11 +514,11 @@ const Catalog = () => {
 						</div>
 
 						{/* Кнопка показа/скрытия */}
-						<div className='text-center my-6'>
+						<div className='text-center mt-5'>
 							<button
 								onClick={toggleFilters}
 								className={`
-									cursor-pointer flex items-center justify-center gap-2 px-6 py-3 font-semibold rounded-full shadow-lg transition-all duration-300
+									m-auto cursor-pointer flex items-center justify-center gap-2 px-6 py-3 font-semibold shadow-lg transition-all duration-300
 									border-2 text-lg
 									${
 										isFiltersOpen
@@ -530,7 +530,7 @@ const Catalog = () => {
 							>
 								{isFiltersOpen
 									? 'Скрыть Дополнительные Фильтры'
-									: 'Показать Дополнительные Фильтры'}
+									: 'Показать Дополнительные Фильтры'}{' '}
 								{isFiltersOpen ? '🔼' : '🔽'}
 							</button>
 						</div>
@@ -544,10 +544,10 @@ const Catalog = () => {
 										? 'max-h-[1000px] opacity-100 scale-100'
 										: 'max-h-0 opacity-0 scale-95'
 								}
-								bg-black text-white border border-red-600 p-6 mt-4
+								bg-black text-white p-6 
 							`}
 						>
-							<div className='shadow-lg rounded-lg p-6 md:p-8 max-w-6xl mx-auto mt-4'>
+							<div className='shadow-lg rounded-lg max-w-6xl mx-auto'>
 								<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
 									{/* Цена от */}
 									<div>
@@ -695,7 +695,7 @@ const Catalog = () => {
 
 									{/* Цвет */}
 									<div>
-										<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
+										<label className='block text-avtoVitaGold font-semibold tracking-wide'>
 											Цвет:
 										</label>
 										<select
@@ -730,7 +730,7 @@ const Catalog = () => {
 						</div>
 
 						{/* Кнопка поиска */}
-						<div className='mt-6 flex flex-wrap gap-6 justify-center'>
+						<div className='flex flex-wrap gap-6 justify-center'>
 							{/* Кнопка "Поиск" */}
 							<button
 								onClick={searchCars}
