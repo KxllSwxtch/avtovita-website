@@ -34,6 +34,8 @@ const translations = {
 	제시번호: 'Номер предложения',
 }
 
+const API_BASE_URL = 'https://ark-motors-backend-3a002a527613.herokuapp.com'
+
 const CarDetails = () => {
 	const { carId } = useParams()
 	const [carData, setCarData] = useState(null)
@@ -44,51 +46,12 @@ const CarDetails = () => {
 	useEffect(() => {
 		const fetchCarDetails = async () => {
 			try {
-				const url = `https://thingproxy.freeboard.io/fetch/https://www.arkmotors.kr/search/detail/${carId}`
-				const response = await axios.get(url, {
-					headers: { Accept: 'text/html' },
+				const response = await axios.get(`${API_BASE_URL}/car-details`, {
+					params: { carId },
 				})
-
-				const parser = new DOMParser()
-				const doc = parser.parseFromString(response.data, 'text/html')
-
-				const carNameElement = doc.querySelector('.car_name p')
-				if (carNameElement) {
-					setCarName(carNameElement.textContent.trim())
-				}
-
-				const basicInfo = doc.querySelector('.basic-info table tbody')
-				const rows = basicInfo ? basicInfo.querySelectorAll('tr') : []
-				let carInfo = {}
-
-				rows.forEach((row) => {
-					const columns = row.querySelectorAll('th, td')
-					if (columns.length === 4) {
-						carInfo[
-							translations[columns[0].textContent.trim()] ||
-								columns[0].textContent.trim()
-						] =
-							translations[columns[1].textContent.trim()] ||
-							columns[1].textContent.trim()
-						carInfo[
-							translations[columns[2].textContent.trim()] ||
-								columns[2].textContent.trim()
-						] =
-							translations[columns[3].textContent.trim()] ||
-							columns[3].textContent.trim()
-					} else if (columns.length === 2) {
-						carInfo[
-							translations[columns[0].textContent.trim()] ||
-								columns[0].textContent.trim()
-						] =
-							translations[columns[1].textContent.trim()] ||
-							columns[1].textContent.trim()
-					}
-				})
-
-				delete carInfo['사고유무']
-
-				setCarData(carInfo)
+				// Сервер возвращает JSON с полями carName и carData
+				setCarName(response.data.carName)
+				setCarData(response.data.carData)
 			} catch (error) {
 				console.error('Ошибка при загрузке деталей автомобиля:', error)
 			} finally {
@@ -98,19 +61,10 @@ const CarDetails = () => {
 
 		const fetchCarImages = async () => {
 			try {
-				const response = await axios.post(
-					'https://www.arkmotors.kr/search/imageList',
-					new URLSearchParams({ carNo: carId }),
-					{
-						headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-					},
-				)
-				setImages(
-					response.data.info.map((img) => ({
-						full: img.CarImageFullName,
-						thumb: img.CarImageThumb,
-					})),
-				)
+				const response = await axios.get(`${API_BASE_URL}/car-images`, {
+					params: { carId },
+				})
+				setImages(response.data.images)
 			} catch (error) {
 				console.error('Ошибка загрузки изображений:', error)
 			}

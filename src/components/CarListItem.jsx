@@ -18,8 +18,8 @@ const CarListItem = ({ car }) => {
 	return (
 		<div className='relative bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden'>
 			{/* Блок изображения */}
-			<a
-				href={car.link}
+			<Link
+				to={`/car/${carId}`}
 				target='_blank'
 				rel='noopener noreferrer'
 				className='block'
@@ -31,7 +31,7 @@ const CarListItem = ({ car }) => {
 						className='w-full h-full object-cover transition-transform duration-300 hover:scale-105'
 					/>
 				</div>
-			</a>
+			</Link>
 
 			{/* Основная информация */}
 			<div className='p-4'>
