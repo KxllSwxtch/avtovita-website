@@ -327,7 +327,7 @@ const Catalog = () => {
 	}
 
 	return (
-		<div className='p-4 mt-35'>
+		<div className='p-4 mt-24 bg-gradient-to-b from-black via-gray-900 to-black text-white min-h-screen'>
 			{/* Фильтры */}
 			<>
 				{/* Кнопки для выбора страны */}
@@ -340,13 +340,15 @@ const Catalog = () => {
 							key={value}
 							onClick={() => handleCountryClick(value)}
 							className={`
-        cursor-pointer relative px-6 py-3 text-lg font-semibold rounded-lg shadow-md transition-all
-        ${
+				cursor-pointer relative px-6 py-3 text-lg font-semibold rounded-full shadow-md transition-all duration-300
+				border-2 
+				${
 					country === value
-						? 'bg-avtoVitaDark text-black  scale-105 shadow-lg'
-						: 'bg-avtoVitaBlack text-avtoVitaGold hover:bg-avtoVitaGold hover:text-black'
-				}
-      `}
+						? 'bg-red-600 text-white border-red-500 scale-105 shadow-xl'
+						: 'bg-black text-red-500 border-red-500 hover:bg-red-600 hover:text-white hover:border-red-600'
+				} 
+				active:scale-95
+			`}
 						>
 							{label}
 						</button>
@@ -355,21 +357,27 @@ const Catalog = () => {
 
 				{/* Если страна выбрана, показываем основные фильтры */}
 				{country && (
-					<div className='bg-white shadow-md rounded-lg p-6 md:p-8 max-w-6xl mx-auto'>
+					<div className='bg-black shadow-lg rounded-2xl p-8 md:p-10 max-w-6xl mx-auto border-2 border-red-500'>
 						<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
 							{/* Производитель */}
 							<div>
-								<label className='block text-gray-700 font-medium mb-2'>
+								<label className='block text-red-500 font-semibold mb-2'>
 									Производитель:
 								</label>
 								<select
 									value={selectedMaker}
 									onChange={(e) => handleMakerChange(e.target.value)}
-									className='w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
+									className='w-full border border-red-500 bg-black text-white p-3 rounded-lg shadow-md focus:ring-red-600 focus:border-red-600 transition duration-300'
 								>
-									<option value=''>Выберите производителя</option>
+									<option value='' className='text-gray-500'>
+										Выберите производителя
+									</option>
 									{makerList.map((maker) => (
-										<option key={maker.MAKER_NO} value={maker.MAKER_NO}>
+										<option
+											key={maker.MAKER_NO}
+											value={maker.MAKER_NO}
+											className='text-black'
+										>
 											{maker.MAKER_NAME}
 										</option>
 									))}
@@ -378,18 +386,30 @@ const Catalog = () => {
 
 							{/* Модель */}
 							<div>
-								<label className='block text-gray-700 font-medium mb-2'>
+								<label className='block text-white font-semibold mb-2 tracking-wide'>
 									Модель:
 								</label>
 								<select
 									value={selectedModel}
 									onChange={(e) => handleModelChange(e.target.value)}
-									className='w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
+									className={`w-full border-2 p-3 rounded-lg shadow-md transition duration-300
+										${
+											selectedMaker
+												? 'border-red-500 bg-black text-white hover:border-red-600 focus:ring-red-500'
+												: 'border-gray-600 bg-gray-800 text-gray-400 cursor-not-allowed'
+										}
+									`}
 									disabled={!selectedMaker}
 								>
-									<option value=''>Выберите модель</option>
+									<option value='' className='text-gray-400'>
+										Выберите модель
+									</option>
 									{modelList.map((model) => (
-										<option key={model.MODEL_NO} value={model.MODEL_NO}>
+										<option
+											key={model.MODEL_NO}
+											value={model.MODEL_NO}
+											className='text-white'
+										>
 											{model.MODEL_NAME}
 										</option>
 									))}
@@ -398,20 +418,29 @@ const Catalog = () => {
 
 							{/* Подробная модель */}
 							<div>
-								<label className='block text-gray-700 font-medium mb-2'>
+								<label className='block text-white font-semibold mb-2 tracking-wide'>
 									Подробная модель:
 								</label>
 								<select
 									value={selectedDetailModel}
 									onChange={(e) => handleDetailModelChange(e.target.value)}
-									className='w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
+									className={`w-full border-2 p-3 rounded-lg shadow-md transition duration-300
+										${
+											selectedModel
+												? 'border-red-500 bg-black text-white hover:border-red-600 focus:ring-red-500'
+												: 'border-gray-600 bg-gray-800 text-gray-400 cursor-not-allowed'
+										}
+									`}
 									disabled={!selectedModel}
 								>
-									<option value=''>Выберите подробную модель</option>
+									<option value='' className='text-gray-400'>
+										Выберите подробную модель
+									</option>
 									{detailModelList.map((dmodel) => (
 										<option
 											key={dmodel.DETAIL_MODEL_NO}
 											value={dmodel.DETAIL_MODEL_NO}
+											className='text-white'
 										>
 											{dmodel.DETAIL_MODEL_NAME}
 										</option>
@@ -421,18 +450,30 @@ const Catalog = () => {
 
 							{/* Комплектация */}
 							<div>
-								<label className='block text-gray-700 font-medium mb-2'>
+								<label className='block text-white font-semibold mb-2 tracking-wide'>
 									Комплектация:
 								</label>
 								<select
 									value={selectedGrade}
 									onChange={(e) => handleGradeChange(e.target.value)}
-									className='w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
+									className={`w-full border-2 p-3 rounded-lg shadow-md transition duration-300
+										${
+											selectedDetailModel
+												? 'border-red-500 bg-black text-white hover:border-red-600 focus:ring-red-500'
+												: 'border-gray-600 bg-gray-800 text-gray-400 cursor-not-allowed'
+										}
+									`}
 									disabled={!selectedDetailModel}
 								>
-									<option value=''>Выберите комплектацию</option>
+									<option value='' className='text-gray-400'>
+										Выберите комплектацию
+									</option>
 									{gradeList.map((grade) => (
-										<option key={grade.GRADE_NO} value={grade.GRADE_NO}>
+										<option
+											key={grade.GRADE_NO}
+											value={grade.GRADE_NO}
+											className='text-white'
+										>
 											{grade.GRADE_NAME}
 										</option>
 									))}
@@ -441,20 +482,29 @@ const Catalog = () => {
 
 							{/* Детальная комплектация */}
 							<div>
-								<label className='block text-gray-700 font-medium mb-2'>
+								<label className='block text-white font-semibold mb-2 tracking-wide'>
 									Детальная комплектация:
 								</label>
 								<select
 									value={selectedDetailGrade}
 									onChange={(e) => handleDetailGradeChange(e.target.value)}
-									className='w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
+									className={`w-full border-2 p-3 rounded-lg shadow-md transition duration-300
+										${
+											selectedGrade
+												? 'border-red-500 bg-black text-white hover:border-red-600 focus:ring-red-500'
+												: 'border-gray-600 bg-gray-800 text-gray-400 cursor-not-allowed'
+										}
+									`}
 									disabled={!selectedGrade}
 								>
-									<option value=''>Выберите детальную комплектацию</option>
+									<option value='' className='text-gray-400'>
+										Выберите детальную комплектацию
+									</option>
 									{detailGradeList.map((dgrade) => (
 										<option
 											key={dgrade.DETAIL_GRADE_NO}
 											value={dgrade.DETAIL_GRADE_NO}
+											className='text-white'
 										>
 											{dgrade.DETAIL_GRADE_NAME}
 										</option>
@@ -464,37 +514,50 @@ const Catalog = () => {
 						</div>
 
 						{/* Кнопка показа/скрытия */}
-						<div className='text-center my-4'>
+						<div className='text-center my-6'>
 							<button
 								onClick={toggleFilters}
-								className='cursor-pointer m-auto mt-10 flex items-center justify-center gap-2 px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-avtoVitaGold transition'
+								className={`
+									cursor-pointer flex items-center justify-center gap-2 px-6 py-3 font-semibold rounded-full shadow-lg transition-all duration-300
+									border-2 text-lg
+									${
+										isFiltersOpen
+											? 'bg-red-600 text-white border-red-700 hover:bg-red-700 hover:border-red-800'
+											: 'bg-black text-avtoVitaGold border-avtoVitaGold hover:bg-avtoVitaGold hover:text-black'
+									}
+									active:scale-95
+								`}
 							>
 								{isFiltersOpen
 									? 'Скрыть Дополнительные Фильтры'
-									: 'Показать Дополнительные Фильтры'}{' '}
+									: 'Показать Дополнительные Фильтры'}
 								{isFiltersOpen ? '🔼' : '🔽'}
 							</button>
 						</div>
 
 						{/* Дополнительные фильтры (шторка) */}
 						<div
-							className={`overflow-hidden transition-all duration-300 ${
-								isFiltersOpen
-									? 'max-h-[1000px] opacity-100'
-									: 'max-h-0 opacity-0'
-							}`}
+							className={`
+								overflow-hidden transition-all duration-500 ease-in-out rounded-xl shadow-lg
+								${
+									isFiltersOpen
+										? 'max-h-[1000px] opacity-100 scale-100'
+										: 'max-h-0 opacity-0 scale-95'
+								}
+								bg-black text-white border border-red-600 p-6 mt-4
+							`}
 						>
-							<div className='bg-white shadow-lg rounded-lg p-6 md:p-8 max-w-6xl mx-auto mt-4'>
+							<div className='shadow-lg rounded-lg p-6 md:p-8 max-w-6xl mx-auto mt-4'>
 								<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
 									{/* Цена от */}
 									<div>
-										<label className='block text-gray-700 font-medium mb-2'>
+										<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
 											Цена от:
 										</label>
 										<select
 											value={priceMin}
 											onChange={(e) => handlePriceMinChange(e.target.value)}
-											className='w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
+											className='w-full border border-red-600 p-3 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out'
 										>
 											{priceOptions.map((opt) => (
 												<option key={opt.value} value={opt.value}>
@@ -506,13 +569,13 @@ const Catalog = () => {
 
 									{/* Цена до */}
 									<div>
-										<label className='block text-gray-700 font-medium mb-2'>
+										<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
 											Цена до:
 										</label>
 										<select
 											value={priceMax}
 											onChange={(e) => setPriceMax(e.target.value)}
-											className='w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
+											className='w-full border border-red-600 p-3 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out'
 										>
 											{filteredPriceMaxOptions.map((opt) => (
 												<option key={opt.value} value={opt.value}>
@@ -524,13 +587,13 @@ const Catalog = () => {
 
 									{/* Год от */}
 									<div>
-										<label className='block text-gray-700 font-medium mb-2'>
+										<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
 											Год от:
 										</label>
 										<select
 											value={yearMin}
 											onChange={(e) => handleYearMinChange(e.target.value)}
-											className='w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
+											className='w-full border border-red-600 p-3 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out'
 										>
 											{yearOptions.map((opt) => (
 												<option key={opt.value} value={opt.value}>
@@ -542,13 +605,13 @@ const Catalog = () => {
 
 									{/* Год до */}
 									<div>
-										<label className='block text-gray-700 font-medium mb-2'>
+										<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
 											Год до:
 										</label>
 										<select
 											value={yearMax}
 											onChange={(e) => setYearMax(e.target.value)}
-											className='w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
+											className='w-full border border-red-600 p-3 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out'
 										>
 											{filteredYearMaxOptions.map((opt) => (
 												<option key={opt.value} value={opt.value}>
@@ -560,13 +623,13 @@ const Catalog = () => {
 
 									{/* Пробег от */}
 									<div>
-										<label className='block text-gray-700 font-medium mb-2'>
+										<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
 											Пробег от:
 										</label>
 										<select
 											value={useKmMin}
 											onChange={(e) => handleUseKmMinChange(e.target.value)}
-											className='w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
+											className='w-full border border-red-600 p-3 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out'
 										>
 											{useKmOptions.map((opt) => (
 												<option key={opt.value} value={opt.value}>
@@ -578,13 +641,13 @@ const Catalog = () => {
 
 									{/* Пробег до */}
 									<div>
-										<label className='block text-gray-700 font-medium mb-2'>
+										<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
 											Пробег до:
 										</label>
 										<select
 											value={useKmMax}
 											onChange={(e) => setUseKmMax(e.target.value)}
-											className='w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
+											className='w-full border border-red-600 p-3 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out'
 										>
 											{filteredUseKmMaxOptions.map((opt) => (
 												<option key={opt.value} value={opt.value}>
@@ -596,13 +659,13 @@ const Catalog = () => {
 
 									{/* Топливо */}
 									<div>
-										<label className='block text-gray-700 font-medium mb-2'>
+										<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
 											Топливо:
 										</label>
 										<select
 											value={fuel}
 											onChange={(e) => setFuel(e.target.value)}
-											className='w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
+											className='w-full border border-red-600 p-3 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out'
 										>
 											{fuelOptions.map((opt) => (
 												<option key={opt.value} value={opt.value}>
@@ -614,13 +677,13 @@ const Catalog = () => {
 
 									{/* Трансмиссия */}
 									<div>
-										<label className='block text-gray-700 font-medium mb-2'>
+										<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
 											Трансмиссия:
 										</label>
 										<select
 											value={mission}
 											onChange={(e) => setMission(e.target.value)}
-											className='w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
+											className='w-full border border-red-600 p-3 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out'
 										>
 											{missionOptions.map((opt) => (
 												<option key={opt.value} value={opt.value}>
@@ -632,13 +695,13 @@ const Catalog = () => {
 
 									{/* Цвет */}
 									<div>
-										<label className='block text-gray-700 font-medium mb-2'>
+										<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
 											Цвет:
 										</label>
 										<select
 											value={color}
 											onChange={(e) => setColor(e.target.value)}
-											className='w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
+											className='w-full border border-red-600 p-3 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out'
 										>
 											{colorOptions.map((opt) => (
 												<option key={opt.value} value={opt.value}>
@@ -667,22 +730,22 @@ const Catalog = () => {
 						</div>
 
 						{/* Кнопка поиска */}
-						<div className='mt-6 flex flex-wrap gap-4 justify-center'>
+						<div className='mt-6 flex flex-wrap gap-6 justify-center'>
 							{/* Кнопка "Поиск" */}
 							<button
 								onClick={searchCars}
 								disabled={!country}
-								className='cursor-pointer px-6 py-3 rounded-lg font-semibold bg-avtoVitaGold text-black hover:bg-avtoVitaDark hover:text-white transition shadow-md'
+								className='cursor-pointer px-8 py-3 rounded-full font-semibold bg-avtoVitaGold text-black hover:bg-avtoVitaDark hover:text-white transition duration-300 ease-in-out shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2'
 							>
-								🔍 Поиск
+								🔍 <span>Поиск</span>
 							</button>
 
 							{/* Кнопка "Сбросить фильтры" */}
 							<button
 								onClick={resetFilters}
-								className='cursor-pointer px-6 py-3 rounded-lg font-semibold bg-gray-300 text-gray-800 hover:bg-gray-400 transition shadow-md'
+								className='cursor-pointer px-8 py-3 rounded-full font-semibold bg-gray-700 text-white hover:bg-red-600 transition duration-300 ease-in-out shadow-lg flex items-center gap-2'
 							>
-								🔄 Сбросить
+								🔄 <span>Сбросить</span>
 							</button>
 						</div>
 					</div>
