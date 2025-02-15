@@ -9,3 +9,8 @@
 
 [context.production.environment]
   NODE_VERSION = "20.9.0"
+
+[[headers]]
+  for = "/*" 
+  [headers.values]
+    access-control-allow-origin = "*" 
