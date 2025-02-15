@@ -1,30 +1,80 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { FaBars, FaTimes } from 'react-icons/fa'
 
 const Header = () => {
+	const [menuOpen, setMenuOpen] = useState(false)
+
 	return (
-		<header className='bg-blue-500 text-white p-4'>
-			<div className='container mx-auto flex justify-between items-center'>
-				<h1 className='text-xl font-bold'>
-					<Link to='/'>AvtoVita</Link>
-				</h1>
-				<nav>
-					<ul className='flex space-x-4'>
-						<li>
-							<Link to='/catalog' className='hover:underline'>
-								Каталог
-							</Link>
-						</li>
-						<li>
-							<Link to='/about' className='hover:underline'>
-								О нас
-							</Link>
-						</li>
-						<li>
-							<Link to='/cases' className='hover:underline'>
-								Кейсы
-							</Link>
-						</li>
-					</ul>
+		<header className='bg-black text-white shadow-md fixed top-0 left-0 w-full z-50'>
+			<div className='container mx-auto flex justify-between items-center px-6 py-4'>
+				{/* Логотип */}
+				<Link to='/' className='flex items-center gap-3'>
+					<img
+						src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1739602704/avtovita/Black_Modern_Car_Auto_Services_Logo.png'
+						alt='AVTOVITA Logo'
+						className='h-16 p-0'
+					/>
+				</Link>
+
+				{/* Меню (Desktop) */}
+				<nav className='hidden md:flex gap-6 text-lg font-medium'>
+					<Link to='/catalog' className='hover:text-red-500 transition'>
+						Каталог
+					</Link>
+					<Link to='/about' className='hover:text-red-500 transition'>
+						О нас
+					</Link>
+					<Link to='/contacts' className='hover:text-red-500 transition'>
+						Контакты
+					</Link>
+				</nav>
+
+				{/* Бургер-меню (Mobile) */}
+				<div className='md:hidden'>
+					<button
+						onClick={() => setMenuOpen(!menuOpen)}
+						className='text-white focus:outline-none'
+					>
+						{menuOpen ? <FaTimes size={26} /> : <FaBars size={26} />}
+					</button>
+				</div>
+			</div>
+
+			{/* Мобильное меню */}
+			<div
+				className={`md:hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-90 flex flex-col items-center justify-center transform transition-transform duration-300 ${
+					menuOpen ? 'translate-x-0' : '-translate-x-full'
+				}`}
+			>
+				<button
+					onClick={() => setMenuOpen(false)}
+					className='absolute top-6 right-6 text-white text-2xl'
+				>
+					<FaTimes />
+				</button>
+				<nav className='flex flex-col gap-6 text-lg'>
+					<Link
+						to='/catalog'
+						className='hover:text-red-500'
+						onClick={() => setMenuOpen(false)}
+					>
+						Каталог
+					</Link>
+					<Link
+						to='/about'
+						className='hover:text-red-500'
+						onClick={() => setMenuOpen(false)}
+					>
+						О нас
+					</Link>
+					<Link
+						to='/contacts'
+						className='hover:text-red-500'
+						onClick={() => setMenuOpen(false)}
+					>
+						Контакты
+					</Link>
 				</nav>
 			</div>
 		</header>

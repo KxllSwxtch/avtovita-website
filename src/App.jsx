@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 // Local imports
 import { Header, Footer } from './components'
-import { Home, About, Catalog, CarDetails } from './pages'
+import { Home, About, Catalog, CarDetails, Contacts } from './pages'
 
 const App = () => {
 	return (
@@ -14,6 +14,7 @@ const App = () => {
 						<Route path='/' element={<Home />} />
 						<Route path='/about' element={<About />} />
 						<Route path='/catalog' element={<Catalog />} />
+						<Route path='/contacts' element={<Contacts />} />
 						<Route path='/car/:carId' element={<CarDetails />} />
 						<Route
 							path='*'

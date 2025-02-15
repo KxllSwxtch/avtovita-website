@@ -1,9 +1,17 @@
-import { HeroSection } from '../components'
+import {
+	HeroSection,
+	AboutUs,
+	HowItWorks,
+	ContactsSection,
+} from '../components'
 
 const Home = () => {
 	return (
-		<div className=''>
+		<div>
 			<HeroSection />
+			<AboutUs />
+			<HowItWorks />
+			<ContactsSection />
 		</div>
 	)
 }
