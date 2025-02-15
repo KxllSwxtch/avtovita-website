@@ -11,7 +11,7 @@ import {
 } from '../utils'
 import { CarListItem, Loader, Message } from '../components'
 
-const API_BASE_URL = 'http://127.0.0.1:8000'
+const API_BASE_URL = 'https://ark-motors-backend-3a002a527613.herokuapp.com'
 
 const Catalog = () => {
 	// ------------------ Основные состояния ------------------
