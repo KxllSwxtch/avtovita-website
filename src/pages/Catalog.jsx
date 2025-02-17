@@ -348,24 +348,25 @@ const Catalog = () => {
 				{/* Кнопки для выбора страны */}
 				<div className='flex justify-center gap-4 mb-6'>
 					{[
-						{ label: '🇰🇷 Корейские', value: 'kor' },
-						{ label: '🌍 Иномарки', value: 'foreign' },
-					].map(({ label, value }) => (
+						{ label: 'Корейские', value: 'kor', emoji: '🇰🇷' },
+						{ label: 'Иномарки', value: 'foreign', emoji: '🌍' },
+					].map(({ label, value, emoji }) => (
 						<button
 							key={value}
 							onClick={() => handleCountryClick(value)}
 							className={`
-				cursor-pointer relative px-6 py-3 text-lg font-semibold rounded-full shadow-md transition-all duration-300
-				border-2 
-				${
-					country === value
-						? 'bg-red-600 text-white border-red-500 scale-105 shadow-xl'
-						: 'bg-black text-red-500 border-red-500 hover:bg-red-600 hover:text-white hover:border-red-600'
-				} 
-				active:scale-95
-			`}
+                cursor-pointer flex items-center justify-center gap-2 px-6 py-3 text-lg font-semibold rounded-full shadow-md transition-all duration-300
+                border-2 w-40 h-14
+                ${
+									country === value
+										? 'bg-red-600 text-white border-red-500 scale-105 shadow-lg'
+										: 'bg-gray-900 text-red-400 border-red-500 hover:bg-red-600 hover:text-white'
+								}
+                active:scale-95
+            `}
 						>
-							{label}
+							<span className='text-2xl'>{emoji}</span>
+							<span>{label}</span>
 						</button>
 					))}
 				</div>
