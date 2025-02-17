@@ -1,12 +1,39 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { FaBars, FaTimes } from 'react-icons/fa'
 
 const Header = () => {
 	const [menuOpen, setMenuOpen] = useState(false)
+	const [isVisible, setIsVisible] = useState(false)
+	const location = useLocation()
+
+	// Отслеживание прокрутки
+	useEffect(() => {
+		const handleScroll = () => {
+			if (window.scrollY > 50) {
+				setIsVisible(true)
+			} else {
+				setIsVisible(false)
+			}
+		}
+
+		window.addEventListener('scroll', handleScroll)
+		return () => window.removeEventListener('scroll', handleScroll)
+	}, [])
 
 	return (
-		<header className='bg-black text-white shadow-md fixed top-0 left-0 w-full z-50'>
+		<header
+			className={`
+        bg-black text-white shadow-md fixed top-0 left-0 w-full z-50 transition-transform duration-500
+        ${
+					location.pathname === '/'
+						? isVisible
+							? 'translate-y-0'
+							: '-translate-y-full'
+						: 'translate-y-0'
+				}
+    `}
+		>
 			<div className='container mx-auto flex justify-between items-center px-6 py-4'>
 				{/* Логотип */}
 				<Link to='/' className='flex items-center gap-3'>

@@ -3,6 +3,7 @@ import {
 	AboutUs,
 	HowItWorks,
 	ContactsSection,
+	WhyUsSection,
 } from '../components'
 
 const Home = () => {
@@ -10,6 +11,7 @@ const Home = () => {
 		<div>
 			<HeroSection />
 			<AboutUs />
+			<WhyUsSection />
 			<HowItWorks />
 			<ContactsSection />
 		</div>

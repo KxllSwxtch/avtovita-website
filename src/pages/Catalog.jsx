@@ -13,6 +13,7 @@ import { CarListItem, Loader, Message } from '../components'
 import { carBrandsTranslation } from '../translations'
 
 const API_BASE_URL = 'https://ark-motors-backend-3a002a527613.herokuapp.com'
+const carsPerPage = 24
 
 const Catalog = () => {
 	// ------------------ Основные состояния ------------------
@@ -213,12 +214,11 @@ const Catalog = () => {
 	const searchCars = async () => {
 		setLoading(true)
 
-		// Собираем все параметры для запроса в виде объекта
 		const params = {
 			order: '',
 			ascending: 'desc',
 			view: 'image',
-			customSelect: '24',
+			customSelect: `${carsPerPage}`,
 			carName: '',
 			maker: selectedMaker,
 			model: selectedModel,
@@ -243,14 +243,23 @@ const Catalog = () => {
 			tab: 'model',
 			detailSearch: 'close',
 			type: '',
-			page, // не забываем передавать номер страницы
+			page, // номер страницы
 		}
 
 		try {
-			// Обращаемся к нашему серверу FastAPI
 			const response = await axios.get(`${API_BASE_URL}/cars`, { params })
-			// Наш сервер возвращает массив автомобилей в формате JSON
-			setCarList(response.data)
+
+			const cars = response.data || []
+
+			// Обновляем список автомобилей
+			setCarList(cars)
+
+			// Определяем количество страниц
+			if (cars.length < carsPerPage) {
+				setTotalPages(page) // Если меньше, значит это последняя страница
+			} else {
+				setTotalPages(page + 1) // Если машин >= 24, то загружаем ещё одну страницу
+			}
 		} catch (error) {
 			console.error('Ошибка при загрузке автомобилей:', error)
 		} finally {
@@ -298,16 +307,21 @@ const Catalog = () => {
 	// ------------------ Обработчики пагинации ------------------
 	// Функция для создания массива страниц
 	const getPageNumbers = () => {
-		const maxVisible = 5
-		const pages = []
-		const startPage = Math.max(1, page - Math.floor(maxVisible / 2))
-		const endPage = Math.min(totalPages, startPage + maxVisible - 1)
+		const maxVisible = 5 // Количество отображаемых страниц в пагинации
+		let startPage = Math.max(1, page - Math.floor(maxVisible / 2))
+		let endPage = startPage + maxVisible - 1
 
-		for (let i = startPage; i <= endPage; i++) {
-			pages.push(i)
+		// Корректируем, если конец выходит за пределы
+		if (endPage > totalPages) {
+			endPage = totalPages
+			startPage = Math.max(1, endPage - maxVisible + 1)
 		}
 
-		return pages
+		// Генерируем массив страниц
+		return Array.from(
+			{ length: endPage - startPage + 1 },
+			(_, i) => startPage + i,
+		)
 	}
 
 	// Обработчики навигации
@@ -358,17 +372,24 @@ const Catalog = () => {
 
 				{/* Если страна выбрана, показываем основные фильтры */}
 				{country && (
-					<div className='shadow-lg p-8 md:p-10 max-w-6xl mx-auto '>
-						<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+					<div className='shadow-lg p-8 md:p-10 max-w-6xl mx-auto flex flex-col md:flex-row md:gap-6 gap-4'>
+						<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
 							{/* Производитель */}
-							<div>
+							<div className='flex-1'>
 								<label className='block text-red-500 font-semibold mb-2'>
 									Производитель:
 								</label>
 								<select
 									value={selectedMaker}
 									onChange={(e) => handleMakerChange(e.target.value)}
-									className='w-full border border-red-500 bg-black text-white p-3 rounded-lg shadow-md focus:ring-red-600 focus:border-red-600 transition duration-300'
+									className='w-full border border-red-500 bg-black text-white p-3 rounded-lg shadow-md focus:ring-red-600 focus:border-red-600 transition duration-300 appearance-none pr-10 relative'
+									style={{
+										backgroundImage:
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										backgroundPosition: 'right 12px center',
+										backgroundRepeat: 'no-repeat',
+										backgroundSize: '1rem',
+									}}
 								>
 									<option value='' className='text-gray-500'>
 										Выберите производителя
@@ -387,14 +408,14 @@ const Catalog = () => {
 							</div>
 
 							{/* Модель */}
-							<div>
+							<div className='flex-1'>
 								<label className='block text-white font-semibold mb-2 tracking-wide'>
 									Модель:
 								</label>
 								<select
 									value={selectedModel}
 									onChange={(e) => handleModelChange(e.target.value)}
-									className={`w-full border-2 p-3 rounded-lg shadow-md transition duration-300
+									className={`w-full border-2 p-3 rounded-lg shadow-md transition duration-300 appearance-none pr-10 relative
 										${
 											selectedMaker
 												? 'border-red-500 bg-black text-white hover:border-red-600 focus:ring-red-500'
@@ -402,6 +423,13 @@ const Catalog = () => {
 										}
 									`}
 									disabled={!selectedMaker}
+									style={{
+										backgroundImage:
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										backgroundPosition: 'right 12px center',
+										backgroundRepeat: 'no-repeat',
+										backgroundSize: '1rem',
+									}}
 								>
 									<option value='' className='text-gray-400'>
 										Выберите модель
@@ -419,14 +447,14 @@ const Catalog = () => {
 							</div>
 
 							{/* Подробная модель */}
-							<div>
+							<div className='flex-1'>
 								<label className='block text-white font-semibold mb-2 tracking-wide'>
 									Подробная модель:
 								</label>
 								<select
 									value={selectedDetailModel}
 									onChange={(e) => handleDetailModelChange(e.target.value)}
-									className={`w-full border-2 p-3 rounded-lg shadow-md transition duration-300
+									className={`w-full border-2 p-3 rounded-lg shadow-md transition duration-300 appearance-none pr-10 relative
 										${
 											selectedModel
 												? 'border-red-500 bg-black text-white hover:border-red-600 focus:ring-red-500'
@@ -434,6 +462,13 @@ const Catalog = () => {
 										}
 									`}
 									disabled={!selectedModel}
+									style={{
+										backgroundImage:
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										backgroundPosition: 'right 10px center',
+										backgroundRepeat: 'no-repeat',
+										backgroundSize: '1rem',
+									}}
 								>
 									<option value='' className='text-gray-400'>
 										Выберите подробную модель
@@ -451,14 +486,14 @@ const Catalog = () => {
 							</div>
 
 							{/* Комплектация */}
-							<div>
+							<div className='flex-1'>
 								<label className='block text-white font-semibold mb-2 tracking-wide'>
 									Комплектация:
 								</label>
 								<select
 									value={selectedGrade}
 									onChange={(e) => handleGradeChange(e.target.value)}
-									className={`w-full border-2 p-3 rounded-lg shadow-md transition duration-300
+									className={`w-full border-2 p-3 pr-10 rounded-lg shadow-md transition duration-300 appearance-none relative
 										${
 											selectedDetailModel
 												? 'border-red-500 bg-black text-white hover:border-red-600 focus:ring-red-500'
@@ -466,6 +501,13 @@ const Catalog = () => {
 										}
 									`}
 									disabled={!selectedDetailModel}
+									style={{
+										backgroundImage:
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										backgroundPosition: 'right 12px center',
+										backgroundRepeat: 'no-repeat',
+										backgroundSize: '1rem',
+									}}
 								>
 									<option value='' className='text-gray-400'>
 										Выберите комплектацию
@@ -483,14 +525,14 @@ const Catalog = () => {
 							</div>
 
 							{/* Детальная комплектация */}
-							<div>
+							<div className='flex-1'>
 								<label className='block text-white font-semibold mb-2 tracking-wide'>
 									Детальная комплектация:
 								</label>
 								<select
 									value={selectedDetailGrade}
 									onChange={(e) => handleDetailGradeChange(e.target.value)}
-									className={`w-full border-2 p-3 rounded-lg shadow-md transition duration-300
+									className={`w-full border-2 p-3 pr-10 rounded-lg shadow-md transition duration-300 appearance-none relative
 										${
 											selectedGrade
 												? 'border-red-500 bg-black text-white hover:border-red-600 focus:ring-red-500'
@@ -498,6 +540,13 @@ const Catalog = () => {
 										}
 									`}
 									disabled={!selectedGrade}
+									style={{
+										backgroundImage:
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										backgroundPosition: 'right 12px center',
+										backgroundRepeat: 'no-repeat',
+										backgroundSize: '1rem',
+									}}
 								>
 									<option value='' className='text-gray-400'>
 										Выберите детальную комплектацию
@@ -514,32 +563,37 @@ const Catalog = () => {
 								</select>
 							</div>
 						</div>
+					</div>
+				)}
+			</>
 
-						{/* Кнопка показа/скрытия */}
-						<div className='text-center mt-5'>
-							<button
-								onClick={toggleFilters}
-								className={`
-        m-auto cursor-pointer flex items-center justify-center gap-2 px-6 py-3 font-semibold shadow-lg transition-all duration-300
-        border-2 text-lg rounded-full
-        ${
-					isFiltersOpen
-						? 'bg-avtoVitaGold text-black border-avtoVitaGold hover:bg-yellow-600 hover:border-yellow-700'
-						: 'bg-avtoVitaBlack text-avtoVitaGold border-avtoVitaGold hover:bg-avtoVitaGold hover:text-black'
-				}
-        active:scale-95
-    `}
-							>
-								{isFiltersOpen
-									? 'Скрыть Дополнительные Фильтры'
-									: 'Показать Дополнительные Фильтры'}{' '}
-								{isFiltersOpen ? '🔼' : '🔽'}
-							</button>
-						</div>
+			{/* Кнопка показа/скрытия */}
+			<div className='text-center mt-5'>
+				<button
+					onClick={toggleFilters}
+					className={`
+									m-auto cursor-pointer flex items-center justify-center px-4 py-2 md:px-6 md:py-3 font-semibold shadow-lg transition-all duration-300
+									border-2 text-base md:text-lg rounded-lg w-full md:w-auto
+									${
+										isFiltersOpen
+											? 'bg-red-600 text-white border-red-500 scale-105 shadow-xl'
+											: 'bg-black text-red-500 border-red-500 hover:bg-red-600 hover:text-white hover:border-red-600'
+									}
+									active:scale-95
+								`}
+				>
+					<span>
+						{isFiltersOpen ? 'Скрыть Доп. фильтры' : 'Показать Доп. фильтры'}
+					</span>
+					{/* <span className='text-sm md:text-base align-middle pl-2'>
+									{isFiltersOpen ? '🔼' : '🔽'}
+								</span> */}
+				</button>
+			</div>
 
-						{/* Дополнительные фильтры (шторка) */}
-						<div
-							className={`
+			{/* Дополнительные фильтры (шторка) */}
+			<div
+				className={`
 								overflow-hidden transition-all duration-500 ease-in-out rounded-xl shadow-lg
 								${
 									isFiltersOpen
@@ -548,173 +602,236 @@ const Catalog = () => {
 								}
 								bg-black text-white p-6 
 							`}
-						>
-							<div className='shadow-lg rounded-lg max-w-6xl mx-auto'>
-								<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-									{/* Цена от */}
-									<div>
-										<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
-											Цена от:
-										</label>
-										<select
-											value={priceMin}
-											onChange={(e) => handlePriceMinChange(e.target.value)}
-											className='w-full border border-red-600 p-3 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out'
-										>
-											{priceOptions.map((opt) => (
-												<option key={opt.value} value={opt.value}>
-													{opt.label}
-												</option>
-											))}
-										</select>
-									</div>
+			>
+				<div className='shadow-lg rounded-lg max-w-6xl mx-auto'>
+					<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+						{/* Цена от */}
+						<div>
+							<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
+								Цена от:
+							</label>
+							<select
+								value={priceMin}
+								onChange={(e) => handlePriceMinChange(e.target.value)}
+								className='w-full border border-red-600 p-3 pr-10 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+								style={{
+									backgroundImage:
+										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+									backgroundPosition: 'right 12px center',
+									backgroundRepeat: 'no-repeat',
+									backgroundSize: '1rem',
+								}}
+							>
+								{priceOptions.map((opt) => (
+									<option key={opt.value} value={opt.value}>
+										{opt.label}
+									</option>
+								))}
+							</select>
+						</div>
 
-									{/* Цена до */}
-									<div>
-										<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
-											Цена до:
-										</label>
-										<select
-											value={priceMax}
-											onChange={(e) => setPriceMax(e.target.value)}
-											className='w-full border border-red-600 p-3 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out'
-										>
-											{filteredPriceMaxOptions.map((opt) => (
-												<option key={opt.value} value={opt.value}>
-													{opt.label}
-												</option>
-											))}
-										</select>
-									</div>
+						{/* Цена до */}
+						<div>
+							<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
+								Цена до:
+							</label>
+							<select
+								value={priceMax}
+								onChange={(e) => setPriceMax(e.target.value)}
+								className='w-full border border-red-600 p-3 pr-10 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+								style={{
+									backgroundImage:
+										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+									backgroundPosition: 'right 12px center',
+									backgroundRepeat: 'no-repeat',
+									backgroundSize: '1rem',
+								}}
+							>
+								{filteredPriceMaxOptions.map((opt) => (
+									<option key={opt.value} value={opt.value}>
+										{opt.label}
+									</option>
+								))}
+							</select>
+						</div>
 
-									{/* Год от */}
-									<div>
-										<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
-											Год от:
-										</label>
-										<select
-											value={yearMin}
-											onChange={(e) => handleYearMinChange(e.target.value)}
-											className='w-full border border-red-600 p-3 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out'
-										>
-											{yearOptions.map((opt) => (
-												<option key={opt.value} value={opt.value}>
-													{opt.label}
-												</option>
-											))}
-										</select>
-									</div>
+						{/* Год от */}
+						<div>
+							<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
+								Год от:
+							</label>
+							<select
+								value={yearMin}
+								onChange={(e) => handleYearMinChange(e.target.value)}
+								className='w-full border border-red-600 p-3 pr-10 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+								style={{
+									backgroundImage:
+										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+									backgroundPosition: 'right 12px center',
+									backgroundRepeat: 'no-repeat',
+									backgroundSize: '1rem',
+								}}
+							>
+								{yearOptions.map((opt) => (
+									<option key={opt.value} value={opt.value}>
+										{opt.label}
+									</option>
+								))}
+							</select>
+						</div>
 
-									{/* Год до */}
-									<div>
-										<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
-											Год до:
-										</label>
-										<select
-											value={yearMax}
-											onChange={(e) => setYearMax(e.target.value)}
-											className='w-full border border-red-600 p-3 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out'
-										>
-											{filteredYearMaxOptions.map((opt) => (
-												<option key={opt.value} value={opt.value}>
-													{opt.label}
-												</option>
-											))}
-										</select>
-									</div>
+						{/* Год до */}
+						<div>
+							<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
+								Год до:
+							</label>
+							<select
+								value={yearMax}
+								onChange={(e) => setYearMax(e.target.value)}
+								className='w-full border border-red-600 p-3 pr-10 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+								style={{
+									backgroundImage:
+										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+									backgroundPosition: 'right 12px center',
+									backgroundRepeat: 'no-repeat',
+									backgroundSize: '1rem',
+								}}
+							>
+								{filteredYearMaxOptions.map((opt) => (
+									<option key={opt.value} value={opt.value}>
+										{opt.label}
+									</option>
+								))}
+							</select>
+						</div>
 
-									{/* Пробег от */}
-									<div>
-										<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
-											Пробег от:
-										</label>
-										<select
-											value={useKmMin}
-											onChange={(e) => handleUseKmMinChange(e.target.value)}
-											className='w-full border border-red-600 p-3 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out'
-										>
-											{useKmOptions.map((opt) => (
-												<option key={opt.value} value={opt.value}>
-													{opt.label}
-												</option>
-											))}
-										</select>
-									</div>
+						{/* Пробег от */}
+						<div>
+							<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
+								Пробег от:
+							</label>
+							<select
+								value={useKmMin}
+								onChange={(e) => handleUseKmMinChange(e.target.value)}
+								className='w-full border border-red-600 p-3 pr-10 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+								style={{
+									backgroundImage:
+										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+									backgroundPosition: 'right 12px center',
+									backgroundRepeat: 'no-repeat',
+									backgroundSize: '1rem',
+								}}
+							>
+								{useKmOptions.map((opt) => (
+									<option key={opt.value} value={opt.value}>
+										{opt.label}
+									</option>
+								))}
+							</select>
+						</div>
 
-									{/* Пробег до */}
-									<div>
-										<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
-											Пробег до:
-										</label>
-										<select
-											value={useKmMax}
-											onChange={(e) => setUseKmMax(e.target.value)}
-											className='w-full border border-red-600 p-3 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out'
-										>
-											{filteredUseKmMaxOptions.map((opt) => (
-												<option key={opt.value} value={opt.value}>
-													{opt.label}
-												</option>
-											))}
-										</select>
-									</div>
+						{/* Пробег до */}
+						<div>
+							<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
+								Пробег до:
+							</label>
+							<select
+								value={useKmMax}
+								onChange={(e) => setUseKmMax(e.target.value)}
+								className='w-full border border-red-600 p-3 pr-10 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+								style={{
+									backgroundImage:
+										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+									backgroundPosition: 'right 12px center',
+									backgroundRepeat: 'no-repeat',
+									backgroundSize: '1rem',
+								}}
+							>
+								{filteredUseKmMaxOptions.map((opt) => (
+									<option key={opt.value} value={opt.value}>
+										{opt.label}
+									</option>
+								))}
+							</select>
+						</div>
 
-									{/* Топливо */}
-									<div>
-										<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
-											Топливо:
-										</label>
-										<select
-											value={fuel}
-											onChange={(e) => setFuel(e.target.value)}
-											className='w-full border border-red-600 p-3 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out'
-										>
-											{fuelOptions.map((opt) => (
-												<option key={opt.value} value={opt.value}>
-													{opt.label}
-												</option>
-											))}
-										</select>
-									</div>
+						{/* Топливо */}
+						<div>
+							<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
+								Топливо:
+							</label>
+							<select
+								value={fuel}
+								onChange={(e) => setFuel(e.target.value)}
+								className='w-full border border-red-600 p-3 pr-10 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+								style={{
+									backgroundImage:
+										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+									backgroundPosition: 'right 12px center',
+									backgroundRepeat: 'no-repeat',
+									backgroundSize: '1rem',
+								}}
+							>
+								{fuelOptions.map((opt) => (
+									<option key={opt.value} value={opt.value}>
+										{opt.label}
+									</option>
+								))}
+							</select>
+						</div>
 
-									{/* Трансмиссия */}
-									<div>
-										<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
-											Трансмиссия:
-										</label>
-										<select
-											value={mission}
-											onChange={(e) => setMission(e.target.value)}
-											className='w-full border border-red-600 p-3 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out'
-										>
-											{missionOptions.map((opt) => (
-												<option key={opt.value} value={opt.value}>
-													{opt.label}
-												</option>
-											))}
-										</select>
-									</div>
+						{/* Трансмиссия */}
+						<div>
+							<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
+								Трансмиссия:
+							</label>
+							<select
+								value={mission}
+								onChange={(e) => setMission(e.target.value)}
+								className='w-full border border-red-600 p-3 pr-10 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+								style={{
+									backgroundImage:
+										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+									backgroundPosition: 'right 12px center',
+									backgroundRepeat: 'no-repeat',
+									backgroundSize: '1rem',
+								}}
+							>
+								{missionOptions.map((opt) => (
+									<option key={opt.value} value={opt.value}>
+										{opt.label}
+									</option>
+								))}
+							</select>
+						</div>
 
-									{/* Цвет */}
-									<div>
-										<label className='block text-avtoVitaGold font-semibold tracking-wide'>
-											Цвет:
-										</label>
-										<select
-											value={color}
-											onChange={(e) => setColor(e.target.value)}
-											className='w-full border border-red-600 p-3 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out'
-										>
-											{colorOptions.map((opt) => (
-												<option key={opt.value} value={opt.value}>
-													{opt.label}
-												</option>
-											))}
-										</select>
-									</div>
+						{/* Цвет */}
+						<div>
+							<label className='block text-avtoVitaGold font-semibold tracking-wide'>
+								Цвет:
+							</label>
+							<select
+								value={color}
+								onChange={(e) => setColor(e.target.value)}
+								className='w-full border border-red-600 p-3 pr-10 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+								style={{
+									backgroundImage:
+										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+									backgroundPosition: 'right 12px center',
+									backgroundRepeat: 'no-repeat',
+									backgroundSize: '1rem',
+								}}
+							>
+								{colorOptions.map((opt) => (
+									<option key={opt.value} value={opt.value}>
+										{opt.label}
+									</option>
+								))}
+							</select>
+						</div>
 
-									{/* Номер авто */}
-									{/* <div>
+						{/* Номер авто */}
+						{/* <div>
 										<label className='block text-gray-700 font-medium mb-2'>
 											Номер авто:
 										</label>
@@ -727,32 +844,29 @@ const Catalog = () => {
 											placeholder='Введите номер авто'
 										/>
 									</div> */}
-								</div>
-							</div>
-						</div>
-
-						{/* Кнопка поиска */}
-						<div className='flex flex-wrap gap-6 justify-center'>
-							{/* Кнопка "Поиск" */}
-							<button
-								onClick={searchCars}
-								disabled={!country}
-								className='cursor-pointer px-8 py-3 rounded-full font-semibold bg-avtoVitaGold text-black hover:bg-avtoVitaDark hover:text-white transition duration-300 ease-in-out shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2'
-							>
-								🔍 <span>Поиск</span>
-							</button>
-
-							{/* Кнопка "Сбросить фильтры" */}
-							<button
-								onClick={resetFilters}
-								className='cursor-pointer px-8 py-3 rounded-full font-semibold bg-gray-700 text-white hover:bg-red-600 transition duration-300 ease-in-out shadow-lg flex items-center gap-2'
-							>
-								🔄 <span>Сбросить</span>
-							</button>
-						</div>
 					</div>
-				)}
-			</>
+				</div>
+			</div>
+
+			{/* Кнопка поиска */}
+			<div className='flex flex-wrap gap-6 justify-center'>
+				{/* Кнопка "Поиск" */}
+				<button
+					onClick={searchCars}
+					disabled={!country}
+					className='cursor-pointer px-8 py-3 rounded-full font-semibold bg-red-600 text-white hover:bg-avtoVitaDark hover:text-black hover:bg-red-400 transition duration-300 ease-in-out shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2'
+				>
+					🔍 <span>Поиск</span>
+				</button>
+
+				{/* Кнопка "Сбросить фильтры" */}
+				<button
+					onClick={resetFilters}
+					className='cursor-pointer px-8 py-3 rounded-full font-semibold bg-gray-700 text-white hover:bg-red-600 transition duration-300 ease-in-out shadow-lg flex items-center gap-2'
+				>
+					🔄 <span>Сбросить</span>
+				</button>
+			</div>
 
 			{/* Отображение автомобилей */}
 			<div className='mt-6'>
@@ -774,54 +888,54 @@ const Catalog = () => {
 			</div>
 
 			{/* Пагинация */}
-			{carList.length > 0 && (
-				<>
-					<div className='mt-6 flex justify-center items-center gap-2'>
-						<button
-							onClick={goToFirstPage}
-							disabled={page === 1}
-							className='cursor-pointer px-3 py-1 text-gray-700 hover:text-black'
-						>
-							&laquo;
-						</button>
-						<button
-							onClick={goToPrevPage}
-							disabled={page === 1}
-							className='px-3 py-1 text-gray-700 hover:text-black'
-						>
-							&lt;
-						</button>
+			{carList.length > 0 && totalPages > 1 && (
+				<div className='mt-6 flex justify-center items-center gap-2'>
+					<button
+						onClick={goToFirstPage}
+						disabled={page === 1}
+						className='cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
+					>
+						&laquo;
+					</button>
+					<button
+						onClick={goToPrevPage}
+						disabled={page === 1}
+						className='px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
+					>
+						&lt;
+					</button>
 
-						{getPageNumbers().map((pageNum) => (
-							<button
-								key={pageNum}
-								onClick={() => goToPage(pageNum)}
-								className={`cursor-pointer px-3 py-1 rounded ${
-									pageNum === page
-										? 'bg-yellow-500 text-white'
-										: 'text-gray-700 hover:text-black'
-								}`}
-							>
-								{pageNum}
-							</button>
-						))}
+					{getPageNumbers().map((pageNum) => (
+						<button
+							key={pageNum}
+							onClick={() => goToPage(pageNum)}
+							className={`cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300
+                    ${
+											pageNum === page
+												? 'bg-yellow-500 text-black scale-110 shadow-lg'
+												: 'bg-gray-800 hover:bg-yellow-400 hover:text-black'
+										}
+                `}
+						>
+							{pageNum}
+						</button>
+					))}
 
-						<button
-							onClick={goToNextPage}
-							disabled={page === totalPages}
-							className='cursor-pointer px-3 py-1 text-gray-700 hover:text-black'
-						>
-							&gt;
-						</button>
-						<button
-							onClick={goToLastPage}
-							disabled={page === totalPages}
-							className='cursor-pointer px-3 py-1 text-gray-700 hover:text-black'
-						>
-							&raquo;
-						</button>
-					</div>
-				</>
+					<button
+						onClick={goToNextPage}
+						disabled={page === totalPages}
+						className='cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
+					>
+						&gt;
+					</button>
+					<button
+						onClick={goToLastPage}
+						disabled={page === totalPages}
+						className='cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
+					>
+						&raquo;
+					</button>
+				</div>
 			)}
 		</div>
 	)

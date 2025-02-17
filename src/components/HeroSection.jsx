@@ -26,7 +26,7 @@ const HeroSection = () => {
 				</p>
 				<Link
 					to='/catalog'
-					className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-full'
+					className='bg-red-500 hover:bg-red-700 transition-colors duration-300 text-white font-semibold py-3 px-6 rounded-full'
 				>
 					Смотреть Каталог
 				</Link>

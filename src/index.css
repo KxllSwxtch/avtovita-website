@@ -6,3 +6,16 @@
 	--color-avtoVitaGoldDark: #b78d37;
 	--color-avtoVitaBlack: #121212;
 }
+
+body {
+	background-color: black;
+}
+
+select:focus,
+select:active {
+	outline: none !important;
+}
+
+select {
+	cursor: pointer;
+}

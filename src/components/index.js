@@ -7,6 +7,7 @@ import Message from './Message'
 import AboutUs from './AboutUs'
 import HowItWorks from './HowItWorks'
 import ContactsSection from './ContactsSection'
+import WhyUsSection from './WhyUsSection'
 
 export {
 	Header,
@@ -18,4 +19,5 @@ export {
 	AboutUs,
 	HowItWorks,
 	ContactsSection,
+	WhyUsSection,
 }
