@@ -61,17 +61,17 @@ const Header = () => {
 				<div className='md:hidden'>
 					<button
 						onClick={() => setMenuOpen(!menuOpen)}
-						className='text-white focus:outline-none'
+						className='text-white focus:outline-none cursor-pointer'
 					>
-						{menuOpen ? <FaTimes size={26} /> : <FaBars size={26} />}
+						<FaBars size={26} />
 					</button>
 				</div>
 			</div>
 
 			{/* Мобильное меню */}
 			<div
-				className={`md:hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-90 flex flex-col items-center justify-center transform transition-transform duration-300 ${
-					menuOpen ? 'translate-x-0' : '-translate-x-full'
+				className={`fixed top-0 left-0 w-full h-screen bg-black bg-opacity-90 flex flex-col items-center justify-center z-50 transition-transform duration-300 ${
+					menuOpen ? 'translate-y-0' : '-translate-x-full'
 				}`}
 			>
 				<button
