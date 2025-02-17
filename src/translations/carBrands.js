@@ -1,6 +1,6 @@
 const carBrandsTranslation = {
 	현대: 'Hyundai',
-	기아: 'Kia',
+	기아: 'KIA',
 	제네시스: 'Genesis',
 	쉐보레: 'Chevrolet (Korea)',
 	대우: 'Daewoo',

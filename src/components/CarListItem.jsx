@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
+// Local imports
+import { carBrandsTranslation } from '../translations'
+
 const fuelTypeTranslation = {
 	휘발유: 'Бензин',
 	경유: 'Дизель',
@@ -31,8 +34,13 @@ const CarListItem = ({ car }) => {
 	const formattedTransmission =
 		car.transmission === '오토' ? 'Автомат' : 'Механика'
 
+	const formattedCarName =
+		carBrandsTranslation[car?.name.split(']')[0].replace('[', '').trim()] +
+		' ' +
+		car.name.split(']')[1]
+
 	return (
-		<div className='relative bg-avtoVitaBlack border  rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl duration-300'>
+		<div className='relative bg-avtoVitaBlack rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl duration-300 border border-gray-700/50'>
 			{/* Блок изображения */}
 			<Link
 				to={`/car/${carId}`}
@@ -44,7 +52,7 @@ const CarListItem = ({ car }) => {
 					<img
 						src={car.image.replaceAll('"', '')}
 						alt={car.name}
-						className='w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-110'
+						className='w-full h-full object-cover'
 					/>
 					{/* Полупрозрачный градиент внизу для эффекта глубины */}
 					<div className='absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-black/50 to-transparent'></div>
@@ -55,7 +63,7 @@ const CarListItem = ({ car }) => {
 			<div className='p-4 rounded-b-2xl'>
 				{/* Марка и модель */}
 				<h2 className='text-xl font-semibold text-white truncate'>
-					{car.name}
+					{formattedCarName}
 				</h2>
 
 				{/* Основные характеристики */}
@@ -75,14 +83,14 @@ const CarListItem = ({ car }) => {
 				{/* Цена и кнопка */}
 				<div className='mt-4 flex justify-between items-center'>
 					<span className='text-lg font-bold text-avtoVitaGold'>
-						Цена в Корее:
-						<br />
 						{formattedPrice} ₩
 					</span>
 					<Link
 						to={`/car/${carId}`}
 						target='_blank'
-						className='px-4 py-2 bg-avtoVitaDark text-white text-sm font-semibold rounded-lg shadow-md transition-all hover:bg-avtoVitaGold hover:text-black'
+						className='px-5 py-2 bg-avtoVitaGold text-black 
+							text-sm font-semibold rounded-md transition-opacity 
+							duration-300 hover:opacity-80'
 					>
 						Подробнее →
 					</Link>
