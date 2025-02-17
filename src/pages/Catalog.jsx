@@ -10,6 +10,7 @@ import {
 	colorOptions,
 } from '../utils'
 import { CarListItem, Loader, Message } from '../components'
+import { carBrandsTranslation } from '../translations'
 
 const API_BASE_URL = 'https://ark-motors-backend-3a002a527613.herokuapp.com'
 
@@ -357,7 +358,7 @@ const Catalog = () => {
 
 				{/* Если страна выбрана, показываем основные фильтры */}
 				{country && (
-					<div className='bg-black shadow-lg rounded-2xl p-8 md:p-10 max-w-6xl mx-auto border-2 border-red-500'>
+					<div className='shadow-lg p-8 md:p-10 max-w-6xl mx-auto '>
 						<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
 							{/* Производитель */}
 							<div>
@@ -378,7 +379,8 @@ const Catalog = () => {
 											value={maker.MAKER_NO}
 											className='text-black'
 										>
-											{maker.MAKER_NAME}
+											{carBrandsTranslation[maker.MAKER_NAME] ||
+												maker.MAKER_NAME}
 										</option>
 									))}
 								</select>
@@ -518,15 +520,15 @@ const Catalog = () => {
 							<button
 								onClick={toggleFilters}
 								className={`
-									m-auto cursor-pointer flex items-center justify-center gap-2 px-6 py-3 font-semibold shadow-lg transition-all duration-300
-									border-2 text-lg
-									${
-										isFiltersOpen
-											? 'bg-red-600 text-white border-red-700 hover:bg-red-700 hover:border-red-800'
-											: 'bg-black text-avtoVitaGold border-avtoVitaGold hover:bg-avtoVitaGold hover:text-black'
-									}
-									active:scale-95
-								`}
+        m-auto cursor-pointer flex items-center justify-center gap-2 px-6 py-3 font-semibold shadow-lg transition-all duration-300
+        border-2 text-lg rounded-full
+        ${
+					isFiltersOpen
+						? 'bg-avtoVitaGold text-black border-avtoVitaGold hover:bg-yellow-600 hover:border-yellow-700'
+						: 'bg-avtoVitaBlack text-avtoVitaGold border-avtoVitaGold hover:bg-avtoVitaGold hover:text-black'
+				}
+        active:scale-95
+    `}
 							>
 								{isFiltersOpen
 									? 'Скрыть Дополнительные Фильтры'
