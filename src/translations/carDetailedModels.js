@@ -8,6 +8,8 @@ const carDetailedModelsTranslation = {
 	프레스티지: 'Prestige',
 	플러스: 'Plus',
 	캘리그래피: 'Calligraphy',
+	캘리그라피: 'Calligraphy',
+	르블랑: 'LeBlanc',
 	럭셔리: 'Luxury',
 	프라임: 'Prime',
 	모던: 'Modern',
