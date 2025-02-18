@@ -527,6 +527,7 @@ const carTrimsTranslation = {
 	포트로: 'Portro',
 	'스피라 - 어울림모터스': 'Spira - Eoulrim Motors',
 	'쎄보(캠시스)': 'Cevo (Camsys)',
+	시에나: 'Sienna',
 }
 
 export default carTrimsTranslation
