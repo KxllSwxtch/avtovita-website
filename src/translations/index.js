@@ -1,3 +1,5 @@
 import carBrandsTranslation from './carBrands'
+import carModelsTranslation from './carModels'
+import carTrimsTranslation from './carTrims'
 
-export { carBrandsTranslation }
+export { carBrandsTranslation, carModelsTranslation, carTrimsTranslation }

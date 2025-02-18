@@ -10,7 +10,11 @@ import {
 	colorOptions,
 } from '../utils'
 import { CarListItem, Loader, Message } from '../components'
-import { carBrandsTranslation } from '../translations'
+import {
+	carBrandsTranslation,
+	carModelsTranslation,
+	carTrimsTranslation,
+} from '../translations'
 
 const API_BASE_URL = 'https://ark-motors-backend-3a002a527613.herokuapp.com'
 const carsPerPage = 24
@@ -435,15 +439,18 @@ const Catalog = () => {
 									<option value='' className='text-gray-400'>
 										Выберите модель
 									</option>
-									{modelList.map((model) => (
-										<option
-											key={model.MODEL_NO}
-											value={model.MODEL_NO}
-											className='text-white'
-										>
-											{model.MODEL_NAME}
-										</option>
-									))}
+									{modelList
+										.sort((a, b) => (a.MODEL_NAME > b.MODEL_NAME ? 1 : -1))
+										.map((model) => (
+											<option
+												key={model.MODEL_NO}
+												value={model.MODEL_NO}
+												className='text-white'
+											>
+												{carModelsTranslation[model.MODEL_NAME] ||
+													model.MODEL_NAME}
+											</option>
+										))}
 								</select>
 							</div>
 
@@ -474,15 +481,20 @@ const Catalog = () => {
 									<option value='' className='text-gray-400'>
 										Выберите подробную модель
 									</option>
-									{detailModelList.map((dmodel) => (
-										<option
-											key={dmodel.DETAIL_MODEL_NO}
-											value={dmodel.DETAIL_MODEL_NO}
-											className='text-white'
-										>
-											{dmodel.DETAIL_MODEL_NAME}
-										</option>
-									))}
+									{detailModelList
+										.sort((a, b) =>
+											a.DETAIL_MODEL_NAME > b.DETAIL_MODEL_NAME ? 1 : -1,
+										)
+										.map((dmodel) => (
+											<option
+												key={dmodel.DETAIL_MODEL_NO}
+												value={dmodel.DETAIL_MODEL_NO}
+												className='text-white'
+											>
+												{carTrimsTranslation[dmodel.DETAIL_MODEL_NAME] ||
+													dmodel.DETAIL_MODEL_NAME}
+											</option>
+										))}
 								</select>
 							</div>
 

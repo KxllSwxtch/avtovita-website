@@ -43,7 +43,7 @@ const carBrandsTranslation = {
 	스즈키: 'Suzuki',
 	미쯔오카: 'Mitsuoka',
 	다찌: 'Dodge',
-	로버: 'Land Rover',
+	로버: 'Rover',
 	로터스: 'Lotus',
 	르노: 'Renault',
 	마이바흐: 'Maybach',
@@ -65,6 +65,7 @@ const carBrandsTranslation = {
 	지리: 'Geely',
 	허머: 'Hummer',
 	폴스타: 'Polestar',
+	폰티악: 'Pontiac',
 }
 
 export default carBrandsTranslation
