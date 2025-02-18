@@ -62,7 +62,8 @@ const Footer = () => {
 						</a>
 					</p>
 					<p className='flex items-center justify-center gap-2 text-sm'>
-						<FaMapMarkerAlt className='text-avtoVitaGold' /> Сеул, Южная Корея
+						<FaMapMarkerAlt className='text-avtoVitaGold' /> 경기 안산시 단원구
+						풍전로 53
 					</p>
 				</div>
 

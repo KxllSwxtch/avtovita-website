@@ -30,18 +30,26 @@ const Contacts = () => {
 							Контактная информация
 						</h3>
 						<div className='space-y-4'>
-							<div className='flex items-center gap-4'>
-								<FaPhone className='text-red-500 text-2xl' />
-								<div>
-									<p className='text-lg font-semibold'>Телефоны</p>
-									<p className='text-gray-400'>Виталий: +82 10-9344-1782</p>
-									<p className='text-gray-400'>Ким Евгений: +82 10-4225-2627</p>
-									<p className='text-gray-400'>Цой Юрий: +82 10-7609-7787</p>
-									<p className='text-gray-400'>Цой Евгений: +82 10-4416-8778</p>
-								</div>
-							</div>
+							{[
+								{ name: 'Виталий', number: '+82 10-9344-1782' },
+								{ name: 'Ким Евгений', number: '+82 10-4225-2627' },
+								{ name: 'Цой Юрий', number: '+82 10-7609-7787' },
+								{ name: 'Цой Евгений', number: '+82 10-4416-8778' },
+							].map((contact, index) => (
+								<p key={index} className='text-lg'>
+									<span className='font-semibold text-white'>
+										{contact.name}:{' '}
+									</span>
+									<a
+										href={`tel:${contact.number}`}
+										className='text-red-400 hover:text-red-300'
+									>
+										{contact.number}
+									</a>
+								</p>
+							))}
 
-							<div className='flex items-center gap-4'>
+							{/* <div className='flex items-center gap-4'>
 								<FaEnvelope className='text-red-500 text-2xl' />
 								<div>
 									<p className='text-lg font-semibold'>E-mail</p>
@@ -52,13 +60,13 @@ const Contacts = () => {
 										info@avtovita.com
 									</a>
 								</div>
-							</div>
+							</div> */}
 
 							<div className='flex items-center gap-4'>
 								<FaMapMarkerAlt className='text-red-500 text-2xl' />
 								<div>
 									<p className='text-lg font-semibold'>Адрес</p>
-									<p className='text-gray-400'>Южная Корея, г. Сеул</p>
+									<p className='text-gray-400'>경기 안산시 단원구 풍전로 53</p>
 								</div>
 							</div>
 						</div>
@@ -136,11 +144,14 @@ const Contacts = () => {
 				</h3>
 				<div className='max-w-6xl mx-auto'>
 					<iframe
-						title='Google Map'
-						className='w-full h-80 rounded-lg shadow-lg'
-						src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12659.658538940635!2d126.97837454677705!3d37.56667917975745!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357ca2a4e1682af5%3A0x9f32ef0b34f4e2b8!2z0JzQnNCcIC0g0KHQsNC50LTQvtC9INC60LjRh9C10YHQutCw0Y8g0YLQtdCw0YLRjNC10L3QvdC-0Lkg0LrQvtC80L_QtdGB0LrQvtCz0LjRh9C10YHRgtGMLCDQmNCy0L3QsNGC!5e0!3m2!1sru!2skr!4v1618461203745!5m2!1sru!2skr'
+						title='Google map'
+						src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3172.765035298867!2d126.789744675919!3d37.32439303797588!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357b6e2df9e21c1d%3A0x8a17213e594f3685!2s53%20Pungjeon-ro%2C%20Danwon-gu%2C%20Ansan-si%2C%20Gyeonggi-do!5e0!3m2!1sen!2skr!4v1739839720681!5m2!1sen!2skr'
+						width='600'
+						height='450'
+						className='w-full h-100 rounded-lg shadow-lg'
 						allowFullScreen=''
 						loading='lazy'
+						referrerPolicy='no-referrer-when-downgrade'
 					></iframe>
 				</div>
 			</section>
