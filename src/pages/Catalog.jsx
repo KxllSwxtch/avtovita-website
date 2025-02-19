@@ -502,7 +502,7 @@ const Catalog = () => {
 											value={dmodel.DETAIL_MODEL_NO}
 											className='text-white'
 										>
-											{carTrimsTranslation[dmodel.DETAIL_MODEL_NAME] ||
+											{translateFuelType(dmodel.DETAIL_MODEL_NAME) ||
 												dmodel.DETAIL_MODEL_NAME}
 										</option>
 									))}
