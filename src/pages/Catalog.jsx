@@ -22,10 +22,10 @@ function translateFuelType(text) {
 	for (const [korean, russian] of Object.entries(
 		carDetailedModelsTranslation,
 	)) {
-		// This regex will match the word `korean` only and not affect any other characters
-		const regex = new RegExp(`(${korean})(?=(\\s|\\W|$))`, 'g')
+		// Match only the Korean part of the word and ignore the prefix (e.g. "G")
+		const regex = new RegExp(`(?<=^|\\s|\\W)${korean}(?=\\s|\\W|$)`, 'g')
 
-		// Replace the matched part (korean) with the russian translation
+		// Replace the matched Korean word with the Russian translation
 		text = text.replace(regex, russian)
 	}
 	return text
@@ -502,7 +502,7 @@ const Catalog = () => {
 											value={dmodel.DETAIL_MODEL_NO}
 											className='text-white'
 										>
-											{translateFuelType(dmodel.DETAIL_MODEL_NAME) ||
+											{carTrimsTranslation[dmodel.DETAIL_MODEL_NAME] ||
 												dmodel.DETAIL_MODEL_NAME}
 										</option>
 									))}
@@ -542,7 +542,7 @@ const Catalog = () => {
 											value={grade.GRADE_NO}
 											className='text-white'
 										>
-											{translateFuelType(grade.GRADE_NAME)}
+											{translateFuelType(grade.GRADE_NAME) || grade.GRADE_NAME}
 										</option>
 									))}
 								</select>
