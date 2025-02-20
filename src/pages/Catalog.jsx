@@ -361,7 +361,7 @@ const Catalog = () => {
 	}
 
 	return (
-		<div className='p-4 mt-24 bg-gradient-to-b from-black via-gray-900 to-black text-white min-h-screen'>
+		<div className='p-4 mt-24 text-white min-h-screen'>
 			{/* Фильтры */}
 			<>
 				{/* Кнопки для выбора страны */}

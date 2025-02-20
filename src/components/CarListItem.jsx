@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
 // Local imports
-import { carBrandsTranslation } from '../translations'
+import { translateCarName } from '../utils'
 
 const fuelTypeTranslation = {
 	휘발유: 'Бензин',
@@ -34,10 +34,7 @@ const CarListItem = ({ car }) => {
 	const formattedTransmission =
 		car.transmission === '오토' ? 'Автомат' : 'Механика'
 
-	const formattedCarName =
-		carBrandsTranslation[car?.name.split(']')[0].replace('[', '').trim()] +
-		' ' +
-		car.name.split(']')[1]
+	const formattedCarName = translateCarName(car?.name) || car?.name
 
 	return (
 		<div className='relative bg-avtoVitaBlack rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl duration-300 border border-gray-700/50'>

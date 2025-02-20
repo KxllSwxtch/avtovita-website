@@ -119,6 +119,8 @@ const carDetailedModelsTranslation = {
 	드라이빙: 'Driving',
 	'7인승': '7-ми местный',
 	'9인승': '9-ми местный',
+	'2인승': '2-местный',
+	엘리트: 'Elite',
 }
 
 export default carDetailedModelsTranslation

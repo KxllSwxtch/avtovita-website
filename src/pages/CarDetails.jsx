@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
-import Slider from 'react-slick'
-import 'slick-carousel/slick/slick.css'
-import 'slick-carousel/slick/slick-theme.css'
-import Loader from '../components/Loader'
+
+import { translateCarName } from '../utils'
+import { carModelsTranslation } from '../translations'
+import { ImageSlider, Loader } from '../components'
 
 const translations = {
+	price: 'Цена в Корее (₩)',
 	연식: 'Год выпуска',
 	최초등록일: 'Дата первой регистрации',
 	연료: 'Тип топлива',
@@ -26,8 +27,8 @@ const translations = {
 	주행거리: 'Пробег',
 	차량번호: 'Гос. номер',
 	차대번호: 'VIN-номер',
-	'압류｜저당': 'Обременения',
-	'0건｜0건': 'Отсутствуют',
+	'압류｜저당': 'Был в ДТП',
+	'0건｜0건': 'Нет',
 	모델명: 'Модель',
 	세금미납: 'Задолженность по налогам',
 	없음: 'Отсутствует',
@@ -78,39 +79,26 @@ const CarDetails = () => {
 
 	return (
 		<div className='container mx-auto p-4 max-w-4xl mt-30'>
-			{images.length > 0 && (
-				<div className='mb-6'>
-					<Slider
-						dots={true}
-						infinite={true}
-						speed={500}
-						slidesToShow={1}
-						slidesToScroll={1}
-						adaptiveHeight={true}
-						className='rounded-lg overflow-hidden'
-					>
-						{images.map((img, index) => (
-							<div key={index} className='flex justify-center'>
-								<img
-									src={img.full}
-									alt={`Car ${index}`}
-									className='w-full max-h-96 object-contain rounded-lg'
-								/>
-							</div>
-						))}
-					</Slider>
-				</div>
-			)}
+			{images.length > 0 && <ImageSlider images={images} />}
 			{carData ? (
-				<div className='bg-white shadow-lg rounded-lg p-6'>
-					<h2 className='text-3xl font-bold mb-6 text-center text-blue-600'>
-						{carName || 'Модель не указана'}
+				<div className='bg-black shadow-2xl rounded-xl p-10'>
+					<h2 className='text-4xl font-bold mb-8 text-center text-red-600'>
+						{carName ? translateCarName(carName) : 'Модель не указана'}
 					</h2>
-					<div className='grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-100 p-6 rounded-lg'>
+					<div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
 						{Object.entries(carData).map(([key, value], index) => (
-							<div key={index} className='bg-white p-4 shadow-md rounded-md'>
-								<p className='text-gray-500 font-semibold'>{key}:</p>
-								<p className='text-lg font-bold text-gray-700'>{value}</p>
+							<div
+								key={index}
+								className='bg-avtoVitaBlack text-white p-6 rounded-lg border border-gray-700 hover:shadow-2xl hover:border-red-600 transition duration-300'
+							>
+								<p className='text-sm font-medium text-gray-400'>
+									{translations[key] || key}:
+								</p>
+								<p className='mt-1 text-xl font-semibold text-avtoVitaGold'>
+									{translations[value] ||
+										carModelsTranslation[value] ||
+										value.toLocaleString()}
+								</p>
 							</div>
 						))}
 					</div>
@@ -118,21 +106,33 @@ const CarDetails = () => {
 			) : (
 				<p className='text-center text-gray-500'>Автомобиль не найден</p>
 			)}
-			<div className='mt-8 p-6 bg-blue-50 rounded-lg text-center'>
-				<h3 className='text-2xl font-bold text-blue-600 mb-4'>
+			<div className='mt-8 p-6 bg-avtoVitaBlack rounded-lg text-center shadow-2xl border border-gray-700 hover:border-red-600 transition duration-300'>
+				<h3 className='text-3xl font-bold text-avtoVitaRed mb-4 text-white'>
 					Контакты для связи
 				</h3>
-				<p className='text-lg'>
-					Виталий: <span className='font-semibold'>+82 10-9344-1782</span>
+				<p className='text-lg text-white'>
+					Виталий:{' '}
+					<span className='font-semibold text-avtoVitaGold'>
+						+82 10-9344-1782
+					</span>
 				</p>
-				<p className='text-lg'>
-					Ким Евгений: <span className='font-semibold'>+82 10-4225-2627</span>
+				<p className='text-lg text-white'>
+					Ким Евгений:{' '}
+					<span className='font-semibold text-avtoVitaGold'>
+						+82 10-4225-2627
+					</span>
 				</p>
-				<p className='text-lg'>
-					Цой Юрий: <span className='font-semibold'>+82 10-7609-7787</span>
+				<p className='text-lg text-white'>
+					Цой Юрий:{' '}
+					<span className='font-semibold text-avtoVitaGold'>
+						+82 10-7609-7787
+					</span>
 				</p>
-				<p className='text-lg'>
-					Цой Евгений: <span className='font-semibold'>+82 10-4416-8778</span>
+				<p className='text-lg text-white'>
+					Цой Евгений:{' '}
+					<span className='font-semibold text-avtoVitaGold'>
+						+82 10-4416-8778
+					</span>
 				</p>
 			</div>
 		</div>

@@ -8,6 +8,7 @@ import AboutUs from './AboutUs'
 import HowItWorks from './HowItWorks'
 import ContactsSection from './ContactsSection'
 import WhyUsSection from './WhyUsSection'
+import ImageSlider from './ImageSlider'
 
 export {
 	Header,
@@ -20,4 +21,5 @@ export {
 	HowItWorks,
 	ContactsSection,
 	WhyUsSection,
+	ImageSlider,
 }
