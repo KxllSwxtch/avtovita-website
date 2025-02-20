@@ -19,7 +19,8 @@ const HeroSection = () => {
 			{/* Контент */}
 			<div className='relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4'>
 				<h1 className='text-4xl md:text-6xl font-bold mb-4'>
-					Продажа авто в Корее и экспорт без посредников
+					Продажа авто на внутреннем рынке Южной Кореи Экспорт авто в страны СНГ
+					без посредников
 				</h1>
 				<p className='text-lg md:text-2xl mb-8'>
 					Надёжно. Быстро. Профессионально.
