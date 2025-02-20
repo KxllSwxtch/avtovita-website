@@ -18,6 +18,22 @@ import {
 } from '../translations'
 
 // Helpers
+function translateTrim(text) {
+	// Проходимся по всем парам в carTrimsTranslation
+	for (const [korean, russian] of Object.entries(carTrimsTranslation)) {
+		// Создаем регулярное выражение для поиска корейского слова в любом контексте
+		// (?<=\D|^) - перед корейским словом может быть нецифровой символ или начало строки
+		// (?=\D|$) - после корейского слова может быть нецифровой символ или конец строки
+		const regex = new RegExp(`(?<=\\D|^)${korean}(?=\\D|$)`, 'g')
+
+		// Заменяем все совпадения на русский перевод
+		text = text.replace(regex, russian)
+	}
+
+	// Возвращаем результат
+	return text
+}
+
 function translateFuelType(text) {
 	for (const [korean, russian] of Object.entries(
 		carDetailedModelsTranslation,
@@ -397,7 +413,7 @@ const Catalog = () => {
 							{/* Производитель */}
 							<div className='flex-1'>
 								<label className='block text-red-500 font-semibold mb-2'>
-									Производитель:
+									Марка:
 								</label>
 								<select
 									value={selectedMaker}
@@ -469,10 +485,10 @@ const Catalog = () => {
 								</select>
 							</div>
 
-							{/* Подробная модель */}
+							{/* Поколение */}
 							<div className='flex-1'>
 								<label className='block text-white font-semibold mb-2 tracking-wide'>
-									Подробная модель:
+									Поколение:
 								</label>
 								<select
 									value={selectedDetailModel}
@@ -502,7 +518,7 @@ const Catalog = () => {
 											value={dmodel.DETAIL_MODEL_NO}
 											className='text-white'
 										>
-											{carTrimsTranslation[dmodel.DETAIL_MODEL_NAME] ||
+											{translateTrim(dmodel.DETAIL_MODEL_NAME) ||
 												dmodel.DETAIL_MODEL_NAME}
 										</option>
 									))}
