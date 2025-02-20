@@ -320,7 +320,7 @@ const Catalog = () => {
 		setColor('')
 		setCarPlateNumber('')
 
-		searchCars({})
+		searchCars()
 	}
 
 	useEffect(() => {

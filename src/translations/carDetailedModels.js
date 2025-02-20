@@ -1,4 +1,6 @@
 const carDetailedModelsTranslation = {
+	골드: 'Gold',
+	럭셔리: 'Luxury',
 	하이브리드: 'Hybrid',
 	애니버셔리: 'Anniversary',
 	헤미: 'Hemi',
@@ -177,7 +179,7 @@ const carDetailedModelsTranslation = {
 	패키지: ' пакет',
 	옵티마: 'Optima',
 	리갈: ' Regal',
-	뉴: 'New',
+	뉴: 'New ',
 	더: 'The',
 	The뉴i40: 'The New i40',
 	The뉴i40Saloon: 'The New i40 (Saloon)',
