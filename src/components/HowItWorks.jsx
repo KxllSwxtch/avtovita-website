@@ -7,12 +7,12 @@ import {
 
 const HowItWorks = () => {
 	return (
-		<section className='bg-gray-900 text-white py-16 px-6'>
+		<section className='bg-white text-black py-16 px-6'>
 			<div className='max-w-6xl mx-auto text-center'>
-				<h2 className='text-4xl font-bold text-red-500 mb-6'>
-					Как мы работаем
+				<h2 className='text-4xl font-bold text-blac mb-6'>
+					Как <span className='text-red-500'>мы</span> работаем
 				</h2>
-				<p className='text-lg text-gray-300 max-w-3xl mx-auto'>
+				<p className='text-lg text-black max-w-3xl mx-auto'>
 					Процесс покупки автомобиля у нас прост и прозрачен.
 				</p>
 
@@ -21,7 +21,7 @@ const HowItWorks = () => {
 					{/* Шаг 1 */}
 					<div className='p-6 bg-black rounded-lg shadow-lg flex flex-col items-center text-center'>
 						<FaSearch className='text-red-500 text-4xl mb-4' />
-						<h3 className='text-xl font-semibold'>1. Выбор авто</h3>
+						<h3 className='text-xl font-semibold text-white'>1. Выбор авто</h3>
 						<p className='text-gray-400 mt-2'>
 							Выбирайте автомобиль из каталога или оставьте заявку на подбор.
 						</p>
@@ -30,7 +30,9 @@ const HowItWorks = () => {
 					{/* Шаг 2 */}
 					<div className='p-6 bg-black rounded-lg shadow-lg flex flex-col items-center text-center'>
 						<FaFileContract className='text-red-500 text-4xl mb-4' />
-						<h3 className='text-xl font-semibold'>2. Оформление сделки</h3>
+						<h3 className='text-xl font-semibold text-white'>
+							2. Оформление сделки
+						</h3>
 						<p className='text-gray-400 mt-2'>
 							Подписываем договор и вносим предоплату.
 						</p>
@@ -39,7 +41,7 @@ const HowItWorks = () => {
 					{/* Шаг 3 */}
 					<div className='p-6 bg-black rounded-lg shadow-lg flex flex-col items-center text-center'>
 						<FaTruck className='text-red-500 text-4xl mb-4' />
-						<h3 className='text-xl font-semibold'>3. Доставка</h3>
+						<h3 className='text-xl font-semibold text-white'>3. Доставка</h3>
 						<p className='text-gray-400 mt-2'>
 							Организуем быструю доставку в ваш регион.
 						</p>
@@ -48,7 +50,9 @@ const HowItWorks = () => {
 					{/* Шаг 4 */}
 					<div className='p-6 bg-black rounded-lg shadow-lg flex flex-col items-center text-center'>
 						<FaFlagCheckered className='text-red-500 text-4xl mb-4' />
-						<h3 className='text-xl font-semibold'>4. Получение авто</h3>
+						<h3 className='text-xl font-semibold text-white'>
+							4. Получение авто
+						</h3>
 						<p className='text-gray-400 mt-2'>
 							Вы получаете автомобиль и подписываете документы.
 						</p>

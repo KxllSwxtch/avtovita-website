@@ -1,11 +1,11 @@
 const AboutUs = () => {
 	return (
-		<section className='bg-black text-white py-16 px-6'>
+		<section className='bg-white text-black py-16 px-6'>
 			<div className='max-w-6xl mx-auto text-center'>
 				<h2 className='text-4xl font-bold text-red-500 mb-6'>
-					О <span className='text-white'>AVTOVITA</span>
+					О <span className='text-black'>AVTOVITA</span>
 				</h2>
-				<p className='text-lg text-gray-300 max-w-3xl mx-auto'>
+				<p className='text-lg text-black max-w-3xl mx-auto'>
 					Мы – компания, занимающаяся экспортом автомобилей из Южной Кореи.
 					Предлагаем широкий выбор автомобилей по выгодным ценам и с полной
 					прозрачностью на всех этапах покупки.

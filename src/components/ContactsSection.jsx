@@ -8,10 +8,10 @@ import {
 
 const ContactsSection = () => {
 	return (
-		<section className='bg-black text-white py-16 px-6'>
+		<section className='bg-gray-100 text-white py-16 px-6'>
 			<div className='max-w-6xl mx-auto text-center'>
-				<h2 className='text-4xl font-bold text-red-500 mb-6'>Контакты</h2>
-				<p className='text-lg text-gray-300 max-w-3xl mx-auto'>
+				<h2 className='text-4xl font-bold text-black mb-6'>Контакты</h2>
+				<p className='text-lg text-gray-600 max-w-3xl mx-auto'>
 					Свяжитесь с нами удобным способом!
 				</p>
 
