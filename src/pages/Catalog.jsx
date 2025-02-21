@@ -52,7 +52,7 @@ const carsPerPage = 24
 
 const Catalog = () => {
 	// ------------------ Основные состояния ------------------
-	const [country, setCountry] = useState('kor') // 'kor' или 'foreign'
+	const [country, setCountry] = useState('foreign') // 'kor' или 'foreign'
 	const [makerList, setMakerList] = useState([]) // Список производителей
 	const [selectedMaker, setSelectedMaker] = useState('') // Выбранный производитель (MAKER_NO)
 
