@@ -35,9 +35,11 @@ const CarListItem = ({ car }) => {
 		car.transmission === '오토' ? 'Автомат' : 'Механика'
 
 	const formattedCarName = translateCarName(car?.name) || car?.name
+	const formattedCarYear =
+		car?.year.split('-')[1] + '/' + car?.year.split('-')[0]
 
 	return (
-		<div className='relative bg-avtoVitaBlack rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl duration-300 border border-gray-700/50'>
+		<div className='relative bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg duration-300 border border-gray-300'>
 			{/* Блок изображения */}
 			<Link
 				to={`/car/${carId}`}
@@ -57,14 +59,14 @@ const CarListItem = ({ car }) => {
 			</Link>
 
 			{/* Основная информация */}
-			<div className='p-4 rounded-b-2xl'>
+			<div className='p-4 rounded-b-2xl bg-white shadow-md'>
 				{/* Марка и модель */}
-				<h2 className='text-xl font-semibold text-white truncate'>
+				<h2 className='text-xl font-semibold text-gray-800 truncate'>
 					{formattedCarName}
 				</h2>
 
 				{/* Основные характеристики */}
-				<div className='flex flex-col text-sm text-white mt-2 space-y-1'>
+				<div className='flex flex-col text-sm text-gray-600 mt-2 space-y-1'>
 					<span className='flex items-center gap-2'>
 						📅 Дата регистрации: {formattedCarDate}
 					</span>
@@ -79,15 +81,15 @@ const CarListItem = ({ car }) => {
 
 				{/* Цена и кнопка */}
 				<div className='mt-4 flex justify-between items-center'>
-					<span className='text-lg font-bold text-avtoVitaGold'>
+					<span className='text-lg font-bold text-red-600'>
 						{formattedPrice} ₩
 					</span>
 					<Link
 						to={`/car/${carId}`}
 						target='_blank'
-						className='px-5 py-2 bg-avtoVitaGold text-black 
-							text-sm font-semibold rounded-md transition-opacity 
-							duration-300 hover:opacity-80'
+						className='px-5 py-2 bg-red-500 text-white 
+				text-sm font-semibold rounded-md transition-opacity 
+				duration-300 hover:opacity-80 shadow-md'
 					>
 						Подробнее →
 					</Link>
@@ -95,8 +97,8 @@ const CarListItem = ({ car }) => {
 			</div>
 
 			{/* Год автомобиля (выведен в углу) */}
-			<div className='absolute top-2 right-2 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded'>
-				{car.year}
+			<div className='absolute top-2 right-2 bg-yellow-200 text-gray-800 text-xs font-semibold px-2 py-1 rounded shadow-md'>
+				{formattedCarYear}
 			</div>
 		</div>
 	)

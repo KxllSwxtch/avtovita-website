@@ -390,15 +390,15 @@ const Catalog = () => {
 							key={value}
 							onClick={() => handleCountryClick(value)}
 							className={`
-                cursor-pointer flex items-center justify-center gap-2 px-6 py-3 text-lg font-semibold rounded-full shadow-md transition-all duration-300
-                border-2 w-40 h-14
-                ${
+								cursor-pointer flex items-center justify-center gap-2 px-6 py-3 text-lg font-semibold rounded-full shadow-md transition-all duration-300
+								border-2 w-40 h-14
+								${
 									country === value
-										? 'bg-red-600 text-white border-red-500 scale-105 shadow-lg'
-										: 'bg-gray-900 text-red-400 border-red-500 hover:bg-red-600 hover:text-white'
+										? 'bg-white text-red-600 border-red-500 scale-105 shadow-lg'
+										: 'bg-gray-100 text-gray-800 border-gray-300 hover:bg-white hover:text-red-600'
 								}
-                active:scale-95
-            `}
+								active:scale-95
+							`}
 						>
 							<span className='text-2xl'>{emoji}</span>
 							<span>{label}</span>
@@ -412,29 +412,29 @@ const Catalog = () => {
 						<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
 							{/* Производитель */}
 							<div className='flex-1'>
-								<label className='block text-red-500 font-semibold mb-2'>
+								<label className='block text-gray-700 font-semibold mb-2'>
 									Марка:
 								</label>
 								<select
 									value={selectedMaker}
 									onChange={(e) => handleMakerChange(e.target.value)}
-									className='w-full border border-red-500 bg-black text-white p-3 rounded-lg shadow-md focus:ring-red-600 focus:border-red-600 transition duration-300 appearance-none pr-10 relative'
+									className='w-full border border-gray-300 bg-gray-100 text-gray-800 p-3 rounded-lg shadow-sm focus:ring-gray-400 focus:border-gray-400 transition duration-300 appearance-none pr-10 relative'
 									style={{
 										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
 										backgroundPosition: 'right 12px center',
 										backgroundRepeat: 'no-repeat',
 										backgroundSize: '1rem',
 									}}
 								>
 									<option value='' className='text-gray-500'>
-										Выберите производителя
+										Выберите марку
 									</option>
 									{makerList.map((maker) => (
 										<option
 											key={maker.MAKER_NO}
 											value={maker.MAKER_NO}
-											className='text-black'
+											className='text-gray-800'
 										>
 											{carBrandsTranslation[maker.MAKER_NAME] ||
 												maker.MAKER_NAME}
@@ -445,29 +445,29 @@ const Catalog = () => {
 
 							{/* Модель */}
 							<div className='flex-1'>
-								<label className='block text-white font-semibold mb-2 tracking-wide'>
+								<label className='block text-gray-700 font-semibold mb-2 tracking-wide'>
 									Модель:
 								</label>
 								<select
 									value={selectedModel}
 									onChange={(e) => handleModelChange(e.target.value)}
-									className={`w-full border-2 p-3 rounded-lg shadow-md transition duration-300 appearance-none pr-10 relative
-										${
-											selectedMaker
-												? 'border-red-500 bg-black text-white hover:border-red-600 focus:ring-red-500'
-												: 'border-gray-600 bg-gray-800 text-gray-400 cursor-not-allowed'
-										}
-									`}
+									className={`w-full border-2 p-3 rounded-lg shadow-sm transition duration-300 appearance-none pr-10 relative
+											${
+												selectedMaker
+													? 'border-gray-300 bg-gray-100 text-gray-800 hover:border-gray-400 focus:ring-gray-400'
+													: 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed'
+											}
+										`}
 									disabled={!selectedMaker}
 									style={{
 										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
 										backgroundPosition: 'right 12px center',
 										backgroundRepeat: 'no-repeat',
 										backgroundSize: '1rem',
 									}}
 								>
-									<option value='' className='text-gray-400'>
+									<option value='' className='text-gray-500'>
 										Выберите модель
 									</option>
 									{modelList
@@ -476,7 +476,7 @@ const Catalog = () => {
 											<option
 												key={model.MODEL_NO}
 												value={model.MODEL_NO}
-												className='text-white'
+												className='text-gray-800'
 											>
 												{carModelsTranslation[model.MODEL_NAME] ||
 													model.MODEL_NAME}
@@ -487,36 +487,36 @@ const Catalog = () => {
 
 							{/* Поколение */}
 							<div className='flex-1'>
-								<label className='block text-white font-semibold mb-2 tracking-wide'>
+								<label className='block text-gray-700 font-semibold mb-2 tracking-wide'>
 									Поколение:
 								</label>
 								<select
 									value={selectedDetailModel}
 									onChange={(e) => handleDetailModelChange(e.target.value)}
-									className={`w-full border-2 p-3 rounded-lg shadow-md transition duration-300 appearance-none pr-10 relative
-										${
-											selectedModel
-												? 'border-red-500 bg-black text-white hover:border-red-600 focus:ring-red-500'
-												: 'border-gray-600 bg-gray-800 text-gray-400 cursor-not-allowed'
-										}
-									`}
+									className={`w-full border-2 p-3 rounded-lg shadow-sm transition duration-300 appearance-none pr-10 relative
+											${
+												selectedModel
+													? 'border-gray-300 bg-gray-100 text-gray-800 hover:border-gray-400 focus:ring-gray-400'
+													: 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed'
+											}
+										`}
 									disabled={!selectedModel}
 									style={{
 										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
 										backgroundPosition: 'right 10px center',
 										backgroundRepeat: 'no-repeat',
 										backgroundSize: '1rem',
 									}}
 								>
-									<option value='' className='text-gray-400'>
+									<option value='' className='text-gray-500'>
 										Выберите подробную модель
 									</option>
 									{detailModelList.map((dmodel) => (
 										<option
 											key={dmodel.DETAIL_MODEL_NO}
 											value={dmodel.DETAIL_MODEL_NO}
-											className='text-white'
+											className='text-gray-800'
 										>
 											{translateTrim(dmodel.DETAIL_MODEL_NAME) ||
 												dmodel.DETAIL_MODEL_NAME}
@@ -527,36 +527,36 @@ const Catalog = () => {
 
 							{/* Комплектация */}
 							<div className='flex-1'>
-								<label className='block text-white font-semibold mb-2 tracking-wide'>
+								<label className='block text-gray-700 font-semibold mb-2 tracking-wide'>
 									Комплектация:
 								</label>
 								<select
 									value={selectedGrade}
 									onChange={(e) => handleGradeChange(e.target.value)}
-									className={`w-full border-2 p-3 pr-10 rounded-lg shadow-md transition duration-300 appearance-none relative
-										${
-											selectedDetailModel
-												? 'border-red-500 bg-black text-white hover:border-red-600 focus:ring-red-500'
-												: 'border-gray-600 bg-gray-800 text-gray-400 cursor-not-allowed'
-										}
-									`}
+									className={`w-full border-2 p-3 pr-10 rounded-lg shadow-sm transition duration-300 appearance-none relative
+											${
+												selectedDetailModel
+													? 'border-gray-300 bg-gray-100 text-gray-800 hover:border-gray-400 focus:ring-gray-400'
+													: 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed'
+											}
+										`}
 									disabled={!selectedDetailModel}
 									style={{
 										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
 										backgroundPosition: 'right 12px center',
 										backgroundRepeat: 'no-repeat',
 										backgroundSize: '1rem',
 									}}
 								>
-									<option value='' className='text-gray-400'>
+									<option value='' className='text-gray-500'>
 										Выберите комплектацию
 									</option>
 									{gradeList.map((grade) => (
 										<option
 											key={grade.GRADE_NO}
 											value={grade.GRADE_NO}
-											className='text-white'
+											className='text-gray-800'
 										>
 											{translateFuelType(grade.GRADE_NAME) || grade.GRADE_NAME}
 										</option>
@@ -566,36 +566,36 @@ const Catalog = () => {
 
 							{/* Детальная комплектация */}
 							<div className='flex-1'>
-								<label className='block text-white font-semibold mb-2 tracking-wide'>
+								<label className='block text-gray-700 font-semibold mb-2 tracking-wide'>
 									Детальная комплектация:
 								</label>
 								<select
 									value={selectedDetailGrade}
 									onChange={(e) => handleDetailGradeChange(e.target.value)}
-									className={`w-full border-2 p-3 pr-10 rounded-lg shadow-md transition duration-300 appearance-none relative
-										${
-											selectedGrade
-												? 'border-red-500 bg-black text-white hover:border-red-600 focus:ring-red-500'
-												: 'border-gray-600 bg-gray-800 text-gray-400 cursor-not-allowed'
-										}
-									`}
+									className={`w-full border-2 p-3 pr-10 rounded-lg shadow-sm transition duration-300 appearance-none relative
+											${
+												selectedGrade
+													? 'border-gray-300 bg-gray-100 text-gray-800 hover:border-gray-400 focus:ring-gray-400'
+													: 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed'
+											}
+										`}
 									disabled={!selectedGrade}
 									style={{
 										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
 										backgroundPosition: 'right 12px center',
 										backgroundRepeat: 'no-repeat',
 										backgroundSize: '1rem',
 									}}
 								>
-									<option value='' className='text-gray-400'>
+									<option value='' className='text-gray-500'>
 										Выберите детальную комплектацию
 									</option>
 									{detailGradeList.map((dgrade) => (
 										<option
 											key={dgrade.DETAIL_GRADE_NO}
 											value={dgrade.DETAIL_GRADE_NO}
-											className='text-white'
+											className='text-gray-800'
 										>
 											{translateFuelType(dgrade.DETAIL_GRADE_NAME)}
 										</option>
@@ -612,58 +612,59 @@ const Catalog = () => {
 				<button
 					onClick={toggleFilters}
 					className={`
-									m-auto cursor-pointer flex items-center justify-center px-4 py-2 md:px-6 md:py-3 font-semibold shadow-lg transition-all duration-300
-									border-2 text-base md:text-lg rounded-lg w-full md:w-auto
-									${
-										isFiltersOpen
-											? 'bg-red-600 text-white border-red-500 scale-105 shadow-xl'
-											: 'bg-black text-red-500 border-red-500 hover:bg-red-600 hover:text-white hover:border-red-600'
-									}
-									active:scale-95
-								`}
+						m-auto cursor-pointer flex items-center justify-center px-4 py-2 md:px-6 md:py-3 font-semibold shadow-sm transition-all duration-300
+						border-2 text-base md:text-lg rounded-lg w-full md:w-auto
+						${
+							isFiltersOpen
+								? 'bg-gray-200 text-gray-800 border-gray-300 scale-105 shadow-md'
+								: 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 hover:text-gray-800 hover:border-gray-400'
+						}
+						active:scale-95
+					`}
 				>
 					<span>
 						{isFiltersOpen ? 'Скрыть Доп. фильтры' : 'Показать Доп. фильтры'}
 					</span>
-					{/* <span className='text-sm md:text-base align-middle pl-2'>
-									{isFiltersOpen ? '🔼' : '🔽'}
-								</span> */}
 				</button>
 			</div>
 
 			{/* Дополнительные фильтры (шторка) */}
 			<div
 				className={`
-								overflow-hidden transition-all duration-500 ease-in-out rounded-xl shadow-lg
-								${
-									isFiltersOpen
-										? 'max-h-[1000px] opacity-100 scale-100'
-										: 'max-h-0 opacity-0 scale-95'
-								}
-								bg-black text-white p-6 
-							`}
+					overflow-hidden transition-all duration-500 ease-in-out
+					${
+						isFiltersOpen
+							? 'max-h-[1000px] opacity-100 scale-100'
+							: 'max-h-0 opacity-0 scale-95'
+					}
+					 text-gray-800 p-6
+				`}
 			>
-				<div className='shadow-lg rounded-lg max-w-6xl mx-auto'>
+				<div className='max-w-6xl mx-auto'>
 					<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
 						{/* Цена от */}
 						<div>
-							<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
+							<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
 								Цена от:
 							</label>
 							<select
 								value={priceMin}
 								onChange={(e) => handlePriceMinChange(e.target.value)}
-								className='w-full border border-red-600 p-3 pr-10 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+								className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
 								style={{
 									backgroundImage:
-										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
 									backgroundPosition: 'right 12px center',
 									backgroundRepeat: 'no-repeat',
 									backgroundSize: '1rem',
 								}}
 							>
 								{priceOptions.map((opt) => (
-									<option key={opt.value} value={opt.value}>
+									<option
+										key={opt.value}
+										value={opt.value}
+										className='text-gray-700'
+									>
 										{opt.label}
 									</option>
 								))}
@@ -672,23 +673,27 @@ const Catalog = () => {
 
 						{/* Цена до */}
 						<div>
-							<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
+							<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
 								Цена до:
 							</label>
 							<select
 								value={priceMax}
 								onChange={(e) => setPriceMax(e.target.value)}
-								className='w-full border border-red-600 p-3 pr-10 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+								className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
 								style={{
 									backgroundImage:
-										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
 									backgroundPosition: 'right 12px center',
 									backgroundRepeat: 'no-repeat',
 									backgroundSize: '1rem',
 								}}
 							>
 								{filteredPriceMaxOptions.map((opt) => (
-									<option key={opt.value} value={opt.value}>
+									<option
+										key={opt.value}
+										value={opt.value}
+										className='text-gray-700'
+									>
 										{opt.label}
 									</option>
 								))}
@@ -697,23 +702,27 @@ const Catalog = () => {
 
 						{/* Год от */}
 						<div>
-							<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
+							<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
 								Год от:
 							</label>
 							<select
 								value={yearMin}
 								onChange={(e) => handleYearMinChange(e.target.value)}
-								className='w-full border border-red-600 p-3 pr-10 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+								className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
 								style={{
 									backgroundImage:
-										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
 									backgroundPosition: 'right 12px center',
 									backgroundRepeat: 'no-repeat',
 									backgroundSize: '1rem',
 								}}
 							>
 								{yearOptions.map((opt) => (
-									<option key={opt.value} value={opt.value}>
+									<option
+										key={opt.value}
+										value={opt.value}
+										className='text-gray-700'
+									>
 										{opt.label}
 									</option>
 								))}
@@ -722,23 +731,27 @@ const Catalog = () => {
 
 						{/* Год до */}
 						<div>
-							<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
+							<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
 								Год до:
 							</label>
 							<select
 								value={yearMax}
 								onChange={(e) => setYearMax(e.target.value)}
-								className='w-full border border-red-600 p-3 pr-10 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+								className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
 								style={{
 									backgroundImage:
-										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
 									backgroundPosition: 'right 12px center',
 									backgroundRepeat: 'no-repeat',
 									backgroundSize: '1rem',
 								}}
 							>
 								{filteredYearMaxOptions.map((opt) => (
-									<option key={opt.value} value={opt.value}>
+									<option
+										key={opt.value}
+										value={opt.value}
+										className='text-gray-700'
+									>
 										{opt.label}
 									</option>
 								))}
@@ -747,23 +760,27 @@ const Catalog = () => {
 
 						{/* Пробег от */}
 						<div>
-							<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
+							<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
 								Пробег от:
 							</label>
 							<select
 								value={useKmMin}
 								onChange={(e) => handleUseKmMinChange(e.target.value)}
-								className='w-full border border-red-600 p-3 pr-10 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+								className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
 								style={{
 									backgroundImage:
-										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
 									backgroundPosition: 'right 12px center',
 									backgroundRepeat: 'no-repeat',
 									backgroundSize: '1rem',
 								}}
 							>
 								{useKmOptions.map((opt) => (
-									<option key={opt.value} value={opt.value}>
+									<option
+										key={opt.value}
+										value={opt.value}
+										className='text-gray-700'
+									>
 										{opt.label}
 									</option>
 								))}
@@ -772,23 +789,27 @@ const Catalog = () => {
 
 						{/* Пробег до */}
 						<div>
-							<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
+							<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
 								Пробег до:
 							</label>
 							<select
 								value={useKmMax}
 								onChange={(e) => setUseKmMax(e.target.value)}
-								className='w-full border border-red-600 p-3 pr-10 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+								className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
 								style={{
 									backgroundImage:
-										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
 									backgroundPosition: 'right 12px center',
 									backgroundRepeat: 'no-repeat',
 									backgroundSize: '1rem',
 								}}
 							>
 								{filteredUseKmMaxOptions.map((opt) => (
-									<option key={opt.value} value={opt.value}>
+									<option
+										key={opt.value}
+										value={opt.value}
+										className='text-gray-700'
+									>
 										{opt.label}
 									</option>
 								))}
@@ -797,23 +818,27 @@ const Catalog = () => {
 
 						{/* Топливо */}
 						<div>
-							<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
+							<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
 								Топливо:
 							</label>
 							<select
 								value={fuel}
 								onChange={(e) => setFuel(e.target.value)}
-								className='w-full border border-red-600 p-3 pr-10 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+								className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
 								style={{
 									backgroundImage:
-										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
 									backgroundPosition: 'right 12px center',
 									backgroundRepeat: 'no-repeat',
 									backgroundSize: '1rem',
 								}}
 							>
 								{fuelOptions.map((opt) => (
-									<option key={opt.value} value={opt.value}>
+									<option
+										key={opt.value}
+										value={opt.value}
+										className='text-gray-700'
+									>
 										{opt.label}
 									</option>
 								))}
@@ -822,23 +847,27 @@ const Catalog = () => {
 
 						{/* Трансмиссия */}
 						<div>
-							<label className='block text-avtoVitaGold font-semibold mb-2 tracking-wide'>
+							<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
 								Трансмиссия:
 							</label>
 							<select
 								value={mission}
 								onChange={(e) => setMission(e.target.value)}
-								className='w-full border border-red-600 p-3 pr-10 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+								className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
 								style={{
 									backgroundImage:
-										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
 									backgroundPosition: 'right 12px center',
 									backgroundRepeat: 'no-repeat',
 									backgroundSize: '1rem',
 								}}
 							>
 								{missionOptions.map((opt) => (
-									<option key={opt.value} value={opt.value}>
+									<option
+										key={opt.value}
+										value={opt.value}
+										className='text-gray-700'
+									>
 										{opt.label}
 									</option>
 								))}
@@ -847,23 +876,27 @@ const Catalog = () => {
 
 						{/* Цвет */}
 						<div>
-							<label className='block text-avtoVitaGold font-semibold tracking-wide'>
+							<label className='block text-gray-600 font-semibold tracking-wide'>
 								Цвет:
 							</label>
 							<select
 								value={color}
 								onChange={(e) => setColor(e.target.value)}
-								className='w-full border border-red-600 p-3 pr-10 rounded-lg shadow-md bg-black text-white focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+								className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
 								style={{
 									backgroundImage:
-										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
 									backgroundPosition: 'right 12px center',
 									backgroundRepeat: 'no-repeat',
 									backgroundSize: '1rem',
 								}}
 							>
 								{colorOptions.map((opt) => (
-									<option key={opt.value} value={opt.value}>
+									<option
+										key={opt.value}
+										value={opt.value}
+										className='text-gray-700'
+									>
 										{opt.label}
 									</option>
 								))}
@@ -888,13 +921,13 @@ const Catalog = () => {
 				</div>
 			</div>
 
-			{/* Кнопка поиска */}
+			{/* Кнопка поиска и сброса фильтров */}
 			<div className='flex flex-wrap gap-6 justify-center'>
 				{/* Кнопка "Поиск" */}
 				<button
 					onClick={searchCars}
 					disabled={!country}
-					className='cursor-pointer px-8 py-3 rounded-full font-semibold bg-red-600 text-white hover:bg-avtoVitaDark hover:text-black hover:bg-red-400 transition duration-300 ease-in-out shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2'
+					className='cursor-pointer px-8 py-3 rounded-full font-semibold bg-gray-100 text-gray-800 hover:bg-gray-200 transition duration-300 ease-in-out shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 border border-gray-300'
 				>
 					🔍 <span>Поиск</span>
 				</button>
@@ -902,7 +935,7 @@ const Catalog = () => {
 				{/* Кнопка "Сбросить фильтры" */}
 				<button
 					onClick={resetFilters}
-					className='cursor-pointer px-8 py-3 rounded-full font-semibold bg-gray-700 text-white hover:bg-red-600 transition duration-300 ease-in-out shadow-lg flex items-center gap-2'
+					className='cursor-pointer px-8 py-3 rounded-full font-semibold bg-gray-100 text-gray-800 hover:bg-gray-200 transition duration-300 ease-in-out shadow-md flex items-center gap-2 border border-gray-300'
 				>
 					🔄 <span>Сбросить</span>
 				</button>

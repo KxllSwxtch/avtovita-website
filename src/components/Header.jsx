@@ -24,7 +24,7 @@ const Header = () => {
 	return (
 		<header
 			className={`
-        bg-black text-white shadow-md fixed top-0 left-0 w-full z-50 transition-transform duration-500
+        bg-white text-gray-800 shadow-md fixed top-0 left-0 w-full z-50 transition-transform duration-500
         ${
 					location.pathname === '/'
 						? isVisible
@@ -34,25 +34,34 @@ const Header = () => {
 				}
     `}
 		>
-			<div className='container mx-auto flex justify-between items-center px-6 py-4'>
+			<div className='container mx-auto flex justify-between items-center px-6'>
 				{/* Логотип */}
 				<Link to='/' className='flex items-center gap-3'>
 					<img
-						src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1739602704/avtovita/Black_Modern_Car_Auto_Services_Logo.png'
+						src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1740102951/avtovita/logo_transparent.png'
 						alt='AVTOVITA Logo'
-						className='h-16 p-0'
+						className='h-24'
 					/>
 				</Link>
 
 				{/* Меню (Desktop) */}
 				<nav className='hidden md:flex gap-6 text-lg font-medium'>
-					<Link to='/catalog' className='hover:text-red-500 transition'>
+					<Link
+						to='/catalog'
+						className='text-gray-700 hover:text-red-500 transition duration-300'
+					>
 						Каталог
 					</Link>
-					<Link to='/about' className='hover:text-red-500 transition'>
+					<Link
+						to='/about'
+						className='text-gray-700 hover:text-red-500 transition duration-300'
+					>
 						О нас
 					</Link>
-					<Link to='/contacts' className='hover:text-red-500 transition'>
+					<Link
+						to='/contacts'
+						className='text-gray-700 hover:text-red-500 transition duration-300'
+					>
 						Контакты
 					</Link>
 				</nav>
@@ -61,7 +70,7 @@ const Header = () => {
 				<div className='md:hidden'>
 					<button
 						onClick={() => setMenuOpen(!menuOpen)}
-						className='text-white focus:outline-none cursor-pointer'
+						className='text-gray-700 focus:outline-none cursor-pointer'
 					>
 						<FaBars size={26} />
 					</button>
@@ -70,34 +79,34 @@ const Header = () => {
 
 			{/* Мобильное меню */}
 			<div
-				className={`fixed top-0 left-0 w-full h-screen bg-black bg-opacity-90 flex flex-col items-center justify-center z-50 transition-transform duration-300 ${
-					menuOpen ? 'translate-y-0' : '-translate-x-full'
+				className={`fixed top-0 left-0 w-full h-screen bg-white text-gray-800 flex flex-col items-center justify-center z-50 transition-transform duration-300 ${
+					menuOpen ? 'translate-y-0' : '-translate-y-full'
 				}`}
 			>
 				<button
 					onClick={() => setMenuOpen(false)}
-					className='absolute top-6 right-6 text-white text-2xl'
+					className='absolute top-6 right-6 text-gray-700 text-2xl'
 				>
 					<FaTimes />
 				</button>
 				<nav className='flex flex-col gap-6 text-lg'>
 					<Link
 						to='/catalog'
-						className='hover:text-red-500'
+						className='text-gray-700 hover:text-red-500 transition duration-300'
 						onClick={() => setMenuOpen(false)}
 					>
 						Каталог
 					</Link>
 					<Link
 						to='/about'
-						className='hover:text-red-500'
+						className='text-gray-700 hover:text-red-500 transition duration-300'
 						onClick={() => setMenuOpen(false)}
 					>
 						О нас
 					</Link>
 					<Link
 						to='/contacts'
-						className='hover:text-red-500'
+						className='text-gray-700 hover:text-red-500 transition duration-300'
 						onClick={() => setMenuOpen(false)}
 					>
 						Контакты

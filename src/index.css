@@ -19,3 +19,31 @@ select:active {
 select {
 	cursor: pointer;
 }
+
+.slick-slide[aria-hidden='true'] {
+	pointer-events: none;
+	opacity: 0.5;
+	transform: scale(0.95);
+}
+
+.slick-arrow {
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+	z-index: 50 !important;
+	opacity: 1 !important;
+	transition: opacity 0.3s ease;
+	position: absolute !important;
+}
+
+.slick-arrow.slick-prev {
+	left: 10px !important;
+}
+
+.slick-arrow.slick-next {
+	right: 10px !important;
+}
+
+.slick-arrow:hover {
+	opacity: 0.8;
+}
