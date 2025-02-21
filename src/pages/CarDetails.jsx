@@ -4,7 +4,7 @@ import axios from 'axios'
 
 import { translateCarName } from '../utils'
 import { carModelsTranslation } from '../translations'
-import { ImageSlider, Loader } from '../components'
+import { ImageSlider, Loader, Calculator } from '../components'
 
 const translations = {
 	price: 'Цена в Корее (₩)',
@@ -88,6 +88,8 @@ const CarDetails = () => {
 					) : (
 						<p className='text-center text-gray-500'>Фотографии отсутствуют</p>
 					)}
+
+					<Calculator />
 				</div>
 
 				{/* Информация об автомобиле */}
