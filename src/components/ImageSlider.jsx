@@ -1,9 +1,11 @@
 import Slider from 'react-slick'
 import PropTypes from 'prop-types'
-import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/solid' // Убедись в правильности импорта
+import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/solid'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
+import { useState, useRef, useEffect } from 'react'
 
+// Кастомная стрелка для навигации
 const CustomArrow = ({ className, onClick, icon }) => (
 	<div
 		className={`${className} flex items-center justify-center bg-gradient-to-r from-gray-100 via-white to-gray-100 text-gray-800 w-12 h-12 rounded-full shadow-lg hover:shadow-2xl hover:scale-110 transition-transform duration-300 border border-gray-300 cursor-pointer`}
@@ -15,12 +17,26 @@ const CustomArrow = ({ className, onClick, icon }) => (
 )
 
 const ImageSlider = ({ images }) => {
-	const settings = {
+	// Состояние и ссылки для синхронизации слайдеров
+	const [nav1, setNav1] = useState(null)
+	const [nav2, setNav2] = useState(null)
+	const mainSlider = useRef(null)
+	const thumbSlider = useRef(null)
+
+	useEffect(() => {
+		setNav1(mainSlider.current)
+		setNav2(thumbSlider.current)
+	}, [])
+
+	// Настройки для главного слайдера
+	const mainSettings = {
+		asNavFor: nav2,
+		ref: mainSlider,
 		autoplay: true,
 		autoplaySpeed: 4000,
-		dots: true,
+		dots: false,
 		infinite: true,
-		speed: 300,
+		speed: 600,
 		slidesToShow: 1,
 		slidesToScroll: 1,
 		className: 'rounded-lg relative z-50',
@@ -37,33 +53,52 @@ const ImageSlider = ({ images }) => {
 				className='absolute top-1/2 left-4 transform -translate-y-1/2 z-50 hover:text-red-500 transition duration-300'
 			/>
 		),
-		customPaging: () => (
-			<div className='w-3 h-3 bg-gray-400 rounded-full hover:bg-red-500 transition-all duration-300 transform hover:scale-125'></div>
-		),
-		afterChange: (current) => {
-			const slides = document.querySelectorAll('.slick-slide')
-			slides.forEach((slide, index) => {
-				if (index !== current) {
-					slide.setAttribute('inert', '')
-				} else {
-					slide.removeAttribute('inert')
-				}
-			})
-		},
+	}
+
+	// Настройки для миниатюр
+	const thumbSettings = {
+		asNavFor: nav1,
+		ref: thumbSlider,
+		slidesToShow: images.length < 6 ? images.length : 5, // Показать максимум 5 миниатюр
+		slidesToScroll: 1,
+		focusOnSelect: true, // Обновление главного слайда при клике на миниатюру
+		centerMode: false,
+		arrows: false,
+		dots: false,
+		className: 'mt-4',
 	}
 
 	return (
-		<Slider {...settings} className='mb-6 relative z-50'>
-			{images.map((img, index) => (
-				<div key={index} className='flex justify-center'>
-					<img
-						src={img.full}
-						alt={`Car ${index}`}
-						className='w-full max-h-96 object-contain rounded-lg'
-					/>
-				</div>
-			))}
-		</Slider>
+		<div className='relative'>
+			{/* Главный слайдер */}
+			<Slider {...mainSettings} ref={mainSlider} className='mb-4'>
+				{images.map((img, index) => (
+					<div key={index} className='flex justify-center'>
+						<img
+							src={img.full}
+							alt={`Car ${index}`}
+							className='w-full max-h-[600px] object-contain rounded-lg'
+						/>
+					</div>
+				))}
+			</Slider>
+
+			{/* Миниатюры */}
+			<Slider {...thumbSettings} ref={thumbSlider} className='mb-6'>
+				{images.map((img, index) => (
+					<div
+						key={index}
+						className='px-1 cursor-pointer transition-transform duration-300 hover:scale-105'
+					>
+						<img
+							src={img.full}
+							alt={`Thumbnail ${index}`}
+							className='w-20 h-20 object-cover rounded-md border border-gray-300 hover:border-red-500 transition-all duration-300'
+						/>
+					</div>
+				))}
+			</Slider>
+		</div>
 	)
 }
 
