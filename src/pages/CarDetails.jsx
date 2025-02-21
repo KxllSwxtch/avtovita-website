@@ -91,8 +91,8 @@ const CarDetails = () => {
 				</div>
 
 				{/* Информация об автомобиле */}
-				<div className='bg-white p-8'>
-					<h2 className='text-4xl font-bold mb-6 text-gray-800'>
+				<div className='bg-white rounded-lg shadow-lg p-8'>
+					<h2 className='text-4xl font-bold mb-6 text-gray-800 text-center'>
 						{carName ? translateCarName(carName) : 'Модель не указана'}
 					</h2>
 
@@ -102,16 +102,23 @@ const CarDetails = () => {
 							<table className='w-full text-left mt-4'>
 								<tbody>
 									{Object.entries(carData).map(([key, value], index) => (
-										<tr key={index} className='border-b border-gray-100'>
+										<tr
+											key={index}
+											className={`border-b border-gray-100 transition duration-300 hover:bg-gray-50 ${
+												index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
+											}`}
+										>
 											{/* Название характеристики */}
-											<td className='py-2 text-sm font-medium text-gray-600 w-1/3'>
-												{translations[key] || key}:
+											<td className='py-3 px-2 text-sm font-medium text-gray-600 w-1/3 md:w-1/4'>
+												{translations[key] || key}
 											</td>
 											{/* Значение характеристики */}
-											<td className='py-2 text-sm text-gray-800'>
-												{translations[value] ||
-													carModelsTranslation[value] ||
-													value.toLocaleString()}
+											<td className='py-3 px-2 text-sm text-gray-800 text-right'>
+												<b>
+													{translations[value] ||
+														carModelsTranslation[value] ||
+														value.toLocaleString()}
+												</b>
 											</td>
 										</tr>
 									))}
@@ -124,59 +131,56 @@ const CarDetails = () => {
 				</div>
 			</div>
 
-			{/* Контактная информация */}
 			<div className='mt-10 p-8 bg-white border border-gray-100'>
-				<h3 className='text-3xl font-bold text-gray-800 mb-6 text-center'>
+				<h3 className='text-4xl font-bold text-gray-800 mb-8 text-center'>
 					Контакты для связи
 				</h3>
 				<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
 					{/* Виталий */}
-					<div className='p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition duration-300'>
-						<h4 className='text-lg font-semibold text-gray-700 mb-1'>
+					<div className='p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-200'>
+						<p className='text-lg font-semibold text-gray-700 mb-1'>
 							Виталий Югай
-						</h4>
+						</p>
 						<a
 							href='tel:+821093441782'
-							className='text-xl text-red-600 hover:underline transition duration-200'
+							className='block text-xl text-red-600 hover:text-red-500 transition duration-300'
 						>
 							+82 10-9344-1782
 						</a>
 					</div>
 
 					{/* Ким Евгений */}
-					<div className='p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition duration-300'>
-						<h4 className='text-lg font-semibold text-gray-700 mb-1'>
+					<div className='p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-200'>
+						<p className='text-lg font-semibold text-gray-700 mb-1'>
 							Ким Евгений
-						</h4>
+						</p>
 						<a
 							href='tel:+821042252627'
-							className='text-xl text-red-600 hover:underline transition duration-200'
+							className='block text-xl text-red-600 hover:text-red-500 transition duration-300'
 						>
 							+82 10-4225-2627
 						</a>
 					</div>
 
 					{/* Цой Юрий */}
-					<div className='p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition duration-300'>
-						<h4 className='text-lg font-semibold text-gray-700 mb-1'>
-							Цой Юрий
-						</h4>
+					<div className='p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-200'>
+						<p className='text-lg font-semibold text-gray-700 mb-1'>Цой Юрий</p>
 						<a
 							href='tel:+821076097787'
-							className='text-xl text-red-600 hover:underline transition duration-200'
+							className='block text-xl text-red-600 hover:text-red-500 transition duration-300'
 						>
 							+82 10-7609-7787
 						</a>
 					</div>
 
 					{/* Цой Евгений */}
-					<div className='p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition duration-300'>
-						<h4 className='text-lg font-semibold text-gray-700 mb-1'>
+					<div className='p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-200'>
+						<p className='text-lg font-semibold text-gray-700 mb-1'>
 							Цой Евгений
-						</h4>
+						</p>
 						<a
 							href='tel:+821044168778'
-							className='text-xl text-red-600 hover:underline transition duration-200'
+							className='block text-xl text-red-600 hover:text-red-500 transition duration-300'
 						>
 							+82 10-4416-8778
 						</a>

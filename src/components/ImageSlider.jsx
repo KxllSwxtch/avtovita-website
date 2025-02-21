@@ -36,7 +36,7 @@ const ImageSlider = ({ images }) => {
 		autoplaySpeed: 4000,
 		dots: false,
 		infinite: true,
-		speed: 600,
+		speed: 700,
 		slidesToShow: 1,
 		slidesToScroll: 1,
 		className: 'rounded-lg relative z-50',
