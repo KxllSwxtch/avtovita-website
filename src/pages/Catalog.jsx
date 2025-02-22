@@ -270,7 +270,6 @@ const Catalog = () => {
 			mission,
 			color,
 			country,
-			carNo: '',
 			carPlateNumber,
 			'vehicle-model': '',
 			'vehicle-dmodel': '',
@@ -602,6 +601,21 @@ const Catalog = () => {
 									))}
 								</select>
 							</div>
+
+							{/* Номер авто */}
+							<div className='flex-1'>
+								<label className='block text-gray-700 font-medium mb-2'>
+									Номер авто:
+								</label>
+								<input
+									type='text'
+									value={carPlateNumber}
+									onChange={(e) => setCarPlateNumber(e.target.value)}
+									maxLength={9}
+									className='text-black w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
+									placeholder='Введите номер авто'
+								/>
+							</div>
 						</div>
 					</div>
 				)}
@@ -902,21 +916,6 @@ const Catalog = () => {
 								))}
 							</select>
 						</div>
-
-						{/* Номер авто */}
-						{/* <div>
-										<label className='block text-gray-700 font-medium mb-2'>
-											Номер авто:
-										</label>
-										<input
-											type='text'
-											value={carPlateNumber}
-											onChange={(e) => setCarPlateNumber(e.target.value)}
-											maxLength={9}
-											className='w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
-											placeholder='Введите номер авто'
-										/>
-									</div> */}
 					</div>
 				</div>
 			</div>
