@@ -47,3 +47,7 @@ select {
 .slick-arrow:hover {
 	opacity: 0.8;
 }
+
+.css-1jsxt1n-control {
+	min-height: 50px !important;
+}
