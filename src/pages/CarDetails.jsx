@@ -182,7 +182,7 @@ const CarDetails = () => {
 					</div>
 
 					{/* Цой Евгений */}
-					<div className='p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-200'>
+					{/* <div className='p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-200'>
 						<p className='text-lg font-semibold text-gray-700 mb-1'>
 							Цой Евгений
 						</p>
@@ -192,7 +192,7 @@ const CarDetails = () => {
 						>
 							+82 10-4416-8778
 						</a>
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</div>

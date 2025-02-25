@@ -36,13 +36,53 @@ const Header = () => {
 		>
 			<div className='container mx-auto flex justify-between items-center px-6'>
 				{/* Логотип */}
-				<Link to='/' className='flex items-center gap-3'>
+				<Link to='/' className='flex items-center'>
 					<img
 						src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1740102951/avtovita/logo_transparent.png'
 						alt='AVTOVITA Logo'
-						className='h-24'
+						className='h-22 md:h-26'
 					/>
 				</Link>
+
+				{/* Контакты посередине */}
+				<div className='flex flex-col md:flex-row items-center text-center space-y-1 md:space-y-0 md:space-x-10 text-xs md:text-sm mr-5 md:mr-0'>
+					<p className='text-gray-700'>
+						Виталий:{' '}
+						<a
+							href='tel:+821093441782'
+							className='text-red-500 hover:underline'
+						>
+							+82 (10)-9344-1782
+						</a>
+					</p>
+					<p className='text-gray-700'>
+						Цой Юрий:{' '}
+						<a
+							href='tel:+821076097787'
+							className='text-red-500 hover:underline'
+						>
+							+82 (10)-7609-7787
+						</a>
+					</p>
+					<p className='text-gray-700'>
+						Ким Евгений:{' '}
+						<a
+							href='tel:+821042252627'
+							className='text-red-500 hover:underline'
+						>
+							+82 (10)-4225-2627
+						</a>
+					</p>
+					{/* <p className='text-gray-700'>
+						Цой Евгений:{' '}
+						<a
+							href='tel:+821044168778'
+							className='text-red-500 hover:underline'
+						>
+							+82 (10)-4416-8778
+						</a>
+					</p> */}
+				</div>
 
 				{/* Меню (Desktop) */}
 				<nav className='hidden md:flex gap-6 text-lg font-medium'>

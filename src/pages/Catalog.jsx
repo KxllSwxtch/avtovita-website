@@ -1,3 +1,4 @@
+import Select from 'react-select'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
@@ -16,6 +17,30 @@ import {
 	carTrimsTranslation,
 	carDetailedModelsTranslation,
 } from '../translations'
+
+const brandLogos = {
+	Volkswagen:
+		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740442227/avtovita/brandslogos/volkswagen.png',
+	Audi: 'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740442148/avtovita/brandslogos/audi.png',
+	'Mercedes-Benz':
+		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740442084/avtovita/brandslogos/mercedes.png',
+	BMW: 'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740441985/avtovita/brandslogos/bmw.png',
+	Hyundai:
+		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740440093/avtovita/brandslogos/hyundai.png',
+	KIA: 'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740440478/avtovita/brandslogos/kia.png',
+	Genesis:
+		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740440397/avtovita/brandslogos/genesis.png',
+	'Chevrolet (Korea)':
+		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740441862/avtovita/brandslogos/chevrolet.png',
+	Chevrolet:
+		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740441862/avtovita/brandslogos/chevrolet.png',
+	'Renault Korea (Samsung)':
+		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740441673/avtovita/brandslogos/renaultkorea.png',
+	'KG Mobility (SsangYong)':
+		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740441782/avtovita/brandslogos/kg.png',
+	Daewoo:
+		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740441921/avtovita/brandslogos/daewoo.png',
+}
 
 // Helpers
 function translateTrim(text) {
@@ -375,6 +400,70 @@ const Catalog = () => {
 		if (page < totalPages) setPage(page + 1)
 	}
 
+	// Преобразуем makerList в формат для react-select
+	const options = makerList.map((maker) => {
+		const translatedName =
+			carBrandsTranslation[maker.MAKER_NAME] || maker.MAKER_NAME
+		return {
+			value: maker.MAKER_NO,
+			label: (
+				<span className='flex items-center gap-2'>
+					{brandLogos[translatedName] && (
+						<img
+							src={brandLogos[translatedName]}
+							alt={translatedName}
+							className='inline-block w-5 auto'
+						/>
+					)}
+					{translatedName}
+				</span>
+			),
+		}
+	})
+
+	const customStyles = {
+		control: (provided) => ({
+			...provided,
+			borderRadius: '0.5rem',
+			borderColor: '#d1d5db',
+			boxShadow: 'none',
+			'&:hover': {
+				borderColor: '#9ca3af',
+			},
+		}),
+		option: (provided, state) => ({
+			...provided,
+			display: 'flex',
+			alignItems: 'center',
+			gap: '0.5rem',
+			color: state.isSelected ? '#fff' : '#374151',
+			backgroundColor: state.isSelected ? '#2563eb' : '#fff',
+			'&:hover': {
+				backgroundColor: '#f3f4f6',
+			},
+		}),
+	}
+
+	// eslint-disable-next-line react/prop-types
+	const BrandSelector = ({ handleMakerChange }) => {
+		const handleChange = (selectedOption) => {
+			handleMakerChange(selectedOption.value) // Обновляем selectedMaker
+		}
+
+		return (
+			<Select
+				value={options.filter(function (option) {
+					return option.value === selectedMaker
+				})}
+				options={options}
+				onChange={handleChange}
+				placeholder='Выберите марку'
+				styles={customStyles}
+				className='w-full text-gray-800 rounded-lg shadow-sm'
+			/>
+		)
+	}
+
 	return (
 		<div className='p-4 mt-24 text-white min-h-screen'>
 			{/* Фильтры */}
@@ -414,32 +503,7 @@ const Catalog = () => {
 								<label className='block text-gray-700 font-semibold mb-2'>
 									Марка:
 								</label>
-								<select
-									value={selectedMaker}
-									onChange={(e) => handleMakerChange(e.target.value)}
-									className='w-full border border-gray-300 bg-gray-100 text-gray-800 p-3 rounded-lg shadow-sm focus:ring-gray-400 focus:border-gray-400 transition duration-300 appearance-none pr-10 relative'
-									style={{
-										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-										backgroundPosition: 'right 12px center',
-										backgroundRepeat: 'no-repeat',
-										backgroundSize: '1rem',
-									}}
-								>
-									<option value='' className='text-gray-500'>
-										Выберите марку
-									</option>
-									{makerList.map((maker) => (
-										<option
-											key={maker.MAKER_NO}
-											value={maker.MAKER_NO}
-											className='text-gray-800'
-										>
-											{carBrandsTranslation[maker.MAKER_NAME] ||
-												maker.MAKER_NAME}
-										</option>
-									))}
-								</select>
+								<BrandSelector handleMakerChange={handleMakerChange} />
 							</div>
 
 							{/* Модель */}

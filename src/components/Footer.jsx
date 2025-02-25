@@ -96,7 +96,7 @@ const Footer = () => {
 							+82 (10)-7609-7787
 						</a>
 					</p>
-					<p className='text-sm text-gray-600'>
+					{/* <p className='text-sm text-gray-600'>
 						Цой Евгений:{' '}
 						<a
 							href='tel:+821044168778'
@@ -104,7 +104,7 @@ const Footer = () => {
 						>
 							+82 (10)-4416-8778
 						</a>
-					</p>
+					</p> */}
 					<p className='text-sm text-gray-600'>
 						<FaEnvelope className='inline-block mr-1 text-red-500' />{' '}
 						<a

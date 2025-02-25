@@ -15,7 +15,7 @@ const ContactsSection = () => {
 					Свяжитесь с нами удобным способом!
 				</p>
 
-				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-10'>
+				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10 mx-auto w-full'>
 					{/* Виталий */}
 					<div className='p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-gray-200'>
 						<FaPhone className='text-red-400 text-4xl mb-4' />
@@ -27,7 +27,6 @@ const ContactsSection = () => {
 							+82 10-9344-1782
 						</a>
 					</div>
-
 					{/* Ким Евгений */}
 					<div className='p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-gray-200'>
 						<FaPhone className='text-red-400 text-4xl mb-4' />
@@ -39,7 +38,6 @@ const ContactsSection = () => {
 							+82 10-4225-2627
 						</a>
 					</div>
-
 					{/* Цой Юрий */}
 					<div className='p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-gray-200'>
 						<FaPhone className='text-red-400 text-4xl mb-4' />
@@ -51,8 +49,7 @@ const ContactsSection = () => {
 							+82 10-7609-7787
 						</a>
 					</div>
-
-					{/* Цой Евгений */}
+					{/* Цой Евгений
 					<div className='p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-gray-200'>
 						<FaPhone className='text-red-400 text-4xl mb-4' />
 						<h3 className='text-xl font-semibold text-gray-800'>Цой Евгений</h3>
@@ -62,7 +59,7 @@ const ContactsSection = () => {
 						>
 							+82 10-4416-8778
 						</a>
-					</div>
+					</div> */}
 				</div>
 
 				{/* Соцсети */}
