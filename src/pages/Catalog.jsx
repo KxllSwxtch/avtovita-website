@@ -178,6 +178,8 @@ const API_BASE_URL = 'https://ark-motors-backend-3a002a527613.herokuapp.com'
 const carsPerPage = 24
 
 const Catalog = () => {
+	const [selectedCategory, setSelectedCategory] = useState('')
+
 	// ------------------ Основные состояния ------------------
 	const [country, setCountry] = useState('foreign') // 'kor' или 'foreign'
 	const [makerList, setMakerList] = useState([]) // Список производителей
@@ -232,6 +234,13 @@ const Catalog = () => {
 		setGradeList([])
 		setSelectedDetailGrade('')
 		setDetailGradeList([])
+
+		if (selectedCategory === ctry) {
+			setSelectedCategory('') // Скрываем, если повторный клик
+		} else {
+			setSelectedCategory(ctry) // Устанавливаем выбранную категорию
+		}
+		setCountry(ctry) // Обновляем страну
 
 		try {
 			const response = await axios.get(`${API_BASE_URL}/makers`, {
@@ -579,28 +588,92 @@ const Catalog = () => {
 			<>
 				{/* Кнопки для выбора страны */}
 				<div className='flex justify-center gap-4 mb-6'>
-					{[
-						{ label: 'Корейские', value: 'kor', emoji: '🇰🇷' },
-						{ label: 'Иномарки', value: 'foreign', emoji: '🌍' },
-					].map(({ label, value, emoji }) => (
+					{/* Корейские */}
+					<div className='flex flex-col items-center'>
 						<button
-							key={value}
-							onClick={() => handleCountryClick(value)}
+							onClick={() => handleCountryClick('kor')}
 							className={`
-								cursor-pointer flex items-center justify-center gap-2 px-6 py-3 text-lg font-semibold rounded-full shadow-md transition-all duration-300
-								border-2 w-40 h-14
-								${
-									country === value
-										? 'bg-white text-red-600 border-red-500 scale-105 shadow-lg'
-										: 'bg-gray-100 text-gray-800 border-gray-300 hover:bg-white hover:text-red-600'
-								}
-								active:scale-95
-							`}
+				cursor-pointer flex items-center justify-center gap-2 px-6 py-3 text-lg font-semibold rounded-full shadow-md transition-all duration-300
+				border-2 w-40 h-40 overflow-hidden
+				${
+					selectedCategory === 'kor'
+						? 'bg-white border-red-500 scale-105 shadow-lg'
+						: 'bg-gray-100 border-gray-300 hover:bg-white hover:border-red-500'
+				}
+				active:scale-95
+			`}
 						>
-							<span className='text-2xl'>{emoji}</span>
-							<span>{label}</span>
+							{/* Логотипы Корейских */}
+							{selectedCategory === 'kor' ? (
+								<div className='grid grid-cols-3 gap-2 items-center justify-center'>
+									{[
+										'Hyundai',
+										'KIA',
+										'Genesis',
+										'Chevrolet (Korea)',
+										'Renault Korea (Samsung)',
+										'KG Mobility (SsangYong)',
+									].map((brand) => (
+										<img
+											key={brand}
+											src={brandLogos[brand]}
+											alt={brand}
+											className='h-10 w-10 object-contain'
+										/>
+									))}
+								</div>
+							) : (
+								<p className='text-black'>Корейские</p>
+							)}
 						</button>
-					))}
+						{/* Подпись */}
+						<span className='mt-2 text-lg font-semibold'>Корейские</span>
+					</div>
+
+					{/* Иномарки */}
+					<div className='flex flex-col items-center'>
+						<button
+							onClick={() => handleCountryClick('foreign')}
+							className={`
+				cursor-pointer flex items-center justify-center gap-2 px-6 py-3 text-lg font-semibold rounded-full shadow-md transition-all duration-300
+				border-2 w-40 h-40 overflow-hidden
+				${
+					selectedCategory === 'foreign'
+						? 'bg-white border-red-500 scale-105 shadow-lg'
+						: 'bg-gray-100 border-gray-300 hover:bg-white hover:border-red-500'
+				}
+				active:scale-95
+			`}
+						>
+							{/* Логотипы Иномарок */}
+							{selectedCategory === 'foreign' ? (
+								<div className='grid grid-cols-3 gap-2 items-center justify-center'>
+									{[
+										'Mercedes-Benz',
+										'BMW',
+										'Audi',
+										'Volkswagen',
+										'Lexus',
+										'Toyota',
+										'Nissan',
+										'Ford',
+										'Honda',
+									].map((brand) => (
+										<img
+											key={brand}
+											src={brandLogos[brand]}
+											alt={brand}
+											className='h-10 w-10 object-contain'
+										/>
+									))}
+								</div>
+							) : (
+								<p className='text-black'>Иномарки</p>
+							)}
+						</button>
+						{/* Подпись */}
+						<span className='mt-2 text-lg font-semibold'>Иномарки</span>
+					</div>
 				</div>
 
 				{/* Если страна выбрана, показываем основные фильтры */}

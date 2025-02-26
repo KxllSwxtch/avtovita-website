@@ -34,6 +34,12 @@ const Header = () => {
 					}
 			`}
 		>
+			<div>
+				{/* Номер факса */}
+				<p className='text-white absolute right-5 top-2 text-xs hidden md:block'>
+					Факс: <a className='text-red-500 hover:underline'>031-8084-7144</a>
+				</p>
+			</div>
 			<div className='container mx-auto flex justify-between items-center px-6'>
 				{/* Логотип */}
 				<Link to='/' className='flex items-center'>
@@ -46,15 +52,6 @@ const Header = () => {
 
 				{/* Контакты посередине */}
 				<div className='flex flex-col md:flex-row items-center text-center space-y-1 md:space-y-0 md:space-x-10 text-xs md:text-sm mr-5 md:mr-0'>
-					<p className='text-white'>
-						Виталий:{' '}
-						<a
-							href='tel:+821093441782'
-							className='text-red-500 hover:underline'
-						>
-							+82 (10)-9344-1782
-						</a>
-					</p>
 					<p className='text-white'>
 						Цой Юрий:{' '}
 						<a
@@ -73,6 +70,16 @@ const Header = () => {
 							+82 (10)-4225-2627
 						</a>
 					</p>
+					<p className='text-white'>
+						Югай Виталий:{' '}
+						<a
+							href='tel:+821093441782'
+							className='text-red-500 hover:underline'
+						>
+							+82 (10)-9344-1782
+						</a>
+					</p>
+
 					{/* <p className='text-white'>
 						Цой Евгений:{' '}
 						<a
@@ -119,7 +126,7 @@ const Header = () => {
 
 			{/* Мобильное меню */}
 			<div
-				className={`fixed top-0 left-0 w-full h-screen bg-[#4A422F] text-gray-800 flex flex-col items-center justify-center z-50 transition-transform duration-300 ${
+				className={`text-center fixed top-0 left-0 w-full h-screen bg-[#4A422F] text-gray-800 flex flex-col items-center justify-center z-50 transition-transform duration-300 ${
 					menuOpen ? 'translate-y-0' : '-translate-y-full'
 				}`}
 			>
@@ -151,6 +158,10 @@ const Header = () => {
 					>
 						Контакты
 					</Link>
+					{/* Номер факса */}
+					<p className='text-white text-sm'>
+						Факс: <a className='text-red-500 hover:underline'>031-8084-7144</a>
+					</p>
 				</nav>
 			</div>
 		</header>
