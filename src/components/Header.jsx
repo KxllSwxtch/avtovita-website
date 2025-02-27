@@ -44,7 +44,7 @@ const Header = () => {
 				{/* Логотип */}
 				<Link to='/' className='flex items-center'>
 					<img
-						src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1740473345/avtovita/Logo.png'
+						src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1740639186/avtovita/Logo2.png'
 						alt='AVTOVITA Logo'
 						className='h-22 md:h-26'
 					/>
@@ -146,40 +146,40 @@ const Header = () => {
 
 			{/* Мобильное меню */}
 			<div
-				className={`text-center fixed top-0 left-0 w-full h-screen bg-[#4A422F] text-gray-800 flex flex-col items-center justify-center z-50 transition-transform duration-300 ${
+				className={`text-center fixed top-0 left-0 w-full h-screen bg-[#b8b8b8] text-black flex flex-col items-center justify-center z-50 transition-transform duration-300 ${
 					menuOpen ? 'translate-y-0' : '-translate-y-full'
 				}`}
 			>
 				<button
 					onClick={() => setMenuOpen(false)}
-					className='absolute top-6 right-6 text-white text-2xl'
+					className='absolute top-6 right-6 text-gray-700 text-2xl'
 				>
 					<FaTimes />
 				</button>
 				<nav className='flex flex-col gap-6 text-lg'>
 					<Link
 						to='/catalog'
-						className='text-white hover:text-red-500 transition duration-300'
+						className='text-gray-700 hover:text-red-500 transition duration-300'
 						onClick={() => setMenuOpen(false)}
 					>
 						Каталог
 					</Link>
 					<Link
 						to='/about'
-						className='text-white hover:text-red-500 transition duration-300'
+						className='text-gray-700 hover:text-red-500 transition duration-300'
 						onClick={() => setMenuOpen(false)}
 					>
 						О нас
 					</Link>
 					<Link
 						to='/contacts'
-						className='text-white hover:text-red-500 transition duration-300'
+						className='text-gray-700 hover:text-red-500 transition duration-300'
 						onClick={() => setMenuOpen(false)}
 					>
 						Контакты
 					</Link>
 					{/* Номер факса */}
-					<p className='text-white text-sm'>
+					<p className='text-gray-700 text-sm'>
 						Факс: <a className='text-red-500 hover:underline'>031-8084-7144</a>
 					</p>
 				</nav>
