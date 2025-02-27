@@ -29,21 +29,41 @@ const Contacts = () => {
 						</h3>
 						<div className='space-y-6'>
 							{[
-								{ name: 'Виталий', number: '+82 10-9344-1782' },
-								{ name: 'Ким Евгений', number: '+82 10-4225-2627' },
-								{ name: 'Цой Юрий', number: '+82 10-7609-7787' },
-								{ name: 'Цой Евгений', number: '+82 10-4416-8778' },
+								{
+									name: 'Цой Юрий',
+									number: '+82 10-7609-7787',
+									photoUrl:
+										'https://scontent-gmp1-1.xx.fbcdn.net/v/t39.30808-6/410289674_6799485666826883_5977297296240849656_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=TsVoir1CQy8Q7kNvgEdSxIW&_nc_oc=AdhOheLSInKLdlsutWv23lp9AkOrDBlVYvN2bBvu7ACtKoDfS8HsmftL56KEZZUPKKA&_nc_zt=23&_nc_ht=scontent-gmp1-1.xx&_nc_gid=AzuL1pYGkLsqE05FNTuMbUE&oh=00_AYBp62JXpmtxUkPFwEY_3nKUxcg59wVMPftajMwx23JjbA&oe=67C58198',
+								},
+								{
+									name: 'Ким Евгений',
+									number: '+82 10-4225-2627',
+									photoUrl:
+										'https://scontent-gmp1-1.xx.fbcdn.net/v/t1.6435-9/90371534_935254923559248_3849896752991698944_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=-qH5xYND5sIQ7kNvgHky3Kn&_nc_oc=AdhRVMA18XztnpmvcJyKmcipVhdMkZP7sXeEkyR_p2fh4_tEERUkvPYNWQWa7-wzpiA&_nc_zt=23&_nc_ht=scontent-gmp1-1.xx&_nc_gid=A8CYWb7bgfKi7bZBFDcaLZ8&oh=00_AYD1xRuL_tpLZGEN1ZY6q9yRZnLMzgvlqFCksG8t2DrtBg&oe=67E74728',
+								},
+								{
+									name: 'Югай Виталий',
+									number: '+82 10-9344-1782',
+									photoUrl:
+										'https://scontent-gmp1-1.xx.fbcdn.net/v/t39.30808-6/469034277_2590938921117370_4792914642707705055_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=107&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=9FD8udPaz9YQ7kNvgHb8iXb&_nc_oc=AdjpbvdNfbEvAwPweSNy_F9qyxtzAFEa1j_GC7ocqAaFFvTIQJwmboeDepaPhyefS2A&_nc_zt=23&_nc_ht=scontent-gmp1-1.xx&_nc_gid=ApjZxDnGPAYXfONaKhnrFuM&oh=00_AYAlJge3TJPNkIxY7CWdaQPHIxaql8YlFmGSlW_zfIvZ-w&oe=67C58A1A',
+								},
+								// { name: 'Цой Евгений', number: '+82 10-4416-8778' },
 							].map((contact, index) => (
-								<p key={index} className='text-lg'>
-									<span className='font-semibold text-gray-800'>
+								<p key={index} className='text-lg flex items-center'>
+									<img
+										src={contact.photoUrl}
+										className='h-20 mr-2 rounded-md'
+										alt=''
+									/>
+									<span className='font-semibold text-gray-800 flex flex-col'>
 										{contact.name}:{' '}
+										<a
+											href={`tel:${contact.number}`}
+											className='text-red-600 hover:text-red-500 transition'
+										>
+											{contact.number}
+										</a>
 									</span>
-									<a
-										href={`tel:${contact.number}`}
-										className='text-red-600 hover:text-red-500 transition'
-									>
-										{contact.number}
-									</a>
 								</p>
 							))}
 
