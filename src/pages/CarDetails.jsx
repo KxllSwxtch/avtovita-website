@@ -39,6 +39,7 @@ const API_BASE_URL = 'https://ark-motors-backend-3a002a527613.herokuapp.com'
 
 const CarDetails = () => {
 	const { carId } = useParams()
+
 	const [carData, setCarData] = useState(null)
 	const [loading, setLoading] = useState(true)
 	const [images, setImages] = useState([])

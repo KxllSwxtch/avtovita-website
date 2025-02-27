@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet'
 import Select from 'react-select'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
@@ -583,16 +584,46 @@ const Catalog = () => {
 	}
 
 	return (
-		<div className='p-4 mt-30 text-white min-h-screen'>
-			{/* Фильтры */}
-			<>
-				{/* Кнопки для выбора страны */}
-				<div className='flex justify-center gap-4 mb-6'>
-					{/* Корейские */}
-					<div className='flex flex-col items-center'>
-						<button
-							onClick={() => handleCountryClick('kor')}
-							className={`
+		<>
+			<Helmet>
+				<title>Каталог автомобилей из Кореи | АвтоВита</title>
+				<meta
+					name='description'
+					content='Купить авто из Кореи под ключ с доставкой. Корейские и иностранные автомобили в наличии.'
+				/>
+				<meta
+					name='keywords'
+					content='авто из Кореи, купить авто из Кореи, иномарки, корейские автомобили, AvtoVita, AvtoDom, avtovita, avtodom, авто из Южной Кореи'
+				/>
+				<meta
+					property='og:title'
+					content='Каталог автомобилей из Кореи | AvtoVita'
+				/>
+				<meta
+					property='og:description'
+					content='Купить авто из Кореи под ключ с доставкой. Корейские и иностранные автомобили в наличии.'
+				/>
+				<meta
+					property='og:image'
+					content='https://avtovita-avtodom.com/preview.png'
+				/>
+				<meta
+					property='og:url'
+					content='https://avtovita-avtodom.com/catalog'
+				/>
+			</Helmet>
+			{/* Остальная часть компонента */}
+
+			<div className='p-4 mt-30 text-white min-h-screen'>
+				{/* Фильтры */}
+				<>
+					{/* Кнопки для выбора страны */}
+					<div className='flex justify-center gap-4 mb-6'>
+						{/* Корейские */}
+						<div className='flex flex-col items-center'>
+							<button
+								onClick={() => handleCountryClick('kor')}
+								className={`
 								cursor-pointer flex items-center justify-center gap-2 px-6 py-3 text-lg font-semibold rounded-full shadow-md transition-all duration-300
 								border-2 w-40 h-40 overflow-hidden
 								${
@@ -602,35 +633,35 @@ const Catalog = () => {
 								}
 								active:scale-95
 							`}
-						>
-							{/* Логотипы Корейских */}
-							<div className='grid grid-cols-3 gap-2 items-center justify-center'>
-								{[
-									'Hyundai',
-									'KIA',
-									'Genesis',
-									'Chevrolet (Korea)',
-									'Renault Korea (Samsung)',
-									'KG Mobility (SsangYong)',
-								].map((brand) => (
-									<img
-										key={brand}
-										src={brandLogos[brand]}
-										alt={brand}
-										className='h-10 w-10 object-contain'
-									/>
-								))}
-							</div>
-						</button>
-						{/* Подпись */}
-						<span className='mt-2 text-lg font-semibold'>Корейские</span>
-					</div>
+							>
+								{/* Логотипы Корейских */}
+								<div className='grid grid-cols-3 gap-2 items-center justify-center'>
+									{[
+										'Hyundai',
+										'KIA',
+										'Genesis',
+										'Chevrolet (Korea)',
+										'Renault Korea (Samsung)',
+										'KG Mobility (SsangYong)',
+									].map((brand) => (
+										<img
+											key={brand}
+											src={brandLogos[brand]}
+											alt={brand}
+											className='h-10 w-10 object-contain'
+										/>
+									))}
+								</div>
+							</button>
+							{/* Подпись */}
+							<span className='mt-2 text-lg font-semibold'>Корейские</span>
+						</div>
 
-					{/* Иномарки */}
-					<div className='flex flex-col items-center'>
-						<button
-							onClick={() => handleCountryClick('foreign')}
-							className={`
+						{/* Иномарки */}
+						<div className='flex flex-col items-center'>
+							<button
+								onClick={() => handleCountryClick('foreign')}
+								className={`
 								cursor-pointer flex items-center justify-center gap-2 px-6 py-3 text-lg font-semibold rounded-full shadow-md transition-all duration-300
 								border-2 w-40 h-40 overflow-hidden
 								${
@@ -640,230 +671,231 @@ const Catalog = () => {
 								}
 								active:scale-95
 							`}
-						>
-							{/* Логотипы Иномарок */}
-							<div className='grid grid-cols-3 gap-2 items-center justify-center'>
-								{[
-									'Mercedes-Benz',
-									'BMW',
-									'Audi',
-									'Volkswagen',
-									'Lexus',
-									'Toyota',
-									'Nissan',
-									'Ford',
-									'Honda',
-								].map((brand) => (
-									<img
-										key={brand}
-										src={brandLogos[brand]}
-										alt={brand}
-										className='h-10 w-10 object-contain'
-									/>
-								))}
-							</div>
-						</button>
-						{/* Подпись */}
-						<span className='mt-2 text-lg font-semibold'>Иномарки</span>
+							>
+								{/* Логотипы Иномарок */}
+								<div className='grid grid-cols-3 gap-2 items-center justify-center'>
+									{[
+										'Mercedes-Benz',
+										'BMW',
+										'Audi',
+										'Volkswagen',
+										'Lexus',
+										'Toyota',
+										'Nissan',
+										'Ford',
+										'Honda',
+									].map((brand) => (
+										<img
+											key={brand}
+											src={brandLogos[brand]}
+											alt={brand}
+											className='h-10 w-10 object-contain'
+										/>
+									))}
+								</div>
+							</button>
+							{/* Подпись */}
+							<span className='mt-2 text-lg font-semibold'>Иномарки</span>
+						</div>
 					</div>
-				</div>
 
-				{/* Если страна выбрана, показываем основные фильтры */}
-				{country && (
-					<div className='shadow-lg p-8 md:p-10 max-w-6xl mx-auto flex flex-col md:flex-row md:gap-6 gap-4'>
-						<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-							{/* Производитель */}
-							<div className='flex-1'>
-								<label className='block text-gray-700 font-semibold mb-2'>
-									Марка:
-								</label>
-								<BrandSelector handleMakerChange={handleMakerChange} />
-							</div>
+					{/* Если страна выбрана, показываем основные фильтры */}
+					{country && (
+						<div className='shadow-lg p-8 md:p-10 max-w-6xl mx-auto flex flex-col md:flex-row md:gap-6 gap-4'>
+							<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+								{/* Производитель */}
+								<div className='flex-1'>
+									<label className='block text-gray-700 font-semibold mb-2'>
+										Марка:
+									</label>
+									<BrandSelector handleMakerChange={handleMakerChange} />
+								</div>
 
-							{/* Модель */}
-							<div className='flex-1'>
-								<label className='block text-gray-700 font-semibold mb-2 tracking-wide'>
-									Модель:
-								</label>
-								<select
-									value={selectedModel}
-									onChange={(e) => handleModelChange(e.target.value)}
-									className={`w-full border-2 p-3 rounded-lg shadow-sm transition duration-300 appearance-none pr-10 relative
+								{/* Модель */}
+								<div className='flex-1'>
+									<label className='block text-gray-700 font-semibold mb-2 tracking-wide'>
+										Модель:
+									</label>
+									<select
+										value={selectedModel}
+										onChange={(e) => handleModelChange(e.target.value)}
+										className={`w-full border-2 p-3 rounded-lg shadow-sm transition duration-300 appearance-none pr-10 relative
 											${
 												selectedMaker
 													? 'border-gray-300 bg-gray-100 text-gray-800 hover:border-gray-400 focus:ring-gray-400'
 													: 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed'
 											}
 										`}
-									disabled={!selectedMaker}
-									style={{
-										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-										backgroundPosition: 'right 12px center',
-										backgroundRepeat: 'no-repeat',
-										backgroundSize: '1rem',
-									}}
-								>
-									<option value='' className='text-gray-500'>
-										Выберите модель
-									</option>
-									{modelList
-										.sort((a, b) => (a.MODEL_NAME > b.MODEL_NAME ? 1 : -1))
-										.map((model) => (
-											<option
-												key={model.MODEL_NO}
-												value={model.MODEL_NO}
-												className='text-gray-800'
-											>
-												{carModelsTranslation[model.MODEL_NAME] ||
-													model.MODEL_NAME}
-											</option>
-										))}
-								</select>
-							</div>
+										disabled={!selectedMaker}
+										style={{
+											backgroundImage:
+												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+											backgroundPosition: 'right 12px center',
+											backgroundRepeat: 'no-repeat',
+											backgroundSize: '1rem',
+										}}
+									>
+										<option value='' className='text-gray-500'>
+											Выберите модель
+										</option>
+										{modelList
+											.sort((a, b) => (a.MODEL_NAME > b.MODEL_NAME ? 1 : -1))
+											.map((model) => (
+												<option
+													key={model.MODEL_NO}
+													value={model.MODEL_NO}
+													className='text-gray-800'
+												>
+													{carModelsTranslation[model.MODEL_NAME] ||
+														model.MODEL_NAME}
+												</option>
+											))}
+									</select>
+								</div>
 
-							{/* Поколение */}
-							<div className='flex-1'>
-								<label className='block text-gray-700 font-semibold mb-2 tracking-wide'>
-									Поколение:
-								</label>
-								<select
-									value={selectedDetailModel}
-									onChange={(e) => handleDetailModelChange(e.target.value)}
-									className={`w-full border-2 p-3 rounded-lg shadow-sm transition duration-300 appearance-none pr-10 relative
+								{/* Поколение */}
+								<div className='flex-1'>
+									<label className='block text-gray-700 font-semibold mb-2 tracking-wide'>
+										Поколение:
+									</label>
+									<select
+										value={selectedDetailModel}
+										onChange={(e) => handleDetailModelChange(e.target.value)}
+										className={`w-full border-2 p-3 rounded-lg shadow-sm transition duration-300 appearance-none pr-10 relative
 											${
 												selectedModel
 													? 'border-gray-300 bg-gray-100 text-gray-800 hover:border-gray-400 focus:ring-gray-400'
 													: 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed'
 											}
 										`}
-									disabled={!selectedModel}
-									style={{
-										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-										backgroundPosition: 'right 10px center',
-										backgroundRepeat: 'no-repeat',
-										backgroundSize: '1rem',
-									}}
-								>
-									<option value='' className='text-gray-500'>
-										Выберите подробную модель
-									</option>
-									{detailModelList.map((dmodel) => (
-										<option
-											key={dmodel.DETAIL_MODEL_NO}
-											value={dmodel.DETAIL_MODEL_NO}
-											className='text-gray-800'
-										>
-											{translateTrim(dmodel.DETAIL_MODEL_NAME) ||
-												dmodel.DETAIL_MODEL_NAME}
+										disabled={!selectedModel}
+										style={{
+											backgroundImage:
+												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+											backgroundPosition: 'right 10px center',
+											backgroundRepeat: 'no-repeat',
+											backgroundSize: '1rem',
+										}}
+									>
+										<option value='' className='text-gray-500'>
+											Выберите подробную модель
 										</option>
-									))}
-								</select>
-							</div>
+										{detailModelList.map((dmodel) => (
+											<option
+												key={dmodel.DETAIL_MODEL_NO}
+												value={dmodel.DETAIL_MODEL_NO}
+												className='text-gray-800'
+											>
+												{translateTrim(dmodel.DETAIL_MODEL_NAME) ||
+													dmodel.DETAIL_MODEL_NAME}
+											</option>
+										))}
+									</select>
+								</div>
 
-							{/* Комплектация */}
-							<div className='flex-1'>
-								<label className='block text-gray-700 font-semibold mb-2 tracking-wide'>
-									Комплектация:
-								</label>
-								<select
-									value={selectedGrade}
-									onChange={(e) => handleGradeChange(e.target.value)}
-									className={`w-full border-2 p-3 pr-10 rounded-lg shadow-sm transition duration-300 appearance-none relative
+								{/* Комплектация */}
+								<div className='flex-1'>
+									<label className='block text-gray-700 font-semibold mb-2 tracking-wide'>
+										Комплектация:
+									</label>
+									<select
+										value={selectedGrade}
+										onChange={(e) => handleGradeChange(e.target.value)}
+										className={`w-full border-2 p-3 pr-10 rounded-lg shadow-sm transition duration-300 appearance-none relative
 											${
 												selectedDetailModel
 													? 'border-gray-300 bg-gray-100 text-gray-800 hover:border-gray-400 focus:ring-gray-400'
 													: 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed'
 											}
 										`}
-									disabled={!selectedDetailModel}
-									style={{
-										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-										backgroundPosition: 'right 12px center',
-										backgroundRepeat: 'no-repeat',
-										backgroundSize: '1rem',
-									}}
-								>
-									<option value='' className='text-gray-500'>
-										Выберите комплектацию
-									</option>
-									{gradeList.map((grade) => (
-										<option
-											key={grade.GRADE_NO}
-											value={grade.GRADE_NO}
-											className='text-gray-800'
-										>
-											{translateFuelType(grade.GRADE_NAME) || grade.GRADE_NAME}
+										disabled={!selectedDetailModel}
+										style={{
+											backgroundImage:
+												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+											backgroundPosition: 'right 12px center',
+											backgroundRepeat: 'no-repeat',
+											backgroundSize: '1rem',
+										}}
+									>
+										<option value='' className='text-gray-500'>
+											Выберите комплектацию
 										</option>
-									))}
-								</select>
-							</div>
+										{gradeList.map((grade) => (
+											<option
+												key={grade.GRADE_NO}
+												value={grade.GRADE_NO}
+												className='text-gray-800'
+											>
+												{translateFuelType(grade.GRADE_NAME) ||
+													grade.GRADE_NAME}
+											</option>
+										))}
+									</select>
+								</div>
 
-							{/* Детальная комплектация */}
-							<div className='flex-1'>
-								<label className='block text-gray-700 font-semibold mb-2 tracking-wide'>
-									Детальная комплектация:
-								</label>
-								<select
-									value={selectedDetailGrade}
-									onChange={(e) => handleDetailGradeChange(e.target.value)}
-									className={`w-full border-2 p-3 pr-10 rounded-lg shadow-sm transition duration-300 appearance-none relative
+								{/* Детальная комплектация */}
+								<div className='flex-1'>
+									<label className='block text-gray-700 font-semibold mb-2 tracking-wide'>
+										Детальная комплектация:
+									</label>
+									<select
+										value={selectedDetailGrade}
+										onChange={(e) => handleDetailGradeChange(e.target.value)}
+										className={`w-full border-2 p-3 pr-10 rounded-lg shadow-sm transition duration-300 appearance-none relative
 											${
 												selectedGrade
 													? 'border-gray-300 bg-gray-100 text-gray-800 hover:border-gray-400 focus:ring-gray-400'
 													: 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed'
 											}
 										`}
-									disabled={!selectedGrade}
-									style={{
-										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-										backgroundPosition: 'right 12px center',
-										backgroundRepeat: 'no-repeat',
-										backgroundSize: '1rem',
-									}}
-								>
-									<option value='' className='text-gray-500'>
-										Выберите детальную комплектацию
-									</option>
-									{detailGradeList.map((dgrade) => (
-										<option
-											key={dgrade.DETAIL_GRADE_NO}
-											value={dgrade.DETAIL_GRADE_NO}
-											className='text-gray-800'
-										>
-											{translateFuelType(dgrade.DETAIL_GRADE_NAME)}
+										disabled={!selectedGrade}
+										style={{
+											backgroundImage:
+												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+											backgroundPosition: 'right 12px center',
+											backgroundRepeat: 'no-repeat',
+											backgroundSize: '1rem',
+										}}
+									>
+										<option value='' className='text-gray-500'>
+											Выберите детальную комплектацию
 										</option>
-									))}
-								</select>
-							</div>
+										{detailGradeList.map((dgrade) => (
+											<option
+												key={dgrade.DETAIL_GRADE_NO}
+												value={dgrade.DETAIL_GRADE_NO}
+												className='text-gray-800'
+											>
+												{translateFuelType(dgrade.DETAIL_GRADE_NAME)}
+											</option>
+										))}
+									</select>
+								</div>
 
-							{/* Номер авто */}
-							<div className='flex-1'>
-								<label className='block text-gray-700 font-medium mb-2'>
-									Номер авто:
-								</label>
-								<input
-									type='text'
-									value={carPlateNumber}
-									onChange={(e) => setCarPlateNumber(e.target.value)}
-									maxLength={9}
-									className='text-black w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
-									placeholder='Введите номер авто'
-								/>
+								{/* Номер авто */}
+								<div className='flex-1'>
+									<label className='block text-gray-700 font-medium mb-2'>
+										Номер авто:
+									</label>
+									<input
+										type='text'
+										value={carPlateNumber}
+										onChange={(e) => setCarPlateNumber(e.target.value)}
+										maxLength={9}
+										className='text-black w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
+										placeholder='Введите номер авто'
+									/>
+								</div>
 							</div>
 						</div>
-					</div>
-				)}
-			</>
+					)}
+				</>
 
-			{/* Кнопка показа/скрытия */}
-			<div className='text-center mt-5'>
-				<button
-					onClick={toggleFilters}
-					className={`
+				{/* Кнопка показа/скрытия */}
+				<div className='text-center mt-5'>
+					<button
+						onClick={toggleFilters}
+						className={`
 						m-auto cursor-pointer flex items-center justify-center px-4 py-2 md:px-6 md:py-3 font-semibold shadow-sm transition-all duration-300
 						border-2 text-base md:text-lg rounded-lg w-full md:w-auto
 						${
@@ -873,16 +905,16 @@ const Catalog = () => {
 						}
 						active:scale-95
 					`}
-				>
-					<span>
-						{isFiltersOpen ? 'Скрыть Доп. фильтры' : 'Показать Доп. фильтры'}
-					</span>
-				</button>
-			</div>
+					>
+						<span>
+							{isFiltersOpen ? 'Скрыть Доп. фильтры' : 'Показать Доп. фильтры'}
+						</span>
+					</button>
+				</div>
 
-			{/* Дополнительные фильтры (шторка) */}
-			<div
-				className={`
+				{/* Дополнительные фильтры (шторка) */}
+				<div
+					className={`
 					overflow-hidden transition-all duration-500 ease-in-out
 					${
 						isFiltersOpen
@@ -891,363 +923,364 @@ const Catalog = () => {
 					}
 					 text-gray-800 p-6
 				`}
-			>
-				<div className='max-w-6xl mx-auto'>
-					<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-						{/* Цена от */}
-						<div>
-							<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
-								Цена от:
-							</label>
-							<select
-								value={priceMin}
-								onChange={(e) => handlePriceMinChange(e.target.value)}
-								className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
-								style={{
-									backgroundImage:
-										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-									backgroundPosition: 'right 12px center',
-									backgroundRepeat: 'no-repeat',
-									backgroundSize: '1rem',
-								}}
-							>
-								{priceOptions.map((opt) => (
-									<option
-										key={opt.value}
-										value={opt.value}
-										className='text-gray-700'
-									>
-										{opt.label}
-									</option>
-								))}
-							</select>
-						</div>
+				>
+					<div className='max-w-6xl mx-auto'>
+						<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+							{/* Цена от */}
+							<div>
+								<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
+									Цена от:
+								</label>
+								<select
+									value={priceMin}
+									onChange={(e) => handlePriceMinChange(e.target.value)}
+									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
+									style={{
+										backgroundImage:
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										backgroundPosition: 'right 12px center',
+										backgroundRepeat: 'no-repeat',
+										backgroundSize: '1rem',
+									}}
+								>
+									{priceOptions.map((opt) => (
+										<option
+											key={opt.value}
+											value={opt.value}
+											className='text-gray-700'
+										>
+											{opt.label}
+										</option>
+									))}
+								</select>
+							</div>
 
-						{/* Цена до */}
-						<div>
-							<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
-								Цена до:
-							</label>
-							<select
-								value={priceMax}
-								onChange={(e) => setPriceMax(e.target.value)}
-								className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
-								style={{
-									backgroundImage:
-										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-									backgroundPosition: 'right 12px center',
-									backgroundRepeat: 'no-repeat',
-									backgroundSize: '1rem',
-								}}
-							>
-								{filteredPriceMaxOptions.map((opt) => (
-									<option
-										key={opt.value}
-										value={opt.value}
-										className='text-gray-700'
-									>
-										{opt.label}
-									</option>
-								))}
-							</select>
-						</div>
+							{/* Цена до */}
+							<div>
+								<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
+									Цена до:
+								</label>
+								<select
+									value={priceMax}
+									onChange={(e) => setPriceMax(e.target.value)}
+									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
+									style={{
+										backgroundImage:
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										backgroundPosition: 'right 12px center',
+										backgroundRepeat: 'no-repeat',
+										backgroundSize: '1rem',
+									}}
+								>
+									{filteredPriceMaxOptions.map((opt) => (
+										<option
+											key={opt.value}
+											value={opt.value}
+											className='text-gray-700'
+										>
+											{opt.label}
+										</option>
+									))}
+								</select>
+							</div>
 
-						{/* Год от */}
-						<div>
-							<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
-								Год от:
-							</label>
-							<select
-								value={yearMin}
-								onChange={(e) => handleYearMinChange(e.target.value)}
-								className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
-								style={{
-									backgroundImage:
-										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-									backgroundPosition: 'right 12px center',
-									backgroundRepeat: 'no-repeat',
-									backgroundSize: '1rem',
-								}}
-							>
-								{yearOptions.map((opt) => (
-									<option
-										key={opt.value}
-										value={opt.value}
-										className='text-gray-700'
-									>
-										{opt.label}
-									</option>
-								))}
-							</select>
-						</div>
+							{/* Год от */}
+							<div>
+								<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
+									Год от:
+								</label>
+								<select
+									value={yearMin}
+									onChange={(e) => handleYearMinChange(e.target.value)}
+									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
+									style={{
+										backgroundImage:
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										backgroundPosition: 'right 12px center',
+										backgroundRepeat: 'no-repeat',
+										backgroundSize: '1rem',
+									}}
+								>
+									{yearOptions.map((opt) => (
+										<option
+											key={opt.value}
+											value={opt.value}
+											className='text-gray-700'
+										>
+											{opt.label}
+										</option>
+									))}
+								</select>
+							</div>
 
-						{/* Год до */}
-						<div>
-							<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
-								Год до:
-							</label>
-							<select
-								value={yearMax}
-								onChange={(e) => setYearMax(e.target.value)}
-								className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
-								style={{
-									backgroundImage:
-										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-									backgroundPosition: 'right 12px center',
-									backgroundRepeat: 'no-repeat',
-									backgroundSize: '1rem',
-								}}
-							>
-								{filteredYearMaxOptions.map((opt) => (
-									<option
-										key={opt.value}
-										value={opt.value}
-										className='text-gray-700'
-									>
-										{opt.label}
-									</option>
-								))}
-							</select>
-						</div>
+							{/* Год до */}
+							<div>
+								<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
+									Год до:
+								</label>
+								<select
+									value={yearMax}
+									onChange={(e) => setYearMax(e.target.value)}
+									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
+									style={{
+										backgroundImage:
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										backgroundPosition: 'right 12px center',
+										backgroundRepeat: 'no-repeat',
+										backgroundSize: '1rem',
+									}}
+								>
+									{filteredYearMaxOptions.map((opt) => (
+										<option
+											key={opt.value}
+											value={opt.value}
+											className='text-gray-700'
+										>
+											{opt.label}
+										</option>
+									))}
+								</select>
+							</div>
 
-						{/* Пробег от */}
-						<div>
-							<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
-								Пробег от:
-							</label>
-							<select
-								value={useKmMin}
-								onChange={(e) => handleUseKmMinChange(e.target.value)}
-								className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
-								style={{
-									backgroundImage:
-										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-									backgroundPosition: 'right 12px center',
-									backgroundRepeat: 'no-repeat',
-									backgroundSize: '1rem',
-								}}
-							>
-								{useKmOptions.map((opt) => (
-									<option
-										key={opt.value}
-										value={opt.value}
-										className='text-gray-700'
-									>
-										{opt.label}
-									</option>
-								))}
-							</select>
-						</div>
+							{/* Пробег от */}
+							<div>
+								<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
+									Пробег от:
+								</label>
+								<select
+									value={useKmMin}
+									onChange={(e) => handleUseKmMinChange(e.target.value)}
+									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
+									style={{
+										backgroundImage:
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										backgroundPosition: 'right 12px center',
+										backgroundRepeat: 'no-repeat',
+										backgroundSize: '1rem',
+									}}
+								>
+									{useKmOptions.map((opt) => (
+										<option
+											key={opt.value}
+											value={opt.value}
+											className='text-gray-700'
+										>
+											{opt.label}
+										</option>
+									))}
+								</select>
+							</div>
 
-						{/* Пробег до */}
-						<div>
-							<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
-								Пробег до:
-							</label>
-							<select
-								value={useKmMax}
-								onChange={(e) => setUseKmMax(e.target.value)}
-								className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
-								style={{
-									backgroundImage:
-										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-									backgroundPosition: 'right 12px center',
-									backgroundRepeat: 'no-repeat',
-									backgroundSize: '1rem',
-								}}
-							>
-								{filteredUseKmMaxOptions.map((opt) => (
-									<option
-										key={opt.value}
-										value={opt.value}
-										className='text-gray-700'
-									>
-										{opt.label}
-									</option>
-								))}
-							</select>
-						</div>
+							{/* Пробег до */}
+							<div>
+								<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
+									Пробег до:
+								</label>
+								<select
+									value={useKmMax}
+									onChange={(e) => setUseKmMax(e.target.value)}
+									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
+									style={{
+										backgroundImage:
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										backgroundPosition: 'right 12px center',
+										backgroundRepeat: 'no-repeat',
+										backgroundSize: '1rem',
+									}}
+								>
+									{filteredUseKmMaxOptions.map((opt) => (
+										<option
+											key={opt.value}
+											value={opt.value}
+											className='text-gray-700'
+										>
+											{opt.label}
+										</option>
+									))}
+								</select>
+							</div>
 
-						{/* Топливо */}
-						<div>
-							<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
-								Топливо:
-							</label>
-							<select
-								value={fuel}
-								onChange={(e) => setFuel(e.target.value)}
-								className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
-								style={{
-									backgroundImage:
-										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-									backgroundPosition: 'right 12px center',
-									backgroundRepeat: 'no-repeat',
-									backgroundSize: '1rem',
-								}}
-							>
-								{fuelOptions.map((opt) => (
-									<option
-										key={opt.value}
-										value={opt.value}
-										className='text-gray-700'
-									>
-										{opt.label}
-									</option>
-								))}
-							</select>
-						</div>
+							{/* Топливо */}
+							<div>
+								<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
+									Топливо:
+								</label>
+								<select
+									value={fuel}
+									onChange={(e) => setFuel(e.target.value)}
+									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
+									style={{
+										backgroundImage:
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										backgroundPosition: 'right 12px center',
+										backgroundRepeat: 'no-repeat',
+										backgroundSize: '1rem',
+									}}
+								>
+									{fuelOptions.map((opt) => (
+										<option
+											key={opt.value}
+											value={opt.value}
+											className='text-gray-700'
+										>
+											{opt.label}
+										</option>
+									))}
+								</select>
+							</div>
 
-						{/* Трансмиссия */}
-						<div>
-							<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
-								Трансмиссия:
-							</label>
-							<select
-								value={mission}
-								onChange={(e) => setMission(e.target.value)}
-								className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
-								style={{
-									backgroundImage:
-										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-									backgroundPosition: 'right 12px center',
-									backgroundRepeat: 'no-repeat',
-									backgroundSize: '1rem',
-								}}
-							>
-								{missionOptions.map((opt) => (
-									<option
-										key={opt.value}
-										value={opt.value}
-										className='text-gray-700'
-									>
-										{opt.label}
-									</option>
-								))}
-							</select>
-						</div>
+							{/* Трансмиссия */}
+							<div>
+								<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
+									Трансмиссия:
+								</label>
+								<select
+									value={mission}
+									onChange={(e) => setMission(e.target.value)}
+									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
+									style={{
+										backgroundImage:
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										backgroundPosition: 'right 12px center',
+										backgroundRepeat: 'no-repeat',
+										backgroundSize: '1rem',
+									}}
+								>
+									{missionOptions.map((opt) => (
+										<option
+											key={opt.value}
+											value={opt.value}
+											className='text-gray-700'
+										>
+											{opt.label}
+										</option>
+									))}
+								</select>
+							</div>
 
-						{/* Цвет */}
-						<div>
-							<label className='block text-gray-600 font-semibold tracking-wide'>
-								Цвет:
-							</label>
-							<select
-								value={color}
-								onChange={(e) => setColor(e.target.value)}
-								className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
-								style={{
-									backgroundImage:
-										'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-									backgroundPosition: 'right 12px center',
-									backgroundRepeat: 'no-repeat',
-									backgroundSize: '1rem',
-								}}
-							>
-								{colorOptions.map((opt) => (
-									<option
-										key={opt.value}
-										value={opt.value}
-										className='text-gray-700'
-									>
-										{opt.label}
-									</option>
-								))}
-							</select>
+							{/* Цвет */}
+							<div>
+								<label className='block text-gray-600 font-semibold tracking-wide'>
+									Цвет:
+								</label>
+								<select
+									value={color}
+									onChange={(e) => setColor(e.target.value)}
+									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
+									style={{
+										backgroundImage:
+											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+										backgroundPosition: 'right 12px center',
+										backgroundRepeat: 'no-repeat',
+										backgroundSize: '1rem',
+									}}
+								>
+									{colorOptions.map((opt) => (
+										<option
+											key={opt.value}
+											value={opt.value}
+											className='text-gray-700'
+										>
+											{opt.label}
+										</option>
+									))}
+								</select>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
 
-			{/* Кнопка поиска и сброса фильтров */}
-			<div className='flex flex-wrap gap-6 justify-center'>
-				{/* Кнопка "Поиск" */}
-				<button
-					onClick={searchCars}
-					disabled={!country}
-					className='cursor-pointer px-8 py-3 rounded-full font-semibold bg-gray-100 text-gray-800 hover:bg-gray-200 transition duration-300 ease-in-out shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 border border-gray-300'
-				>
-					🔍 <span>Поиск</span>
-				</button>
-
-				{/* Кнопка "Сбросить фильтры" */}
-				<button
-					onClick={resetFilters}
-					className='cursor-pointer px-8 py-3 rounded-full font-semibold bg-gray-100 text-gray-800 hover:bg-gray-200 transition duration-300 ease-in-out shadow-md flex items-center gap-2 border border-gray-300'
-				>
-					🔄 <span>Сбросить</span>
-				</button>
-			</div>
-
-			{/* Отображение автомобилей */}
-			<div className='mt-6'>
-				{loading ? (
-					<div className='flex justify-center items-center h-32'>
-						<Loader />
-					</div>
-				) : carList.length > 0 ? (
-					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-						{carList
-							.sort((a, b) => (a.year > b.year ? -1 : 1))
-							.map((car, idx) => (
-								<CarListItem car={car} key={idx} />
-							))}
-					</div>
-				) : (
-					<Message text='Автомобили не найдены' icon='❌' />
-				)}
-			</div>
-
-			{/* Пагинация */}
-			{carList.length > 0 && totalPages > 1 && (
-				<div className='mt-6 flex justify-center items-center gap-2'>
+				{/* Кнопка поиска и сброса фильтров */}
+				<div className='flex flex-wrap gap-6 justify-center'>
+					{/* Кнопка "Поиск" */}
 					<button
-						onClick={goToFirstPage}
-						disabled={page === 1}
-						className='cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
+						onClick={searchCars}
+						disabled={!country}
+						className='cursor-pointer px-8 py-3 rounded-full font-semibold bg-gray-100 text-gray-800 hover:bg-gray-200 transition duration-300 ease-in-out shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 border border-gray-300'
 					>
-						&laquo;
-					</button>
-					<button
-						onClick={goToPrevPage}
-						disabled={page === 1}
-						className='px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
-					>
-						&lt;
+						🔍 <span>Поиск</span>
 					</button>
 
-					{getPageNumbers().map((pageNum) => (
+					{/* Кнопка "Сбросить фильтры" */}
+					<button
+						onClick={resetFilters}
+						className='cursor-pointer px-8 py-3 rounded-full font-semibold bg-gray-100 text-gray-800 hover:bg-gray-200 transition duration-300 ease-in-out shadow-md flex items-center gap-2 border border-gray-300'
+					>
+						🔄 <span>Сбросить</span>
+					</button>
+				</div>
+
+				{/* Отображение автомобилей */}
+				<div className='mt-6'>
+					{loading ? (
+						<div className='flex justify-center items-center h-32'>
+							<Loader />
+						</div>
+					) : carList.length > 0 ? (
+						<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+							{carList
+								.sort((a, b) => (a.year > b.year ? -1 : 1))
+								.map((car, idx) => (
+									<CarListItem car={car} key={idx} />
+								))}
+						</div>
+					) : (
+						<Message text='Автомобили не найдены' icon='❌' />
+					)}
+				</div>
+
+				{/* Пагинация */}
+				{carList.length > 0 && totalPages > 1 && (
+					<div className='mt-6 flex justify-center items-center gap-2'>
 						<button
-							key={pageNum}
-							onClick={() => goToPage(pageNum)}
-							className={`cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300
+							onClick={goToFirstPage}
+							disabled={page === 1}
+							className='cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
+						>
+							&laquo;
+						</button>
+						<button
+							onClick={goToPrevPage}
+							disabled={page === 1}
+							className='px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
+						>
+							&lt;
+						</button>
+
+						{getPageNumbers().map((pageNum) => (
+							<button
+								key={pageNum}
+								onClick={() => goToPage(pageNum)}
+								className={`cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300
                     ${
 											pageNum === page
 												? 'bg-yellow-500 text-black scale-110 shadow-lg'
 												: 'bg-gray-800 hover:bg-yellow-400 hover:text-black'
 										}
                 `}
-						>
-							{pageNum}
-						</button>
-					))}
+							>
+								{pageNum}
+							</button>
+						))}
 
-					<button
-						onClick={goToNextPage}
-						disabled={page === totalPages}
-						className='cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
-					>
-						&gt;
-					</button>
-					<button
-						onClick={goToLastPage}
-						disabled={page === totalPages}
-						className='cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
-					>
-						&raquo;
-					</button>
-				</div>
-			)}
-		</div>
+						<button
+							onClick={goToNextPage}
+							disabled={page === totalPages}
+							className='cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
+						>
+							&gt;
+						</button>
+						<button
+							onClick={goToLastPage}
+							disabled={page === totalPages}
+							className='cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
+						>
+							&raquo;
+						</button>
+					</div>
+				)}
+			</div>
+		</>
 	)
 }
 

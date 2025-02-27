@@ -38,11 +38,50 @@ const CarListItem = ({ car }) => {
 	const formattedCarYear =
 		car?.year.split('-')[1] + '/' + car?.year.split('-')[0]
 
+	// Формируем SEO-friendly ссылку
+	console.log(car)
+
+	// Функция для преобразования имени в slug
+	const generateSlug = (name, year) => {
+		// Убираем [скобки] и переводим в нижний регистр
+		let cleanName = name
+			.replace(/\[.*?\]/g, '')
+			.toLowerCase()
+			.replace(/클래스/g, '') // Удаляем "클래스"
+			.replace(/x[0-9]+/gi, '') // Удаляем X247 или другие серии
+			.replace(/\s+/g, '-') // Пробелы заменяем на дефисы
+
+		// Заменяем корейские марки на английские
+		const brandTranslations = {
+			벤츠: 'benz',
+			현대: 'hyundai',
+			기아: 'kia',
+			제네시스: 'genesis',
+			쉐보레: 'chevrolet',
+			르노코리아: 'renault-korea',
+			KG모빌리티: 'kg-mobility',
+		}
+		Object.keys(brandTranslations).forEach((kor) => {
+			cleanName = cleanName.replace(
+				new RegExp(kor, 'g'),
+				brandTranslations[kor],
+			)
+		})
+
+		// Берем только год из year
+		const carYear = year.split('-')[0]
+
+		// Финальный slug
+		return `${cleanName}-${carYear}`
+	}
+
+	const slug = generateSlug(car.name, car.year)
+
 	return (
 		<div className='relative bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg duration-300 border border-gray-300'>
 			{/* Блок изображения */}
 			<Link
-				to={`/car/${carId}`}
+				to={`/catalog/${slug}/${carId}`}
 				target='_blank'
 				rel='noopener noreferrer'
 				className='block'
@@ -85,7 +124,7 @@ const CarListItem = ({ car }) => {
 						{formattedPrice} ₩
 					</span>
 					<Link
-						to={`/car/${carId}`}
+						to={`/catalog/${slug}/${carId}`}
 						target='_blank'
 						className='px-5 py-2 bg-red-500 text-white 
 				text-sm font-semibold rounded-md transition-opacity 
