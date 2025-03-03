@@ -18,12 +18,14 @@ const HeroSection = () => {
 
 			{/* Контент */}
 			<div className='relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4'>
-				<h1 className='text-4xl md:text-6xl font-bold mb-4'>
-					Продажа авто на внутреннем рынке Южной Кореи Экспорт авто в страны СНГ
-					без посредников
-				</h1>
-				<p className='text-lg md:text-2xl mb-8'>
-					Надёжно. Быстро. Профессионально.
+				<h1 className='text-5xl md:text-6xl font-black mb-4'>AVTOVITA</h1>
+				<p className='text-lg md:text-2xl mb-8 md:w-1/2'>
+					Уже много лет занимается продажами автомобилей на внутренем рынке
+					Южной Кореи и поставками автомобилей из Южной Кореи. <br />
+					<br /> Отточенная до мелочей система доставки и многолетний опыт
+					позволяют нам доставить автомобиль в сжатые сроки. Мы не берем никаких
+					дополнительных или скрытых комиссий за наши услуги, и в договоре у нас
+					нет мелкого шрифта
 				</p>
 				<Link
 					to='/catalog'
