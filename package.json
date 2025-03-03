@@ -14,6 +14,7 @@
 		"@heroicons/react": "^2.2.0",
 		"@tailwindcss/vite": "^4.0.6",
 		"axios": "^1.7.9",
+		"framer-motion": "^12.4.7",
 		"https-proxy-agent": "^7.0.6",
 		"prop-types": "^15.8.1",
 		"react": "^19.0.0",
