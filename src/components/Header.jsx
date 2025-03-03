@@ -55,7 +55,7 @@ const Header = () => {
 					<p className='text-white flex justify-center items-center'>
 						<img
 							className='h-6 p-0 m-0'
-							src='https://scontent-gmp1-1.xx.fbcdn.net/v/t39.30808-6/410289674_6799485666826883_5977297296240849656_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=TsVoir1CQy8Q7kNvgEdSxIW&_nc_oc=AdhOheLSInKLdlsutWv23lp9AkOrDBlVYvN2bBvu7ACtKoDfS8HsmftL56KEZZUPKKA&_nc_zt=23&_nc_ht=scontent-gmp1-1.xx&_nc_gid=AzuL1pYGkLsqE05FNTuMbUE&oh=00_AYBp62JXpmtxUkPFwEY_3nKUxcg59wVMPftajMwx23JjbA&oe=67C58198'
+							src='https://scontent.fala6-1.fna.fbcdn.net/v/t39.30808-6/410289674_6799485666826883_5977297296240849656_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=znrMak7-PVcQ7kNvgEx7q8p&_nc_oc=Adh_xXiHZN4yrdJlwxNx4AVsk66ZiXFW9ys8j3GXxfPfy5L7frCJm3ka7KrUoMb1--w&_nc_zt=23&_nc_ht=scontent.fala6-1.fna&_nc_gid=Alo0dJoyjZoM3VCQcme4W7Z&oh=00_AYBnCC-1mZvoU6TIGMu6-2DuLZU9M9fQHw4Hpn5NYawbvQ&oe=67CB7058'
 						/>
 						<span className='flex flex-col items-start ml-2'>
 							Цой Юрий:{' '}
@@ -85,7 +85,7 @@ const Header = () => {
 					</p>
 					<p className='text-white flex justify-center items-center'>
 						<img
-							src='https://scontent-gmp1-1.xx.fbcdn.net/v/t39.30808-6/469034277_2590938921117370_4792914642707705055_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=107&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=9FD8udPaz9YQ7kNvgHb8iXb&_nc_oc=AdjpbvdNfbEvAwPweSNy_F9qyxtzAFEa1j_GC7ocqAaFFvTIQJwmboeDepaPhyefS2A&_nc_zt=23&_nc_ht=scontent-gmp1-1.xx&_nc_gid=ApjZxDnGPAYXfONaKhnrFuM&oh=00_AYAlJge3TJPNkIxY7CWdaQPHIxaql8YlFmGSlW_zfIvZ-w&oe=67C58A1A'
+							src='https://scontent.fala6-1.fna.fbcdn.net/v/t39.30808-6/469034277_2590938921117370_4792914642707705055_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=107&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=n83IjPgXrjMQ7kNvgHkRYbZ&_nc_oc=AdhhExsSw-4u6H6td3iFnV70B08T03X0siOxfJwKiHtzPc9S38PUktHehWE69YgAC7s&_nc_zt=23&_nc_ht=scontent.fala6-1.fna&_nc_gid=AtwDqcCXeYzSiDB2sJJhZGp&oh=00_AYBi7IK2zob1g6KOEnM0ID6uF8Q3NkMM2jTbRTU-V5jzmQ&oe=67CB78DA'
 							alt=''
 							className='h-6 p-0 m-0'
 						/>
