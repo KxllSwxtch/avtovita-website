@@ -1,6 +1,7 @@
+import Loader from './Loader'
 import Header from './Header'
 import Footer from './Footer'
-import Loader from './Loader'
+import LogoLoader from './LogoLoader'
 import HeroSection from './HeroSection'
 import CarListItem from './CarListItem'
 import Message from './Message'
@@ -14,7 +15,7 @@ import Calculator from './Calculator'
 export {
 	Header,
 	Footer,
-	Loader,
+	LogoLoader,
 	HeroSection,
 	CarListItem,
 	Message,
@@ -24,4 +25,5 @@ export {
 	WhyUsSection,
 	ImageSlider,
 	Calculator,
+	Loader,
 }

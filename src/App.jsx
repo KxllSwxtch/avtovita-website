@@ -1,22 +1,31 @@
-import { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
+import { Routes, Route, useLocation } from 'react-router-dom'
 
 // Local imports
-import { Header, Footer, Loader } from './components'
+import { Header, Footer, Loader, LogoLoader } from './components'
 import { Home, About, Catalog, CarDetails, Contacts } from './pages'
 
 const App = () => {
 	const [loading, setLoading] = useState(true)
 
-	const handleLoadComplete = () => {
-		setLoading(false) // Убираем лоадер после загрузки
-	}
+	// Определяем, на какой странице находится пользователь
+	const location = useLocation()
+
+	useEffect(() => {
+		// Показываем лоадер при каждом изменении маршрута
+		setLoading(true)
+		const timeout = setTimeout(() => {
+			setLoading(false) // Скрываем лоадер через 2 секунды
+		}, 2000)
+
+		return () => clearTimeout(timeout)
+	}, [location])
 
 	return (
-		<Router>
+		<>
 			<AnimatePresence>
-				{loading && <Loader onComplete={handleLoadComplete} />}
+				{loading && (location.pathname === '/' ? <LogoLoader /> : <Loader />)}
 			</AnimatePresence>
 
 			{!loading && (
@@ -42,7 +51,7 @@ const App = () => {
 					<Footer />
 				</div>
 			)}
-		</Router>
+		</>
 	)
 }
 
