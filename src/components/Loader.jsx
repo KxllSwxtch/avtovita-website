@@ -22,14 +22,14 @@ const Loader = ({ onComplete }) => {
 
 	return isVisible ? (
 		<motion.div
-			className='fixed inset-0 flex items-center justify-center bg-[#1A1A1A] z-50'
+			className='fixed inset-0 flex items-center justify-center bg-[#b8b8b8] z-50'
 			variants={loaderVariants}
 			initial='initial'
 			animate='initial'
 			exit='exit'
 		>
 			<motion.img
-				src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1740639186/avtovita/Logo2.png'
+				src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1741075526/avtovita/logo_transparent.png'
 				alt='Loading Logo'
 				className='w-32 md:w-48'
 				initial={{ opacity: 0, scale: 0.8 }}
