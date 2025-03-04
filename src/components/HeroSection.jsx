@@ -34,7 +34,7 @@ const HeroSection = () => {
 			{/* Контент */}
 			<div className='relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4'>
 				{/* Логотип */}
-				{imageLoaded ? (
+				{/* {imageLoaded ? (
 					<motion.img
 						src={logoUrl}
 						alt='AVTOVITA Logo'
@@ -48,7 +48,7 @@ const HeroSection = () => {
 					<div className='w-32 md:w-40 mb-4 h-16 flex items-center justify-center'>
 						<div className='w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin'></div>
 					</div>
-				)}
+				)} */}
 
 				{/* Заголовок с эффектом появления и увеличения */}
 				<motion.h1

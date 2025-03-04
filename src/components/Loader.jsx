@@ -1,16 +1,43 @@
-const Loader = () => {
-	return (
-		<div className='fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 z-50'>
-			<div className='relative w-20 h-20 animate-pulse'>
-				<div className='absolute inset-0 w-full h-full border-4 border-[#a2006d] border-t-transparent border-solid rounded-full animate-[spin_1.5s_linear_infinite]'></div>
-				{/* <div className='absolute inset-0 w-3/4 h-3/4 border-4 border-[#e00024] border-t-transparent border-solid rounded-full animate-[spin_2s_reverse_linear_infinite]'></div>
-				<div className='absolute inset-0 w-1/2 h-1/2 border-4 border-[#f4e4d1] border-t-transparent border-solid rounded-full animate-[spin_1.5s_reverse_linear_infinite]'></div>
-				<div className='absolute inset-0 flex items-center justify-center'>
-					<div className='w-4 h-4 bg-[#e00024] rounded-full animate-ping'></div> */}
-				{/* </div> */}
-			</div>
-		</div>
-	)
+import { motion } from 'framer-motion'
+import { useEffect, useState } from 'react'
+
+const Loader = ({ onComplete }) => {
+	const [isVisible, setIsVisible] = useState(true)
+
+	useEffect(() => {
+		// Симулируем загрузку (например, 2 секунды)
+		const timeout = setTimeout(() => {
+			setIsVisible(false)
+			onComplete() // Сообщаем, что загрузка завершена
+		}, 2000)
+
+		return () => clearTimeout(timeout)
+	}, [onComplete])
+
+	// Анимация исчезновения
+	const loaderVariants = {
+		initial: { opacity: 1 },
+		exit: { opacity: 0, transition: { duration: 0.8, ease: 'easeOut' } },
+	}
+
+	return isVisible ? (
+		<motion.div
+			className='fixed inset-0 flex items-center justify-center bg-[#1A1A1A] z-50'
+			variants={loaderVariants}
+			initial='initial'
+			animate='initial'
+			exit='exit'
+		>
+			<motion.img
+				src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1740639186/avtovita/Logo2.png'
+				alt='Loading Logo'
+				className='w-32 md:w-48'
+				initial={{ opacity: 0, scale: 0.8 }}
+				animate={{ opacity: 1, scale: 1 }}
+				transition={{ duration: 1, ease: 'easeOut' }}
+			/>
+		</motion.div>
+	) : null
 }
 
 export default Loader
