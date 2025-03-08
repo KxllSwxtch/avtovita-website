@@ -44,7 +44,7 @@ const Header = () => {
 				{/* Логотип */}
 				<Link to='/' className='flex items-center'>
 					<img
-						src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1740639186/avtovita/Logo.png'
+						src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1741410943/avtovita/logo_transparent2.png'
 						alt='AVTOVITA Logo'
 						className='h-22 md:h-26'
 					/>
