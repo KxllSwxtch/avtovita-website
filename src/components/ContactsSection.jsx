@@ -19,7 +19,9 @@ const ContactsSection = () => {
 					{/* Виталий */}
 					<div className='p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-gray-200'>
 						<FaPhone className='text-red-400 text-4xl mb-4' />
-						<h3 className='text-xl font-semibold text-gray-800'>Виталий</h3>
+						<h3 className='text-xl font-semibold text-gray-800'>
+							Югай Виталий
+						</h3>
 						<a
 							href='tel:+821093441782'
 							className='text-gray-600 mt-2 hover:text-red-400 transition duration-200'
@@ -63,7 +65,7 @@ const ContactsSection = () => {
 				</div>
 
 				{/* Соцсети */}
-				<div className='mt-10 flex justify-center gap-6'>
+				{/* <div className='mt-10 flex justify-center gap-6'>
 					<a
 						target='_blank'
 						href='https://wa.me/821012345678'
@@ -92,7 +94,7 @@ const ContactsSection = () => {
 					>
 						<FaYoutube />
 					</a>
-				</div>
+				</div> */}
 			</div>
 		</section>
 	)

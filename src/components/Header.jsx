@@ -44,7 +44,7 @@ const Header = () => {
 				{/* Логотип */}
 				<Link to='/' className='flex items-center'>
 					<img
-						src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1740639186/avtovita/Logo2.png'
+						src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1740639186/avtovita/Logo.png'
 						alt='AVTOVITA Logo'
 						className='h-22 md:h-26'
 					/>
@@ -55,7 +55,7 @@ const Header = () => {
 					<p className='text-white flex justify-center items-center'>
 						<img
 							className='h-6 p-0 m-0'
-							src='https://scontent.fala6-1.fna.fbcdn.net/v/t39.30808-6/410289674_6799485666826883_5977297296240849656_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=znrMak7-PVcQ7kNvgEx7q8p&_nc_oc=Adh_xXiHZN4yrdJlwxNx4AVsk66ZiXFW9ys8j3GXxfPfy5L7frCJm3ka7KrUoMb1--w&_nc_zt=23&_nc_ht=scontent.fala6-1.fna&_nc_gid=Alo0dJoyjZoM3VCQcme4W7Z&oh=00_AYBnCC-1mZvoU6TIGMu6-2DuLZU9M9fQHw4Hpn5NYawbvQ&oe=67CB7058'
+							src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1741407212/avtovita/yurii.jpg'
 						/>
 						<span className='flex flex-col items-start ml-2'>
 							Цой Юрий:{' '}
@@ -69,7 +69,7 @@ const Header = () => {
 					</p>
 					<p className='text-white flex justify-center items-center'>
 						<img
-							src='https://scontent-gmp1-1.xx.fbcdn.net/v/t1.6435-9/90371534_935254923559248_3849896752991698944_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=-qH5xYND5sIQ7kNvgHky3Kn&_nc_oc=AdhRVMA18XztnpmvcJyKmcipVhdMkZP7sXeEkyR_p2fh4_tEERUkvPYNWQWa7-wzpiA&_nc_zt=23&_nc_ht=scontent-gmp1-1.xx&_nc_gid=A8CYWb7bgfKi7bZBFDcaLZ8&oh=00_AYD1xRuL_tpLZGEN1ZY6q9yRZnLMzgvlqFCksG8t2DrtBg&oe=67E74728'
+							src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1741407263/avtovita/yevgenii.jpg'
 							alt=''
 							className='h-6 p-0 m-0'
 						/>
@@ -85,7 +85,7 @@ const Header = () => {
 					</p>
 					<p className='text-white flex justify-center items-center'>
 						<img
-							src='https://scontent.fala6-1.fna.fbcdn.net/v/t39.30808-6/469034277_2590938921117370_4792914642707705055_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=107&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=n83IjPgXrjMQ7kNvgHkRYbZ&_nc_oc=AdhhExsSw-4u6H6td3iFnV70B08T03X0siOxfJwKiHtzPc9S38PUktHehWE69YgAC7s&_nc_zt=23&_nc_ht=scontent.fala6-1.fna&_nc_gid=AtwDqcCXeYzSiDB2sJJhZGp&oh=00_AYBi7IK2zob1g6KOEnM0ID6uF8Q3NkMM2jTbRTU-V5jzmQ&oe=67CB78DA'
+							src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1741407128/avtovita/vitalik.jpg'
 							alt=''
 							className='h-6 p-0 m-0'
 						/>

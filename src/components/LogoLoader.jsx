@@ -29,9 +29,9 @@ const Loader = ({ onComplete }) => {
 			exit='exit'
 		>
 			<motion.img
-				src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1741075526/avtovita/logo_transparent.png'
+				src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1741075526/avtovita/logo.png'
 				alt='Loading Logo'
-				className='w-32 md:w-48'
+				className='w-50 md:w-100'
 				initial={{ opacity: 0, scale: 0.8 }}
 				animate={{ opacity: 1, scale: 1 }}
 				transition={{ duration: 1, ease: 'easeOut' }}

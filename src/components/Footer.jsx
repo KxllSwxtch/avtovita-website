@@ -1,7 +1,5 @@
 import {
-	FaPhone,
 	FaEnvelope,
-	FaMapMarkerAlt,
 	FaWhatsapp,
 	FaTelegram,
 	FaInstagram,
@@ -10,12 +8,12 @@ import {
 
 const Footer = () => {
 	return (
-		<footer className='bg-gray-50 text-gray-700 py-12 px-6 border-t border-gray-200'>
+		<footer className='bg-gray-300  text-gray-700 py-12 px-6 border-t border-gray-200'>
 			<div className='max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8'>
 				{/* Логотип и описание */}
 				<div className='text-center md:text-left flex flex-col items-center md:items-start'>
 					<img
-						src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1740102951/avtovita/logo_transparent.png'
+						src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1741407464/avtovita/logo_transparent.png'
 						alt='AvtoVita Logo'
 						className='w-32'
 					/>
@@ -70,7 +68,7 @@ const Footer = () => {
 				<div className='text-center md:text-left'>
 					<h2 className='text-lg font-bold text-gray-800 mb-3'>Контакты</h2>
 					<p className='text-sm text-gray-600'>
-						Виталий:{' '}
+						Югай Виталий:{' '}
 						<a
 							href='tel:+821093441782'
 							className='text-gray-600 hover:text-red-500 transition'
