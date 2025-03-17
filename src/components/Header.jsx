@@ -24,7 +24,7 @@ const Header = () => {
 	return (
 		<header
 			className={`
-					bg-[#b8b8b8] text-white shadow-md fixed top-0 left-0 w-full z-50 transition-transform duration-500 pb-2 pt-2
+					bg-white text-gray-500 shadow-md fixed top-0 left-0 w-full z-50 transition-transform duration-500 pb-2 pt-2
 					${
 						location.pathname === '/'
 							? isVisible
@@ -36,7 +36,7 @@ const Header = () => {
 		>
 			<div>
 				{/* Номер факса */}
-				<p className='text-white absolute right-5 top-2 text-xs hidden md:block'>
+				<p className='text-gray-800 absolute right-5 top-2 text-xs hidden md:block'>
 					Факс: <a className='text-red-500 hover:underline'>031-8084-7144</a>
 				</p>
 			</div>
@@ -52,7 +52,7 @@ const Header = () => {
 
 				{/* Контакты посередине */}
 				<div className='flex flex-col md:flex-row items-center text-center space-y-1 md:space-y-0 md:space-x-10 text-xs md:text-sm mr-5 md:mr-0'>
-					<p className='text-white flex justify-center items-center'>
+					<p className='text-gray-800 flex justify-center items-center'>
 						<img
 							className='h-6 p-0 m-0'
 							src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1741407212/avtovita/yurii.jpg'
@@ -67,7 +67,7 @@ const Header = () => {
 							</a>
 						</span>
 					</p>
-					<p className='text-white flex justify-center items-center'>
+					<p className='text-gray-800 flex justify-center items-center'>
 						<img
 							src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1741407263/avtovita/yevgenii.jpg'
 							alt=''
@@ -83,7 +83,7 @@ const Header = () => {
 							</a>
 						</span>
 					</p>
-					<p className='text-white flex justify-center items-center'>
+					<p className='text-gray-800 flex justify-center items-center'>
 						<img
 							src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1741407128/avtovita/vitalik.jpg'
 							alt=''
@@ -100,7 +100,7 @@ const Header = () => {
 						</span>
 					</p>
 
-					{/* <p className='text-white'>
+					{/* <p className='text-gray-800'>
 						Цой Евгений:{' '}
 						<a
 							href='tel:+821044168778'
@@ -115,19 +115,19 @@ const Header = () => {
 				<nav className='hidden md:flex gap-6 text-lg font-medium'>
 					<Link
 						to='/catalog'
-						className='text-white hover:text-red-500 transition duration-300'
+						className='text-gray-800 hover:text-red-500 transition duration-300'
 					>
 						Каталог
 					</Link>
 					<Link
 						to='/about'
-						className='text-white hover:text-red-500 transition duration-300'
+						className='text-gray-800 hover:text-red-500 transition duration-300'
 					>
 						О нас
 					</Link>
 					<Link
 						to='/contacts'
-						className='text-white hover:text-red-500 transition duration-300'
+						className='text-gray-800 hover:text-red-500 transition duration-300'
 					>
 						Контакты
 					</Link>
@@ -137,7 +137,7 @@ const Header = () => {
 				<div className='md:hidden'>
 					<button
 						onClick={() => setMenuOpen(!menuOpen)}
-						className='text-white focus:outline-none cursor-pointer'
+						className='text-gray-800 focus:outline-none cursor-pointer'
 					>
 						<FaBars size={26} />
 					</button>
