@@ -614,45 +614,42 @@ const Catalog = () => {
 			</Helmet>
 			{/* Остальная часть компонента */}
 
-			<div className='p-4 mt-30 text-white min-h-screen'>
+			<div className='p-4 mt-35 md:mt-40 text-white min-h-screen'>
 				{/* Фильтры */}
 				<>
-					{/* Кнопки для выбора страны */}
-					<div className='flex justify-center gap-4 mb-6'>
-						<button
-							onClick={() => handleCountryClick('kor')}
-							className={`
-								cursor-pointer px-6 py-3 text-lg font-semibold rounded-full shadow-md transition-all duration-300 border-2
-								${
+					<div className='flex justify-center mb-6'>
+						<div className='relative flex items-center bg-gradient-to-r from-gray-100 to-gray-200 rounded-full w-[270px] h-[52px] shadow-inner px-1'>
+							<div
+								className={`absolute top-[4px] left-[4px] w-[130px] h-[44px] bg-white rounded-full shadow-md transition-transform duration-300 ease-in-out z-0 ${
 									selectedCategory === 'kor'
-										? 'bg-white border-red-500 text-red-500 scale-105 shadow-lg'
-										: 'bg-gray-100 border-gray-300 text-gray-800 hover:bg-white hover:border-red-500'
-								}
-								active:scale-95
-							`}
-						>
-							Корейские
-						</button>
-
-						<button
-							onClick={() => handleCountryClick('foreign')}
-							className={`
-								cursor-pointer px-6 py-3 text-lg font-semibold rounded-full shadow-md transition-all duration-300 border-2
-								${
+										? 'translate-x-0'
+										: 'translate-x-[132px]'
+								}`}
+							></div>
+							<button
+								onClick={() => handleCountryClick('kor')}
+								className={`w-[130px] h-[44px] flex items-center justify-center gap-2 rounded-full transition-all duration-300 text-base font-semibold z-10 relative ${
+									selectedCategory === 'kor' ? 'text-red-600' : 'text-gray-600'
+								}`}
+							>
+								🇰🇷 Корейские
+							</button>
+							<button
+								onClick={() => handleCountryClick('foreign')}
+								className={`w-[130px] h-[44px] flex items-center justify-center gap-2 rounded-full transition-all duration-300 text-base font-semibold z-10 relative ${
 									selectedCategory === 'foreign'
-										? 'bg-white border-red-500 text-red-500 scale-105 shadow-lg'
-										: 'bg-gray-100 border-gray-300 text-gray-800 hover:bg-white hover:border-red-500'
-								}
-								active:scale-95
-							`}
-						>
-							Иномарки
-						</button>
+										? 'text-red-600'
+										: 'text-gray-600'
+								}`}
+							>
+								🌍 Иномарки
+							</button>
+						</div>
 					</div>
 
 					{/* Если страна выбрана, показываем основные фильтры */}
 					{country && (
-						<div className='shadow-lg p-8 md:p-10 max-w-6xl mx-auto flex flex-col md:flex-row md:gap-6 gap-4'>
+						<div className='shadow-lg md:p-10 max-w-6xl mx-auto flex flex-col md:flex-row md:gap-6 gap-4'>
 							<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
 								{/* Производитель */}
 								<div className='flex-1'>
@@ -843,19 +840,19 @@ const Catalog = () => {
 				</>
 
 				{/* Кнопка показа/скрытия */}
-				<div className='text-center mt-5'>
+				<div className='text-center'>
 					<button
 						onClick={toggleFilters}
 						className={`
-						m-auto cursor-pointer flex items-center justify-center px-4 py-2 md:px-6 md:py-3 font-semibold shadow-sm transition-all duration-300
-						border-2 text-base md:text-lg rounded-lg w-full md:w-auto
-						${
-							isFiltersOpen
-								? 'bg-gray-200 text-gray-800 border-gray-300 scale-105 shadow-md'
-								: 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 hover:text-gray-800 hover:border-gray-400'
-						}
-						active:scale-95
-					`}
+							mt-5 m-auto cursor-pointer flex items-center justify-center px-4 py-2 md:px-6 md:py-3 font-semibold shadow-sm transition-all duration-300
+							border-2 text-base md:text-lg rounded-lg w-full md:w-auto
+							${
+								isFiltersOpen
+									? 'bg-gray-200 text-gray-800 border-gray-300 scale-105 shadow-md'
+									: 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 hover:text-gray-800 hover:border-gray-400'
+							}
+							active:scale-95
+						`}
 					>
 						<span>
 							{isFiltersOpen ? 'Скрыть Доп. фильтры' : 'Показать Доп. фильтры'}
@@ -872,7 +869,7 @@ const Catalog = () => {
 							? 'max-h-[1000px] opacity-100 scale-100'
 							: 'max-h-0 opacity-0 scale-95'
 					}
-					 text-gray-800 p-6
+					 text-gray-800 py-4
 				`}
 				>
 					<div className='max-w-6xl mx-auto'>
@@ -1165,7 +1162,8 @@ const Catalog = () => {
 				<div className='mt-6'>
 					{loading ? (
 						<div className='flex justify-center items-center h-32'>
-							<Loader />
+							{/* <Loader /> */}
+							<p>Загрузка...</p>
 						</div>
 					) : carList.length > 0 ? (
 						<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
