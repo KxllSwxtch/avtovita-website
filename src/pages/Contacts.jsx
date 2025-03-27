@@ -8,9 +8,9 @@ import {
 
 const Contacts = () => {
 	return (
-		<div className='bg-gray-50 text-gray-800 mt-20'>
+		<div className='bg-gray-50 text-gray-800 mt-30'>
 			{/* Заголовок */}
-			<section className='py-16 px-6 text-center'>
+			<section className='py-10 px-6 text-center'>
 				<h2 className='text-5xl font-bold text-red-600 mb-6'>
 					Свяжитесь с нами
 				</h2>
@@ -37,7 +37,7 @@ const Contacts = () => {
 							<div className='space-y-2 text-lg text-gray-800'>
 								<p className='flex items-center gap-2'>
 									<FaMapMarkerAlt className='text-red-600' /> Republic of Korea,
-									경기 안산시 단원구 풍전로 53
+									경기 안산시 단원구 풍전로 53, 451호 The중고차
 								</p>
 								<p className='flex items-center gap-2'>
 									📞 <span className='font-semibold'>Цой Юрий:</span>{' '}
@@ -151,10 +151,7 @@ const Contacts = () => {
 			</section>
 
 			{/* Карта */}
-			<section className='py-16 px-6'>
-				<h3 className='text-4xl font-semibold text-red-600 text-center mb-8'>
-					Наше местоположение
-				</h3>
+			<section className='px-6'>
 				<div className='max-w-6xl mx-auto rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300'>
 					<iframe
 						title='Google map'
