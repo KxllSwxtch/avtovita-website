@@ -23,55 +23,59 @@ const Contacts = () => {
 			<section className='py-16 px-6'>
 				<div className='max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12'>
 					{/* Контактная информация */}
-					<div className='bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300'>
-						<h3 className='text-3xl font-semibold text-red-600 mb-6'>
-							Контактная информация
-						</h3>
-						<div className='space-y-6'>
-							{[
-								{
-									name: 'Цой Юрий',
-									number: '+82 10-7609-7787',
-									photoUrl:
-										'https://scontent-gmp1-1.xx.fbcdn.net/v/t39.30808-6/410289674_6799485666826883_5977297296240849656_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=TsVoir1CQy8Q7kNvgEdSxIW&_nc_oc=AdhOheLSInKLdlsutWv23lp9AkOrDBlVYvN2bBvu7ACtKoDfS8HsmftL56KEZZUPKKA&_nc_zt=23&_nc_ht=scontent-gmp1-1.xx&_nc_gid=AzuL1pYGkLsqE05FNTuMbUE&oh=00_AYBp62JXpmtxUkPFwEY_3nKUxcg59wVMPftajMwx23JjbA&oe=67C58198',
-								},
-								{
-									name: 'Ким Евгений',
-									number: '+82 10-4225-2627',
-									photoUrl:
-										'https://scontent-gmp1-1.xx.fbcdn.net/v/t1.6435-9/90371534_935254923559248_3849896752991698944_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=-qH5xYND5sIQ7kNvgHky3Kn&_nc_oc=AdhRVMA18XztnpmvcJyKmcipVhdMkZP7sXeEkyR_p2fh4_tEERUkvPYNWQWa7-wzpiA&_nc_zt=23&_nc_ht=scontent-gmp1-1.xx&_nc_gid=A8CYWb7bgfKi7bZBFDcaLZ8&oh=00_AYD1xRuL_tpLZGEN1ZY6q9yRZnLMzgvlqFCksG8t2DrtBg&oe=67E74728',
-								},
-								{
-									name: 'Югай Виталий',
-									number: '+82 10-9344-1782',
-									photoUrl:
-										'https://scontent-gmp1-1.xx.fbcdn.net/v/t39.30808-6/469034277_2590938921117370_4792914642707705055_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=107&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=9FD8udPaz9YQ7kNvgHb8iXb&_nc_oc=AdjpbvdNfbEvAwPweSNy_F9qyxtzAFEa1j_GC7ocqAaFFvTIQJwmboeDepaPhyefS2A&_nc_zt=23&_nc_ht=scontent-gmp1-1.xx&_nc_gid=ApjZxDnGPAYXfONaKhnrFuM&oh=00_AYAlJge3TJPNkIxY7CWdaQPHIxaql8YlFmGSlW_zfIvZ-w&oe=67C58A1A',
-								},
-								// { name: 'Цой Евгений', number: '+82 10-4416-8778' },
-							].map((contact, index) => (
-								<p key={index} className='text-lg flex items-center'>
-									<img
-										src={contact.photoUrl}
-										className='h-20 mr-2 rounded-md'
-										alt=''
-									/>
-									<span className='font-semibold text-gray-800 flex flex-col'>
-										{contact.name}:{' '}
-										<a
-											href={`tel:${contact.number}`}
-											className='text-red-600 hover:text-red-500 transition'
-										>
-											{contact.number}
-										</a>
-									</span>
+					<div className='bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 space-y-10'>
+						{/* Главный офис */}
+						<div>
+							<h3 className='text-3xl font-semibold text-red-600 mb-4'>
+								Головной офис
+							</h3>
+							<img
+								src='https://res.cloudinary.com/dt0nkqowc/image/upload/v1743116189/AvtoVita/avtodome_logo_wuwh07.jpg'
+								alt='Главный офис'
+								className='w-full h-auto rounded-lg mb-4'
+							/>
+							<div className='space-y-2 text-lg text-gray-800'>
+								<p className='flex items-center gap-2'>
+									<FaMapMarkerAlt className='text-red-600' /> Republic of Korea,
+									경기 안산시 단원구 풍전로 53
 								</p>
-							))}
-
-							<div className='flex items-start gap-4 mt-6'>
-								<FaMapMarkerAlt className='text-red-600 text-3xl mt-1' />
-								<div>
-									<p className='text-lg font-semibold text-gray-800'>Адрес</p>
-									<p className='text-gray-600'>경기 안산시 단원구 풍전로 53</p>
+								<p className='flex items-center gap-2'>
+									📞 <span className='font-semibold'>Цой Юрий:</span>{' '}
+									<a
+										href='tel:+821076097787'
+										className='text-red-600 hover:underline'
+									>
+										+82 (10)-7609-7787
+									</a>
+								</p>
+								<p className='flex items-center gap-2'>
+									📞 <span className='font-semibold'>Ким Евгений:</span>{' '}
+									<a
+										href='tel:+821042252627'
+										className='text-red-600 hover:underline'
+									>
+										+82 (10)-4225-2627
+									</a>
+								</p>
+								<p className='flex items-center gap-2'>
+									📞 <span className='font-semibold'>Югай Виталий:</span>{' '}
+									<a
+										href='tel:+821093441782'
+										className='text-red-600 hover:underline'
+									>
+										+82 (10)-9344-1782
+									</a>
+								</p>
+								<div className='flex gap-4 text-2xl mt-2'>
+									<a href='#' className='text-blue-400 hover:text-blue-500'>
+										<FaTelegram />
+									</a>
+									<a href='#' className='text-green-500 hover:text-green-600'>
+										<FaWhatsapp />
+									</a>
+									<a href='#' className='text-pink-500 hover:text-pink-600'>
+										<FaInstagram />
+									</a>
 								</div>
 							</div>
 						</div>
@@ -115,30 +119,34 @@ const Contacts = () => {
 					Мы в соцсетях
 				</h3>
 				<div className='flex justify-center gap-8 text-4xl'>
-					<a
+					{/* <a
 						href='https://wa.me/821093441782'
 						className='text-green-500 hover:text-green-600 transition-transform transform hover:scale-110'
 					>
 						<FaWhatsapp />
-					</a>
+					</a> */}
 					<a
+						target='_blank'
+						rel='noopener noreferer'
 						href='https://t.me/avtovita'
 						className='text-blue-400 hover:text-blue-500 transition-transform transform hover:scale-110'
 					>
 						<FaTelegram />
 					</a>
 					<a
+						target='_blank'
+						rel='noopener noreferer'
 						href='https://instagram.com/avtovita'
 						className='text-pink-500 hover:text-pink-600 transition-transform transform hover:scale-110'
 					>
 						<FaInstagram />
 					</a>
-					<a
+					{/* <a
 						href='https://youtube.com/avtovita'
 						className='text-red-600 hover:text-red-700 transition-transform transform hover:scale-110'
 					>
 						<FaYoutube />
-					</a>
+					</a> */}
 				</div>
 			</section>
 

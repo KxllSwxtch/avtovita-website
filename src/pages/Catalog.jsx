@@ -619,84 +619,35 @@ const Catalog = () => {
 				<>
 					{/* Кнопки для выбора страны */}
 					<div className='flex justify-center gap-4 mb-6'>
-						{/* Корейские */}
-						<div className='flex flex-col items-center'>
-							<button
-								onClick={() => handleCountryClick('kor')}
-								className={`
-								cursor-pointer flex items-center justify-center gap-2 px-6 py-3 text-lg font-semibold rounded-full shadow-md transition-all duration-300
-								border-2 w-40 h-40 overflow-hidden
+						<button
+							onClick={() => handleCountryClick('kor')}
+							className={`
+								cursor-pointer px-6 py-3 text-lg font-semibold rounded-full shadow-md transition-all duration-300 border-2
 								${
 									selectedCategory === 'kor'
-										? 'bg-white border-red-500 scale-105 shadow-lg'
-										: 'bg-gray-100 border-gray-300 hover:bg-white hover:border-red-500'
+										? 'bg-white border-red-500 text-red-500 scale-105 shadow-lg'
+										: 'bg-gray-100 border-gray-300 text-gray-800 hover:bg-white hover:border-red-500'
 								}
 								active:scale-95
 							`}
-							>
-								{/* Логотипы Корейских */}
-								<div className='grid grid-cols-3 gap-2 items-center justify-center'>
-									{[
-										'Hyundai',
-										'KIA',
-										'Genesis',
-										'Chevrolet (Korea)',
-										'Renault Korea (Samsung)',
-										'KG Mobility (SsangYong)',
-									].map((brand) => (
-										<img
-											key={brand}
-											src={brandLogos[brand]}
-											alt={brand}
-											className='h-10 w-10 object-contain'
-										/>
-									))}
-								</div>
-							</button>
-							{/* Подпись */}
-							<span className='mt-2 text-lg font-semibold'>Корейские</span>
-						</div>
+						>
+							Корейские
+						</button>
 
-						{/* Иномарки */}
-						<div className='flex flex-col items-center'>
-							<button
-								onClick={() => handleCountryClick('foreign')}
-								className={`
-								cursor-pointer flex items-center justify-center gap-2 px-6 py-3 text-lg font-semibold rounded-full shadow-md transition-all duration-300
-								border-2 w-40 h-40 overflow-hidden
+						<button
+							onClick={() => handleCountryClick('foreign')}
+							className={`
+								cursor-pointer px-6 py-3 text-lg font-semibold rounded-full shadow-md transition-all duration-300 border-2
 								${
 									selectedCategory === 'foreign'
-										? 'bg-white border-red-500 scale-105 shadow-lg'
-										: 'bg-gray-100 border-gray-300 hover:bg-white hover:border-red-500'
+										? 'bg-white border-red-500 text-red-500 scale-105 shadow-lg'
+										: 'bg-gray-100 border-gray-300 text-gray-800 hover:bg-white hover:border-red-500'
 								}
 								active:scale-95
 							`}
-							>
-								{/* Логотипы Иномарок */}
-								<div className='grid grid-cols-3 gap-2 items-center justify-center'>
-									{[
-										'Mercedes-Benz',
-										'BMW',
-										'Audi',
-										'Volkswagen',
-										'Lexus',
-										'Toyota',
-										'Nissan',
-										'Ford',
-										'Honda',
-									].map((brand) => (
-										<img
-											key={brand}
-											src={brandLogos[brand]}
-											alt={brand}
-											className='h-10 w-10 object-contain'
-										/>
-									))}
-								</div>
-							</button>
-							{/* Подпись */}
-							<span className='mt-2 text-lg font-semibold'>Иномарки</span>
-						</div>
+						>
+							Иномарки
+						</button>
 					</div>
 
 					{/* Если страна выбрана, показываем основные фильтры */}
