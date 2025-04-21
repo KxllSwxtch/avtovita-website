@@ -1,14 +1,17 @@
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 
-const Loader = ({ onComplete }) => {
+const LogoLoader = ({ onComplete }) => {
 	const [isVisible, setIsVisible] = useState(true)
 
 	useEffect(() => {
 		// Симулируем загрузку (например, 2 секунды)
 		const timeout = setTimeout(() => {
 			setIsVisible(false)
-			onComplete() // Сообщаем, что загрузка завершена
+			// Проверяем, что onComplete существует и является функцией
+			if (typeof onComplete === 'function') {
+				onComplete() // Сообщаем, что загрузка завершена
+			}
 		}, 2000)
 
 		return () => clearTimeout(timeout)
@@ -40,4 +43,4 @@ const Loader = ({ onComplete }) => {
 	) : null
 }
 
-export default Loader
+export default LogoLoader

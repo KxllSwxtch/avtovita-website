@@ -95,13 +95,7 @@ const About = () => {
 							<p className='text-gray-600'>Специалист по логистике</p>
 						</div>
 						<div className='p-6 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300'>
-							<h4 className='text-2xl font-semibold text-gray-800'>Цой Юрий</h4>
-							<p className='text-gray-600'>Технический эксперт</p>
-						</div>
-						<div className='p-6 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300'>
-							<h4 className='text-2xl font-semibold text-gray-800'>
-								Цой Евгений
-							</h4>
+							<h4 className='text-2xl font-semibold text-gray-800'>Цой Евгений</h4>
 							<p className='text-gray-600'>Финансовый консультант</p>
 						</div>
 					</div>

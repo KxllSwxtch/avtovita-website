@@ -40,15 +40,6 @@ const Contacts = () => {
 									경기 안산시 단원구 풍전로 53, 451호 The중고차
 								</p>
 								<p className='flex items-center gap-2'>
-									📞 <span className='font-semibold'>Цой Юрий:</span>{' '}
-									<a
-										href='tel:+821076097787'
-										className='text-red-600 hover:underline'
-									>
-										+82 (10)-7609-7787
-									</a>
-								</p>
-								<p className='flex items-center gap-2'>
 									📞 <span className='font-semibold'>Ким Евгений:</span>{' '}
 									<a
 										href='tel:+821042252627'

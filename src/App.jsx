@@ -25,7 +25,12 @@ const App = () => {
 	return (
 		<>
 			<AnimatePresence>
-				{loading && (location.pathname === '/' ? <LogoLoader /> : <Loader />)}
+				{loading &&
+					(location.pathname === '/' ? (
+						<LogoLoader onComplete={() => setLoading(false)} />
+					) : (
+						<Loader />
+					))}
 			</AnimatePresence>
 
 			{!loading && (

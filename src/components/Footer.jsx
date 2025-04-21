@@ -68,15 +68,6 @@ const Footer = () => {
 				<div className='text-center md:text-left'>
 					<h2 className='text-lg font-bold text-gray-800 mb-3'>Контакты</h2>
 					<p className='text-sm text-gray-600'>
-						Югай Виталий:{' '}
-						<a
-							href='tel:+821093441782'
-							className='text-gray-600 hover:text-red-500 transition'
-						>
-							+82 (10)-9344-1782
-						</a>
-					</p>
-					<p className='text-sm text-gray-600'>
 						Ким Евгений:{' '}
 						<a
 							href='tel:+821042252627'
@@ -86,23 +77,14 @@ const Footer = () => {
 						</a>
 					</p>
 					<p className='text-sm text-gray-600'>
-						Цой Юрий:{' '}
+						Югай Виталий:{' '}
 						<a
-							href='tel:+821076097787'
+							href='tel:+821093441782'
 							className='text-gray-600 hover:text-red-500 transition'
 						>
-							+82 (10)-7609-7787
+							+82 (10)-9344-1782
 						</a>
 					</p>
-					{/* <p className='text-sm text-gray-600'>
-						Цой Евгений:{' '}
-						<a
-							href='tel:+821044168778'
-							className='text-gray-600 hover:text-red-500 transition'
-						>
-							+82 (10)-4416-8778
-						</a>
-					</p> */}
 					<p className='text-sm text-gray-600'>
 						<FaEnvelope className='inline-block mr-1 text-red-500' />{' '}
 						<a

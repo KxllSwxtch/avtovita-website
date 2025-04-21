@@ -1162,8 +1162,8 @@ const Catalog = () => {
 				<div className='mt-6'>
 					{loading ? (
 						<div className='flex justify-center items-center h-32'>
-							{/* <Loader /> */}
-							<p>Загрузка...</p>
+							<Loader />
+							{/* <p>Загрузка...</p> */}
 						</div>
 					) : carList.length > 0 ? (
 						<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
@@ -1174,7 +1174,7 @@ const Catalog = () => {
 								))}
 						</div>
 					) : (
-						<Message text='Автомобили не найдены' icon='❌' />
+						<Message text='Автомобили не найдены' i n='❌' />
 					)}
 				</div>
 

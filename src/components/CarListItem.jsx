@@ -38,9 +38,6 @@ const CarListItem = ({ car }) => {
 	const formattedCarYear =
 		car?.year.split('-')[1] + '/' + car?.year.split('-')[0]
 
-	// Формируем SEO-friendly ссылку
-	console.log(car)
-
 	// Функция для преобразования имени в slug
 	const generateSlug = (name, year) => {
 		// Убираем [скобки] и переводим в нижний регистр
@@ -88,7 +85,7 @@ const CarListItem = ({ car }) => {
 			>
 				<div className='relative w-full h-60 overflow-hidden rounded-t-2xl'>
 					<img
-						src={car.image.replaceAll('"', '')}
+						src={car.image.replaceAll('"', '').replace('_TH', '')}
 						alt={car.name}
 						className='w-full h-full object-cover'
 					/>

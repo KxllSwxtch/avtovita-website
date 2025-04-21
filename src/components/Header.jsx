@@ -53,19 +53,7 @@ const Header = () => {
 				{/* Контакты посередине */}
 				<div className='flex flex-col md:flex-row items-center text-center space-y-1 md:space-y-0 md:space-x-10 text-xs md:text-sm mr-5 md:mr-0'>
 					<p className='text-gray-800 flex justify-center items-center'>
-						<img
-							className='h-6 p-0 m-0'
-							src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1741407212/avtovita/yurii.jpg'
-						/>
-						<span className='flex flex-col items-start ml-2'>
-							Цой Юрий:{' '}
-							<a
-								href='tel:+821076097787'
-								className='text-red-500 hover:underline'
-							>
-								+82 (10)-7609-7787
-							</a>
-						</span>
+						{/* Удален блок с фото и контактами Цой Юрия */}
 					</p>
 					<p className='text-gray-800 flex justify-center items-center'>
 						<img

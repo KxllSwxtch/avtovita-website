@@ -171,17 +171,6 @@ const CarDetails = () => {
 						</a>
 					</div>
 
-					{/* Цой Юрий */}
-					<div className='p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-200'>
-						<p className='text-lg font-semibold text-gray-700 mb-1'>Цой Юрий</p>
-						<a
-							href='tel:+821076097787'
-							className='block text-xl text-red-600 hover:text-red-500 transition duration-300'
-						>
-							+82 10-7609-7787
-						</a>
-					</div>
-
 					{/* Цой Евгений */}
 					{/* <div className='p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-200'>
 						<p className='text-lg font-semibold text-gray-700 mb-1'>

@@ -40,28 +40,6 @@ const ContactsSection = () => {
 							+82 10-4225-2627
 						</a>
 					</div>
-					{/* Цой Юрий */}
-					<div className='p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-gray-200'>
-						<FaPhone className='text-red-400 text-4xl mb-4' />
-						<h3 className='text-xl font-semibold text-gray-800'>Цой Юрий</h3>
-						<a
-							href='tel:+821076097787'
-							className='text-gray-600 mt-2 hover:text-red-400 transition duration-200'
-						>
-							+82 10-7609-7787
-						</a>
-					</div>
-					{/* Цой Евгений
-					<div className='p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-gray-200'>
-						<FaPhone className='text-red-400 text-4xl mb-4' />
-						<h3 className='text-xl font-semibold text-gray-800'>Цой Евгений</h3>
-						<a
-							href='tel:+821044168778'
-							className='text-gray-600 mt-2 hover:text-red-400 transition duration-200'
-						>
-							+82 10-4416-8778
-						</a>
-					</div> */}
 				</div>
 
 				{/* Соцсети */}
