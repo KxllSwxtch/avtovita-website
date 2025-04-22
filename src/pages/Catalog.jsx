@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet'
 import Select from 'react-select'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import axios from 'axios'
 
 import {
@@ -147,6 +147,10 @@ const brandLogos = {
 
 // Helpers
 function translateTrim(text) {
+	if (text === undefined || text === null) {
+		return ''
+	}
+
 	// Проходимся по всем парам в carTrimsTranslation
 	for (const [korean, russian] of Object.entries(carTrimsTranslation)) {
 		// Создаем регулярное выражение для поиска корейского слова в любом контексте
@@ -181,40 +185,41 @@ const carsPerPage = 24
 const Catalog = () => {
 	const [selectedCategory, setSelectedCategory] = useState('foreign')
 
-	// ------------------ Основные состояния ------------------
-	const [country, setCountry] = useState('foreign') // 'kor' или 'foreign'
+	// Вместо множества отдельных useState
+	const [filters, setFilters] = useState({
+		country: 'foreign',
+		selectedMaker: '',
+		selectedModel: '',
+		selectedDetailModel: '',
+		selectedGrade: '',
+		selectedDetailGrade: '',
+		priceMin: '',
+		priceMax: '',
+		yearMin: '',
+		yearMax: '',
+		useKmMin: '',
+		useKmMax: '',
+		fuel: '',
+		mission: '',
+		color: '',
+		carPlateNumber: '',
+	})
+
+	// Обновление через функциональные обновления
+	const updateFilter = (key, value) => {
+		setFilters((prev) => ({ ...prev, [key]: value }))
+	}
+
 	const [makerList, setMakerList] = useState([]) // Список производителей
-	const [selectedMaker, setSelectedMaker] = useState('') // Выбранный производитель (MAKER_NO)
-
 	const [modelList, setModelList] = useState([]) // Список моделей
-	const [selectedModel, setSelectedModel] = useState('') // Выбранная модель (MODEL_NO)
-
-	const [detailModelList, setDetailModelList] = useState([]) // Список подробных моделей
-	const [selectedDetailModel, setSelectedDetailModel] = useState('')
-
 	const [gradeList, setGradeList] = useState([]) // Список комплектаций
-	const [selectedGrade, setSelectedGrade] = useState('') // Выбранная комплектация (GRADE_NO)
-
 	const [detailGradeList, setDetailGradeList] = useState([]) // Список детальных комплектаций
-	const [selectedDetailGrade, setSelectedDetailGrade] = useState('') // DETAIL_GRADE_NO
-
-	// ------------------ Доп. фильтры ------------------
-	const [priceMin, setPriceMin] = useState('')
-	const [priceMax, setPriceMax] = useState('')
-	const [yearMin, setYearMin] = useState('')
-	const [yearMax, setYearMax] = useState('')
-	const [useKmMin, setUseKmMin] = useState('')
-	const [useKmMax, setUseKmMax] = useState('')
-	const [fuel, setFuel] = useState('')
-	const [mission, setMission] = useState('')
-	const [color, setColor] = useState('')
-	const [carPlateNumber, setCarPlateNumber] = useState('')
-
 	const [carList, setCarList] = useState([])
 	const [loading, setLoading] = useState(true)
 	const [page, setPage] = useState(1) // Текущая страница
 	const [totalPages, setTotalPages] = useState(7000) // Всего страниц
 	const [isFiltersOpen, setIsFiltersOpen] = useState(false)
+	const [detailModelList, setDetailModelList] = useState([]) // Список подробных моделей
 
 	const toggleFilters = () => {
 		setIsFiltersOpen((prev) => !prev)
@@ -224,16 +229,14 @@ const Catalog = () => {
 	// 1) Выбор страны => getMakerList
 	const handleCountryClick = async (ctry) => {
 		// Сбрасываем состояние
-		setCountry(ctry)
-		setSelectedMaker('')
+		updateFilter('country', ctry)
+		updateFilter('selectedMaker', '')
+		updateFilter('selectedModel', '')
+		updateFilter('selectedDetailModel', '')
+		updateFilter('selectedGrade', '')
+		updateFilter('selectedDetailGrade', '')
 		setMakerList([])
-		setSelectedModel('')
 		setModelList([])
-		setSelectedDetailModel('')
-		setDetailModelList([])
-		setSelectedGrade('')
-		setGradeList([])
-		setSelectedDetailGrade('')
 		setDetailGradeList([])
 
 		if (selectedCategory === ctry) {
@@ -241,7 +244,7 @@ const Catalog = () => {
 		} else {
 			setSelectedCategory(ctry) // Устанавливаем выбранную категорию
 		}
-		setCountry(ctry) // Обновляем страну
+		updateFilter('country', ctry) // Обновляем страну
 
 		try {
 			const response = await axios.get(`${API_BASE_URL}/makers`, {
@@ -255,14 +258,12 @@ const Catalog = () => {
 
 	// 2) Выбор производителя => getModelList
 	const handleMakerChange = async (makerNo) => {
-		setSelectedMaker(makerNo)
-		setSelectedModel('')
-		setModelList([])
-		setSelectedDetailModel('')
-		setDetailModelList([])
-		setSelectedGrade('')
+		updateFilter('selectedMaker', makerNo)
+		updateFilter('selectedModel', '')
+		updateFilter('selectedDetailModel', '')
+		updateFilter('selectedGrade', '')
+		updateFilter('selectedDetailGrade', '')
 		setGradeList([])
-		setSelectedDetailGrade('')
 		setDetailGradeList([])
 
 		if (!makerNo) return
@@ -278,12 +279,9 @@ const Catalog = () => {
 
 	// 3) Выбор модели => getDetailModelList
 	const handleModelChange = async (modelNo) => {
-		setSelectedModel(modelNo)
-		setSelectedDetailModel('')
-		setDetailModelList([])
-		setSelectedGrade('')
+		updateFilter('selectedModel', modelNo)
+		updateFilter('selectedDetailModel', '')
 		setGradeList([])
-		setSelectedDetailGrade('')
 		setDetailGradeList([])
 
 		if (!modelNo) return
@@ -291,7 +289,12 @@ const Catalog = () => {
 			const response = await axios.get(`${API_BASE_URL}/detail-models`, {
 				params: { model: modelNo },
 			})
+			// Сохраняем список подробных моделей
 			setDetailModelList(response.data)
+			// Устанавливаем первую модель как выбранную
+			if (response.data.length > 0) {
+				updateFilter('selectedDetailModel', response.data[0].DETAIL_MODEL_NO)
+			}
 		} catch (error) {
 			console.error('Ошибка при загрузке подробных моделей:', error)
 		}
@@ -299,10 +302,8 @@ const Catalog = () => {
 
 	// 4) Выбор подробной модели => getGradeList
 	const handleDetailModelChange = async (detailModelNo) => {
-		setSelectedDetailModel(detailModelNo)
-		setSelectedGrade('')
+		updateFilter('selectedDetailModel', detailModelNo)
 		setGradeList([])
-		setSelectedDetailGrade('')
 		setDetailGradeList([])
 
 		if (!detailModelNo) return
@@ -318,8 +319,8 @@ const Catalog = () => {
 
 	// 5) Выбор комплектации => getDetailGradeList
 	const handleGradeChange = async (gradeNo) => {
-		setSelectedGrade(gradeNo)
-		setSelectedDetailGrade('')
+		updateFilter('selectedGrade', gradeNo)
+		updateFilter('selectedDetailGrade', '')
 		setDetailGradeList([])
 
 		if (!gradeNo) return
@@ -335,51 +336,51 @@ const Catalog = () => {
 
 	// 6) Выбор детальной комплектации
 	const handleDetailGradeChange = (detailGradeNo) => {
-		setSelectedDetailGrade(detailGradeNo)
+		updateFilter('selectedDetailGrade', detailGradeNo)
 	}
 
 	// ------------------ Логика динамических списков "от"/"до" ------------------
 
 	// Цена
 	const handlePriceMinChange = (val) => {
-		setPriceMin(val)
-		if (priceMax && Number(priceMax) < Number(val)) {
-			setPriceMax(val)
+		updateFilter('priceMin', val)
+		if (filters.priceMax && Number(filters.priceMax) < Number(val)) {
+			updateFilter('priceMax', val)
 		}
 	}
 	const filteredPriceMaxOptions = priceOptions.filter(
 		(opt) =>
-			!priceMin ||
+			!filters.priceMin ||
 			opt.value === '' ||
-			(opt.value !== '' && Number(opt.value) >= Number(priceMin)),
+			(opt.value !== '' && Number(opt.value) >= Number(filters.priceMin)),
 	)
 
 	// Год
 	const handleYearMinChange = (val) => {
-		setYearMin(val)
-		if (yearMax && Number(yearMax) < Number(val)) {
-			setYearMax(val)
+		updateFilter('yearMin', val)
+		if (filters.yearMax && Number(filters.yearMax) < Number(val)) {
+			updateFilter('yearMax', val)
 		}
 	}
 	const filteredYearMaxOptions = yearOptions.filter(
 		(opt) =>
-			!yearMin ||
+			!filters.yearMin ||
 			opt.value === '' ||
-			(opt.value !== '' && Number(opt.value) >= Number(yearMin)),
+			(opt.value !== '' && Number(opt.value) >= Number(filters.yearMin)),
 	)
 
 	// Пробег
 	const handleUseKmMinChange = (val) => {
-		setUseKmMin(val)
-		if (useKmMax && Number(useKmMax) < Number(val)) {
-			setUseKmMax(val)
+		updateFilter('useKmMin', val)
+		if (filters.useKmMax && Number(filters.useKmMax) < Number(val)) {
+			updateFilter('useKmMax', val)
 		}
 	}
 	const filteredUseKmMaxOptions = useKmOptions.filter(
 		(opt) =>
-			!useKmMin ||
+			!filters.useKmMin ||
 			opt.value === '' ||
-			(opt.value !== '' && Number(opt.value) >= Number(useKmMin)),
+			(opt.value !== '' && Number(opt.value) >= Number(filters.useKmMin)),
 	)
 
 	// ------------------ Финальный поиск ------------------
@@ -392,22 +393,22 @@ const Catalog = () => {
 			view: 'image',
 			customSelect: `${carsPerPage}`,
 			carName: '',
-			maker: selectedMaker,
-			model: selectedModel,
-			dmodel: selectedDetailModel,
-			grade: selectedGrade,
-			dgrade: selectedDetailGrade,
-			'price-min': priceMin,
-			'price-max': priceMax,
-			'year-min': yearMin,
-			'year-max': yearMax,
-			'usekm-min': useKmMin,
-			'usekm-max': useKmMax,
-			fuel,
-			mission,
-			color,
-			country,
-			carPlateNumber,
+			maker: filters.selectedMaker,
+			model: filters.selectedModel,
+			dmodel: filters.selectedDetailModel,
+			grade: filters.selectedGrade,
+			dgrade: filters.selectedDetailGrade,
+			'price-min': filters.priceMin,
+			'price-max': filters.priceMax,
+			'year-min': filters.yearMin,
+			'year-max': filters.yearMax,
+			'usekm-min': filters.useKmMin,
+			'usekm-max': filters.useKmMax,
+			fuel: filters.fuel,
+			mission: filters.mission,
+			color: filters.color,
+			country: filters.country,
+			carPlateNumber: filters.carPlateNumber,
 			'vehicle-model': '',
 			'vehicle-dmodel': '',
 			'vehicle-name': '',
@@ -440,21 +441,21 @@ const Catalog = () => {
 
 	const resetFilters = () => {
 		// Сбрасываем состояние фильтров
-		setSelectedMaker('')
-		setSelectedModel('')
-		setSelectedDetailModel('')
-		setSelectedGrade('')
-		setSelectedDetailGrade('')
-		setPriceMin('')
-		setPriceMax('')
-		setYearMin('')
-		setYearMax('')
-		setUseKmMin('')
-		setUseKmMax('')
-		setFuel('')
-		setMission('')
-		setColor('')
-		setCarPlateNumber('')
+		updateFilter('selectedMaker', '')
+		updateFilter('selectedModel', '')
+		updateFilter('selectedDetailModel', '')
+		updateFilter('selectedGrade', '')
+		updateFilter('selectedDetailGrade', '')
+		updateFilter('priceMin', '')
+		updateFilter('priceMax', '')
+		updateFilter('yearMin', '')
+		updateFilter('yearMax', '')
+		updateFilter('useKmMin', '')
+		updateFilter('useKmMax', '')
+		updateFilter('fuel', '')
+		updateFilter('mission', '')
+		updateFilter('color', '')
+		updateFilter('carPlateNumber', '')
 
 		searchCars()
 	}
@@ -463,7 +464,7 @@ const Catalog = () => {
 		const initialMakerList = async () => {
 			try {
 				const response = await axios.get(`${API_BASE_URL}/makers`, {
-					params: { country },
+					params: { country: filters.country },
 				})
 				setMakerList(response.data)
 			} catch (error) {
@@ -473,7 +474,7 @@ const Catalog = () => {
 		window.scroll({ top: 0, behavior: 'smooth' }) // Прокручиваем страницу вверх
 		searchCars()
 		initialMakerList()
-	}, [country, page])
+	}, [filters.country, page])
 
 	// ------------------ Обработчики пагинации ------------------
 	// Функция для создания массива страниц
@@ -530,7 +531,7 @@ const Catalog = () => {
 					{translatedName}
 				</span>
 			),
-			searchLabel: carBrandsTranslation[maker.MAKER_NAME] || maker.MAKER_NAME,
+			searchLabel: carBrandsTranslation[translatedName] || translatedName,
 		}
 	})
 
@@ -572,7 +573,7 @@ const Catalog = () => {
 		return (
 			<Select
 				ignoreCase
-				value={options.find((option) => option.value === selectedMaker)}
+				value={options.find((option) => option.value === filters.selectedMaker)}
 				filterOption={customFilter} // Добавили кастомный фильтр
 				options={options}
 				onChange={handleChange}
@@ -648,7 +649,7 @@ const Catalog = () => {
 					</div>
 
 					{/* Если страна выбрана, показываем основные фильтры */}
-					{country && (
+					{filters.country && (
 						<div className='shadow-lg md:p-10 max-w-6xl mx-auto flex flex-col md:flex-row md:gap-6 gap-4'>
 							<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
 								{/* Производитель */}
@@ -665,16 +666,16 @@ const Catalog = () => {
 										Модель:
 									</label>
 									<select
-										value={selectedModel}
+										value={filters.selectedModel}
 										onChange={(e) => handleModelChange(e.target.value)}
 										className={`w-full border-2 p-3 rounded-lg shadow-sm transition duration-300 appearance-none pr-10 relative
 											${
-												selectedMaker
+												filters.selectedMaker
 													? 'border-gray-300 bg-gray-100 text-gray-800 hover:border-gray-400 focus:ring-gray-400'
 													: 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed'
 											}
 										`}
-										disabled={!selectedMaker}
+										disabled={!filters.selectedMaker}
 										style={{
 											backgroundImage:
 												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
@@ -707,16 +708,16 @@ const Catalog = () => {
 										Поколение:
 									</label>
 									<select
-										value={selectedDetailModel}
+										value={filters.selectedDetailModel}
 										onChange={(e) => handleDetailModelChange(e.target.value)}
 										className={`w-full border-2 p-3 rounded-lg shadow-sm transition duration-300 appearance-none pr-10 relative
 											${
-												selectedModel
+												filters.selectedModel
 													? 'border-gray-300 bg-gray-100 text-gray-800 hover:border-gray-400 focus:ring-gray-400'
 													: 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed'
 											}
 										`}
-										disabled={!selectedModel}
+										disabled={!filters.selectedModel}
 										style={{
 											backgroundImage:
 												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
@@ -747,16 +748,16 @@ const Catalog = () => {
 										Комплектация:
 									</label>
 									<select
-										value={selectedGrade}
+										value={filters.selectedGrade}
 										onChange={(e) => handleGradeChange(e.target.value)}
 										className={`w-full border-2 p-3 pr-10 rounded-lg shadow-sm transition duration-300 appearance-none relative
 											${
-												selectedDetailModel
+												filters.selectedDetailModel
 													? 'border-gray-300 bg-gray-100 text-gray-800 hover:border-gray-400 focus:ring-gray-400'
 													: 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed'
 											}
 										`}
-										disabled={!selectedDetailModel}
+										disabled={!filters.selectedDetailModel}
 										style={{
 											backgroundImage:
 												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
@@ -787,16 +788,16 @@ const Catalog = () => {
 										Детальная комплектация:
 									</label>
 									<select
-										value={selectedDetailGrade}
+										value={filters.selectedDetailGrade}
 										onChange={(e) => handleDetailGradeChange(e.target.value)}
 										className={`w-full border-2 p-3 pr-10 rounded-lg shadow-sm transition duration-300 appearance-none relative
 											${
-												selectedGrade
+												filters.selectedGrade
 													? 'border-gray-300 bg-gray-100 text-gray-800 hover:border-gray-400 focus:ring-gray-400'
 													: 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed'
 											}
 										`}
-										disabled={!selectedGrade}
+										disabled={!filters.selectedGrade}
 										style={{
 											backgroundImage:
 												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
@@ -827,8 +828,10 @@ const Catalog = () => {
 									</label>
 									<input
 										type='text'
-										value={carPlateNumber}
-										onChange={(e) => setCarPlateNumber(e.target.value)}
+										value={filters.carPlateNumber}
+										onChange={(e) =>
+											updateFilter('carPlateNumber', e.target.value)
+										}
 										maxLength={9}
 										className='text-black w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
 										placeholder='Введите номер авто'
@@ -880,7 +883,7 @@ const Catalog = () => {
 									Цена от:
 								</label>
 								<select
-									value={priceMin}
+									value={filters.priceMin}
 									onChange={(e) => handlePriceMinChange(e.target.value)}
 									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
 									style={{
@@ -909,8 +912,8 @@ const Catalog = () => {
 									Цена до:
 								</label>
 								<select
-									value={priceMax}
-									onChange={(e) => setPriceMax(e.target.value)}
+									value={filters.priceMax}
+									onChange={(e) => updateFilter('priceMax', e.target.value)}
 									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
 									style={{
 										backgroundImage:
@@ -938,7 +941,7 @@ const Catalog = () => {
 									Год от:
 								</label>
 								<select
-									value={yearMin}
+									value={filters.yearMin}
 									onChange={(e) => handleYearMinChange(e.target.value)}
 									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
 									style={{
@@ -967,8 +970,8 @@ const Catalog = () => {
 									Год до:
 								</label>
 								<select
-									value={yearMax}
-									onChange={(e) => setYearMax(e.target.value)}
+									value={filters.yearMax}
+									onChange={(e) => updateFilter('yearMax', e.target.value)}
 									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
 									style={{
 										backgroundImage:
@@ -996,7 +999,7 @@ const Catalog = () => {
 									Пробег от:
 								</label>
 								<select
-									value={useKmMin}
+									value={filters.useKmMin}
 									onChange={(e) => handleUseKmMinChange(e.target.value)}
 									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
 									style={{
@@ -1025,8 +1028,8 @@ const Catalog = () => {
 									Пробег до:
 								</label>
 								<select
-									value={useKmMax}
-									onChange={(e) => setUseKmMax(e.target.value)}
+									value={filters.useKmMax}
+									onChange={(e) => updateFilter('useKmMax', e.target.value)}
 									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
 									style={{
 										backgroundImage:
@@ -1054,8 +1057,8 @@ const Catalog = () => {
 									Топливо:
 								</label>
 								<select
-									value={fuel}
-									onChange={(e) => setFuel(e.target.value)}
+									value={filters.fuel}
+									onChange={(e) => updateFilter('fuel', e.target.value)}
 									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
 									style={{
 										backgroundImage:
@@ -1083,8 +1086,8 @@ const Catalog = () => {
 									Трансмиссия:
 								</label>
 								<select
-									value={mission}
-									onChange={(e) => setMission(e.target.value)}
+									value={filters.mission}
+									onChange={(e) => updateFilter('mission', e.target.value)}
 									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
 									style={{
 										backgroundImage:
@@ -1112,8 +1115,8 @@ const Catalog = () => {
 									Цвет:
 								</label>
 								<select
-									value={color}
-									onChange={(e) => setColor(e.target.value)}
+									value={filters.color}
+									onChange={(e) => updateFilter('color', e.target.value)}
 									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
 									style={{
 										backgroundImage:
@@ -1143,7 +1146,7 @@ const Catalog = () => {
 					{/* Кнопка "Поиск" */}
 					<button
 						onClick={searchCars}
-						disabled={!country}
+						disabled={!filters.country}
 						className='cursor-pointer px-8 py-3 rounded-full font-semibold bg-gray-100 text-gray-800 hover:bg-gray-200 transition duration-300 ease-in-out shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 border border-gray-300'
 					>
 						🔍 <span>Поиск</span>

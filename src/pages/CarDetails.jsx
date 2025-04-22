@@ -145,19 +145,6 @@ const CarDetails = () => {
 					Контакты для связи
 				</h3>
 				<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-					{/* Виталий */}
-					<div className='p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-200'>
-						<p className='text-lg font-semibold text-gray-700 mb-1'>
-							Виталий Югай
-						</p>
-						<a
-							href='tel:+821093441782'
-							className='block text-xl text-red-600 hover:text-red-500 transition duration-300'
-						>
-							+82 10-9344-1782
-						</a>
-					</div>
-
 					{/* Ким Евгений */}
 					<div className='p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-200'>
 						<p className='text-lg font-semibold text-gray-700 mb-1'>
@@ -168,6 +155,19 @@ const CarDetails = () => {
 							className='block text-xl text-red-600 hover:text-red-500 transition duration-300'
 						>
 							+82 10-4225-2627
+						</a>
+					</div>
+
+					{/* Виталий */}
+					<div className='p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-200'>
+						<p className='text-lg font-semibold text-gray-700 mb-1'>
+							Виталий Югай
+						</p>
+						<a
+							href='tel:+821093441782'
+							className='block text-xl text-red-600 hover:text-red-500 transition duration-300'
+						>
+							+82 10-9344-1782
 						</a>
 					</div>
 
