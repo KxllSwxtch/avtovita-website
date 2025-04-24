@@ -1,4 +1,7 @@
 const carTrimsTranslation = {
+	카이엔: 'Cayenne',
+	그랜드: 'Grand',
+	마칸: 'Macan',
 	'e-트론': 'e-Tron',
 	그란쿠페M: 'Gran Coupe M',
 	그란쿠페: 'Gran Coupe',

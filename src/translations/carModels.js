@@ -1,4 +1,6 @@
 const carModelsTranslation = {
+	카이엔: 'Cayenne',
+	그랜드: 'Grand',
 	노아: 'Noir',
 	가이아: 'Gaia',
 	그랜저: 'Grandeur',

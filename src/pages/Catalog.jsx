@@ -180,6 +180,7 @@ function translateFuelType(text) {
 }
 
 const API_BASE_URL = 'https://ark-motors-backend-3a002a527613.herokuapp.com'
+// const API_BASE_URL = 'http://localhost:8000'
 const carsPerPage = 24
 
 const Catalog = () => {
@@ -291,10 +292,6 @@ const Catalog = () => {
 			})
 			// Сохраняем список подробных моделей
 			setDetailModelList(response.data)
-			// Устанавливаем первую модель как выбранную
-			if (response.data.length > 0) {
-				updateFilter('selectedDetailModel', response.data[0].DETAIL_MODEL_NO)
-			}
 		} catch (error) {
 			console.error('Ошибка при загрузке подробных моделей:', error)
 		}
@@ -384,8 +381,10 @@ const Catalog = () => {
 	)
 
 	// ------------------ Финальный поиск ------------------
-	const searchCars = async () => {
+	const searchCars = useCallback(async () => {
 		setLoading(true)
+
+		const currentFilters = { ...filters } // создаем копию текущих фильтров
 
 		const params = {
 			order: '',
@@ -393,22 +392,22 @@ const Catalog = () => {
 			view: 'image',
 			customSelect: `${carsPerPage}`,
 			carName: '',
-			maker: filters.selectedMaker,
-			model: filters.selectedModel,
-			dmodel: filters.selectedDetailModel,
-			grade: filters.selectedGrade,
-			dgrade: filters.selectedDetailGrade,
-			'price-min': filters.priceMin,
-			'price-max': filters.priceMax,
-			'year-min': filters.yearMin,
-			'year-max': filters.yearMax,
-			'usekm-min': filters.useKmMin,
-			'usekm-max': filters.useKmMax,
-			fuel: filters.fuel,
-			mission: filters.mission,
-			color: filters.color,
-			country: filters.country,
-			carPlateNumber: filters.carPlateNumber,
+			maker: currentFilters.selectedMaker,
+			model: currentFilters.selectedModel,
+			dmodel: currentFilters.selectedDetailModel,
+			grade: currentFilters.selectedGrade,
+			dgrade: currentFilters.selectedDetailGrade,
+			'price-min': currentFilters.priceMin,
+			'price-max': currentFilters.priceMax,
+			'year-min': currentFilters.yearMin,
+			'year-max': currentFilters.yearMax,
+			'usekm-min': currentFilters.useKmMin,
+			'usekm-max': currentFilters.useKmMax,
+			fuel: currentFilters.fuel,
+			mission: currentFilters.mission,
+			color: currentFilters.color,
+			country: currentFilters.country,
+			carPlateNumber: currentFilters.carPlateNumber,
 			'vehicle-model': '',
 			'vehicle-dmodel': '',
 			'vehicle-name': '',
@@ -437,27 +436,93 @@ const Catalog = () => {
 		} finally {
 			setLoading(false)
 		}
-	}
+	}, [filters, page])
 
 	const resetFilters = () => {
-		// Сбрасываем состояние фильтров
-		updateFilter('selectedMaker', '')
-		updateFilter('selectedModel', '')
-		updateFilter('selectedDetailModel', '')
-		updateFilter('selectedGrade', '')
-		updateFilter('selectedDetailGrade', '')
-		updateFilter('priceMin', '')
-		updateFilter('priceMax', '')
-		updateFilter('yearMin', '')
-		updateFilter('yearMax', '')
-		updateFilter('useKmMin', '')
-		updateFilter('useKmMax', '')
-		updateFilter('fuel', '')
-		updateFilter('mission', '')
-		updateFilter('color', '')
-		updateFilter('carPlateNumber', '')
+		// Сначала показываем индикатор загрузки
+		setLoading(true)
 
-		searchCars()
+		// Сброс страницы и списков
+		setPage(1)
+		setModelList([])
+		setDetailModelList([])
+		setGradeList([])
+		setDetailGradeList([])
+
+		// Обновляем фильтры с гарантией выполнения запроса после обновления состояния
+		setFilters((prev) => {
+			const resetState = {
+				...prev, // сохраняем country
+				selectedMaker: '',
+				selectedModel: '',
+				selectedDetailModel: '',
+				selectedGrade: '',
+				selectedDetailGrade: '',
+				priceMin: '',
+				priceMax: '',
+				yearMin: '',
+				yearMax: '',
+				useKmMin: '',
+				useKmMax: '',
+				fuel: '',
+				mission: '',
+				color: '',
+				carPlateNumber: '',
+			}
+
+			setTimeout(() => {
+				// Важно! Передаем ПОЛНЫЙ набор параметров в том же формате, что и в searchCars
+				const params = {
+					order: '',
+					ascending: 'desc',
+					view: 'image',
+					customSelect: `${carsPerPage}`,
+					carName: '',
+					maker: '', // пустые значения для сброшенных фильтров
+					model: '',
+					dmodel: '',
+					grade: '',
+					dgrade: '',
+					'price-min': '',
+					'price-max': '',
+					'year-min': '',
+					'year-max': '',
+					'usekm-min': '',
+					'usekm-max': '',
+					fuel: '',
+					mission: '',
+					color: '',
+					country: resetState.country, // сохраняем текущую страну
+					carPlateNumber: '',
+					'vehicle-model': '',
+					'vehicle-dmodel': '',
+					'vehicle-name': '',
+					tab: 'model',
+					detailSearch: 'close',
+					type: '',
+					page: 1,
+				}
+
+				axios
+					.get(`${API_BASE_URL}/cars`, { params })
+					.then((response) => {
+						setCarList(response.data || [])
+						if (response.data && response.data.length > 0) {
+							setTotalPages(response.data.length < carsPerPage ? 1 : 2)
+						} else {
+							setTotalPages(1)
+						}
+					})
+					.catch((error) => {
+						console.error('Ошибка при загрузке автомобилей:', error)
+					})
+					.finally(() => {
+						setLoading(false)
+					})
+			}, 0)
+
+			return resetState
+		})
 	}
 
 	useEffect(() => {
