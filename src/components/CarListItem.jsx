@@ -75,7 +75,7 @@ const CarListItem = ({ car }) => {
 	const slug = generateSlug(car.name, car.year)
 
 	return (
-		<div className='relative bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg duration-300 border border-gray-300'>
+		<div className='group relative bg-white rounded-lg overflow-hidden transition-all duration-300 border border-gray-100 hover:border-[#0e2cc2]/20'>
 			{/* Блок изображения */}
 			<Link
 				to={`/catalog/${slug}/${carId}`}
@@ -83,58 +83,62 @@ const CarListItem = ({ car }) => {
 				rel='noopener noreferrer'
 				className='block'
 			>
-				<div className='relative w-full h-60 overflow-hidden rounded-t-2xl'>
+				<div className='relative w-full h-56 overflow-hidden'>
 					<img
 						src={car.image.replaceAll('"', '').replace('_TH', '')}
 						alt={car.name}
-						className='w-full h-full object-cover'
+						className='w-full h-full object-cover transition-transform duration-700 group-hover:scale-105'
 					/>
-					{/* Полупрозрачный градиент внизу для эффекта глубины */}
-					<div className='absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-black/50 to-transparent'></div>
 				</div>
 			</Link>
 
 			{/* Основная информация */}
-			<div className='p-4 rounded-b-2xl bg-white shadow-md'>
+			<div className='p-4'>
 				{/* Марка и модель */}
-				<h2 className='text-xl font-semibold text-gray-800 truncate'>
-					{formattedCarName}
-				</h2>
-
-				{/* Основные характеристики */}
-				<div className='flex flex-col text-sm text-gray-600 mt-2 space-y-1'>
-					<span className='flex items-center gap-2'>
-						📅 Дата регистрации: {formattedCarDate}
+				<div className='flex justify-between items-start mb-2'>
+					<h2 className='text-base font-medium text-[#0e2cc2] truncate max-w-[70%]'>
+						{formattedCarName}
+					</h2>
+					<span className='text-xs font-medium text-gray-500 bg-gray-100 py-1 px-2 rounded-sm'>
+						{formattedCarYear}
 					</span>
-					<span className='flex items-center gap-2'>
-						🚗 Пробег: {formattedCarMileage} км
-					</span>
-					<span className='flex items-center gap-2'>
-						⛽ {fuelTypeTranslation[car.fuelType] || car.fuelType}
-					</span>
-					<span>⚙️ {formattedTransmission}</span>
 				</div>
 
+				{/* Основные характеристики - более компактно */}
+				<div className='grid grid-cols-2 gap-x-2 gap-y-1 text-xs text-gray-500 mt-2'>
+					<span className='flex items-center gap-1'>
+						<span className='text-gray-400'>📅</span> {formattedCarDate}
+					</span>
+					<span className='flex items-center gap-1'>
+						<span className='text-gray-400'>🚗</span> {formattedCarMileage} км
+					</span>
+					<span className='flex items-center gap-1'>
+						<span className='text-gray-400'>⛽</span>{' '}
+						{fuelTypeTranslation[car.fuelType] || car.fuelType}
+					</span>
+					<span className='flex items-center gap-1'>
+						<span className='text-gray-400'>⚙️</span> {formattedTransmission}
+					</span>
+				</div>
+
+				{/* Разделитель */}
+				<div className='h-px w-full bg-gray-100 my-3'></div>
+
 				{/* Цена и кнопка */}
-				<div className='mt-4 flex justify-between items-center'>
-					<span className='text-lg font-bold text-red-600'>
+				<div className='flex justify-between items-center'>
+					<span className='text-lg font-semibold text-[#0e2cc2]'>
 						{formattedPrice} ₩
 					</span>
 					<Link
 						to={`/catalog/${slug}/${carId}`}
 						target='_blank'
-						className='px-5 py-2 bg-red-500 text-white 
-				text-sm font-semibold rounded-md transition-opacity 
-				duration-300 hover:opacity-80 shadow-md'
+						className='px-3 py-1.5 bg-[#0e2cc2] text-white 
+						text-xs font-medium rounded-md transition-colors 
+						duration-200 hover:bg-[#a330f0]'
 					>
-						Подробнее →
+						Подробнее
 					</Link>
 				</div>
-			</div>
-
-			{/* Год автомобиля (выведен в углу) */}
-			<div className='absolute top-2 right-2 bg-yellow-200 text-gray-800 text-xs font-semibold px-2 py-1 rounded shadow-md'>
-				{formattedCarYear}
 			</div>
 		</div>
 	)

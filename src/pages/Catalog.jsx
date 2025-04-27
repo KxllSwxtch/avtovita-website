@@ -1,8 +1,6 @@
-import { Helmet } from 'react-helmet'
-import Select from 'react-select'
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useMemo, lazy, Suspense } from 'react'
 import axios from 'axios'
-
+import Select from 'react-select'
 import {
 	priceOptions,
 	yearOptions,
@@ -10,8 +8,12 @@ import {
 	fuelOptions,
 	missionOptions,
 	colorOptions,
+	brandLogos,
+	modelLogos,
+	translateCarName,
 } from '../utils'
-import { CarListItem, Loader, Message } from '../components'
+import { Loader, Message } from '../components'
+const CarListItem = lazy(() => import('../components/CarListItem'))
 import {
 	carBrandsTranslation,
 	carModelsTranslation,
@@ -19,153 +21,7 @@ import {
 	carDetailedModelsTranslation,
 } from '../translations'
 
-const brandLogos = {
-	Bentley:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470478/avtovita/brandslogos/bentley.png',
-	Mitsuoka:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470421/avtovita/brandslogos/mitsuoka.png',
-	Mitsubishi:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470352/avtovita/brandslogos/mitsubishi.png',
-	McLaren:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470254/avtovita/brandslogos/mclaren.png',
-	Mazda:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470218/avtovita/brandslogos/mazda.png',
-	Maybach:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470152/avtovita/brandslogos/maybach.png',
-	Maserati:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470116/avtovita/brandslogos/maserati.png',
-	Lincoln:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470044/avtovita/brandslogos/lincoln.png',
-	Renault:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740469994/avtovita/brandslogos/renault.png',
-	'Rolls-Royce':
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740469938/avtovita/brandslogos/rolls-royce.png',
-	Lotus:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740469901/avtovita/brandslogos/lotus.png',
-	Rover:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740469859/avtovita/brandslogos/rover.png',
-	Lexus:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740469824/avtovita/brandslogos/lexus.png',
-	Lamborghini:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740469766/avtovita/brandslogos/lamborghini.png',
-	Dodge:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740469714/avtovita/brandslogos/dodge.png',
-	Daihatsu:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740469678/avtovita/brandslogos/daihatsu.png',
-	Nissan:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740469634/avtovita/brandslogos/nissan.png',
-	'Land Rover':
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740469530/avtovita/brandslogos/landrover.png',
-	Volvo:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740469491/avtovita/brandslogos/volvo.png',
-	Mini: 'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740469453/avtovita/brandslogos/mini.png',
-	Volkswagen:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740442227/avtovita/brandslogos/volkswagen.png',
-	Audi: 'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740442148/avtovita/brandslogos/audi.png',
-	'Mercedes-Benz':
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740442084/avtovita/brandslogos/mercedes.png',
-	BMW: 'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740441985/avtovita/brandslogos/bmw.png',
-	Hyundai:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740440093/avtovita/brandslogos/hyundai.png',
-	KIA: 'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740440478/avtovita/brandslogos/kia.png',
-	Genesis:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740440397/avtovita/brandslogos/genesis.png',
-	'Chevrolet (Korea)':
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740441862/avtovita/brandslogos/chevrolet.png',
-	Chevrolet:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740441862/avtovita/brandslogos/chevrolet.png',
-	'Renault Korea (Samsung)':
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740441673/avtovita/brandslogos/renaultkorea.png',
-	'KG Mobility (SsangYong)':
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740441782/avtovita/brandslogos/kg.png',
-	Daewoo:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740441921/avtovita/brandslogos/daewoo.png',
-	Bugatti:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470527/avtovita/brandslogos/bugatti.png',
-	Buick:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470567/avtovita/brandslogos/buick.png',
-	SAAB: 'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470618/avtovita/brandslogos/saab.png',
-	Scion:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470648/avtovita/brandslogos/scion.png',
-	Smart:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470719/avtovita/brandslogos/smart.png',
-	Subaru:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470754/avtovita/brandslogos/subaru.png',
-	Suzuki:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470790/avtovita/brandslogos/suzuki.png',
-	Opel: 'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470824/avtovita/brandslogos/opel.png',
-	Oldsmobile:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470908/avtovita/brandslogos/oldsmobile.png',
-	Iveco:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470942/avtovita/brandslogos/iveco.png',
-	Isuzu:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740470974/avtovita/brandslogos/isuzu.png',
-	Infiniti:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471009/avtovita/brandslogos/infiniti.png',
-	Jaguar:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471069/avtovita/brandslogos/jaguar.png',
-	Jeep: 'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471101/avtovita/brandslogos/jeep.png',
-	Zidou:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471173/avtovita/brandslogos/zhidou.png',
-	Geely:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471208/avtovita/brandslogos/geely.png',
-	Cadillac:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471249/avtovita/brandslogos/cadillac.png',
-	Chrysler:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471287/avtovita/brandslogos/chrysler.png',
-	Tesla:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471322/avtovita/brandslogos/tesla.png',
-	Toyota:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471360/avtovita/brandslogos/toyota.png',
-	Ferrari:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471393/avtovita/brandslogos/ferrari.png',
-	Ford: 'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471424/avtovita/brandslogos/ford.png',
-	Foton:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471465/avtovita/brandslogos/foton.png',
-	Pontiac:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471496/avtovita/brandslogos/pontiac.png',
-	Peugeot:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471531/avtovita/brandslogos/peugeot.png',
-	Fiat: 'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471564/avtovita/brandslogos/fiat.png',
-	Hummer:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471597/avtovita/brandslogos/hummer.png',
-	GMC: 'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471630/avtovita/brandslogos/gmc.png',
-	Polestar:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471734/avtovita/brandslogos/polestar.png',
-	BYD: 'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471769/avtovita/brandslogos/BYD.png',
-	Citroën:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471866/avtovita/brandslogos/citroen.png',
-	'Alfa Romeo':
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471902/avtovita/brandslogos/alfaromeo.png',
-	'Aston Martin':
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740471960/avtovita/brandslogos/astonmartin.png',
-	Acura:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740472002/avtovita/brandslogos/acura.png',
-	Honda:
-		'https://res.cloudinary.com/pomegranitedesign/image/upload/v1740472069/avtovita/brandslogos/honda.png',
-}
-
 // Helpers
-function translateTrim(text) {
-	if (text === undefined || text === null) {
-		return ''
-	}
-
-	// Проходимся по всем парам в carTrimsTranslation
-	for (const [korean, russian] of Object.entries(carTrimsTranslation)) {
-		// Создаем регулярное выражение для поиска корейского слова в любом контексте
-		// (?<=\D|^) - перед корейским словом может быть нецифровой символ или начало строки
-		// (?=\D|$) - после корейского слова может быть нецифровой символ или конец строки
-		const regex = new RegExp(`(?<=\\D|^)${korean}(?=\\D|$)`, 'g')
-
-		// Заменяем все совпадения на русский перевод
-		text = text.replace(regex, russian)
-	}
-
-	// Возвращаем результат
-	return text
-}
-
 function translateFuelType(text) {
 	for (const [korean, russian] of Object.entries(
 		carDetailedModelsTranslation,
@@ -179,48 +35,44 @@ function translateFuelType(text) {
 	return text
 }
 
-const API_BASE_URL = 'https://ark-motors-backend-3a002a527613.herokuapp.com'
-// const API_BASE_URL = 'http://localhost:8000'
+const API_BASE_URL = `https://ark-motors-backend-3a002a527613.herokuapp.com`
 const carsPerPage = 24
 
 const Catalog = () => {
-	const [selectedCategory, setSelectedCategory] = useState('foreign')
-
-	// Вместо множества отдельных useState
-	const [filters, setFilters] = useState({
-		country: 'foreign',
-		selectedMaker: '',
-		selectedModel: '',
-		selectedDetailModel: '',
-		selectedGrade: '',
-		selectedDetailGrade: '',
-		priceMin: '',
-		priceMax: '',
-		yearMin: '',
-		yearMax: '',
-		useKmMin: '',
-		useKmMax: '',
-		fuel: '',
-		mission: '',
-		color: '',
-		carPlateNumber: '',
-	})
-
-	// Обновление через функциональные обновления
-	const updateFilter = (key, value) => {
-		setFilters((prev) => ({ ...prev, [key]: value }))
-	}
-
+	// ------------------ Основные состояния ------------------
+	const [country, setCountry] = useState('foreign') // 'kor' или 'foreign'
 	const [makerList, setMakerList] = useState([]) // Список производителей
+	const [selectedMaker, setSelectedMaker] = useState('') // Выбранный производитель (MAKER_NO)
+
 	const [modelList, setModelList] = useState([]) // Список моделей
+	const [selectedModel, setSelectedModel] = useState('') // Выбранная модель (MODEL_NO)
+
+	const [detailModelList, setDetailModelList] = useState([]) // Список подробных моделей
+	const [selectedDetailModel, setSelectedDetailModel] = useState('')
+
 	const [gradeList, setGradeList] = useState([]) // Список комплектаций
+	const [selectedGrade, setSelectedGrade] = useState('') // Выбранная комплектация (GRADE_NO)
+
 	const [detailGradeList, setDetailGradeList] = useState([]) // Список детальных комплектаций
+	const [selectedDetailGrade, setSelectedDetailGrade] = useState('') // DETAIL_GRADE_NO
+
+	// ------------------ Доп. фильтры ------------------
+	const [priceMin, setPriceMin] = useState('')
+	const [priceMax, setPriceMax] = useState('')
+	const [yearMin, setYearMin] = useState('')
+	const [yearMax, setYearMax] = useState('')
+	const [useKmMin, setUseKmMin] = useState('')
+	const [useKmMax, setUseKmMax] = useState('')
+	const [fuel, setFuel] = useState('')
+	const [mission, setMission] = useState('')
+	const [color, setColor] = useState('')
+	const [carPlateNumber, setCarPlateNumber] = useState('')
+
 	const [carList, setCarList] = useState([])
 	const [loading, setLoading] = useState(true)
 	const [page, setPage] = useState(1) // Текущая страница
 	const [totalPages, setTotalPages] = useState(7000) // Всего страниц
 	const [isFiltersOpen, setIsFiltersOpen] = useState(false)
-	const [detailModelList, setDetailModelList] = useState([]) // Список подробных моделей
 
 	const toggleFilters = () => {
 		setIsFiltersOpen((prev) => !prev)
@@ -229,49 +81,92 @@ const Catalog = () => {
 	// ------------------ Запросы к API ------------------
 	// 1) Выбор страны => getMakerList
 	const handleCountryClick = async (ctry) => {
-		// Сбрасываем состояние
-		updateFilter('country', ctry)
-		updateFilter('selectedMaker', '')
-		updateFilter('selectedModel', '')
-		updateFilter('selectedDetailModel', '')
-		updateFilter('selectedGrade', '')
-		updateFilter('selectedDetailGrade', '')
-		setMakerList([])
-		setModelList([])
-		setDetailGradeList([])
+		// Устанавливаем loading сразу
+		setLoading(true)
 
-		if (selectedCategory === ctry) {
-			setSelectedCategory('') // Скрываем, если повторный клик
-		} else {
-			setSelectedCategory(ctry) // Устанавливаем выбранную категорию
-		}
-		updateFilter('country', ctry) // Обновляем страну
+		// Сбрасываем состояние
+		setCountry(ctry)
+		setSelectedMaker('')
+		setMakerList([])
+		setSelectedModel('')
+		setModelList([])
+		setSelectedDetailModel('')
+		setDetailModelList([])
+		setSelectedGrade('')
+		setGradeList([])
+		setSelectedDetailGrade('')
+		setDetailGradeList([])
+		setPage(1) // Сбрасываем страницу на первую
 
 		try {
+			// Сначала загружаем производителей
 			const response = await axios.get(`${API_BASE_URL}/makers`, {
 				params: { country: ctry },
 			})
 			setMakerList(response.data)
+
+			// Затем сразу загружаем автомобили для выбранной страны
+			await searchCarsForCountry(ctry)
 		} catch (error) {
 			console.error('Ошибка при загрузке производителей:', error)
+			setLoading(false) // Сбрасываем состояние загрузки в случае ошибки
+		}
+	}
+
+	// Новая функция для загрузки автомобилей по стране
+	const searchCarsForCountry = async (ctry) => {
+		try {
+			const params = {
+				order: '',
+				ascending: 'desc',
+				view: 'image',
+				customSelect: `${carsPerPage}`,
+				country: ctry,
+				page: 1,
+			}
+
+			const response = await axios.get(`${API_BASE_URL}/cars`, { params })
+			const cars = response.data || []
+
+			// Обновляем список автомобилей
+			setCarList(cars)
+
+			// Определяем количество страниц
+			if (cars.length < carsPerPage) {
+				setTotalPages(1) // Если меньше, значит это последняя страница
+			} else {
+				setTotalPages(2) // Если машин >= 24, то загружаем ещё одну страницу
+			}
+		} catch (error) {
+			console.error('Ошибка при загрузке автомобилей:', error)
+		} finally {
+			// Добавляем небольшую задержку перед скрытием лоадера
+			setTimeout(() => {
+				setLoading(false)
+			}, 300)
 		}
 	}
 
 	// 2) Выбор производителя => getModelList
 	const handleMakerChange = async (makerNo) => {
-		updateFilter('selectedMaker', makerNo)
-		updateFilter('selectedModel', '')
-		updateFilter('selectedDetailModel', '')
-		updateFilter('selectedGrade', '')
-		updateFilter('selectedDetailGrade', '')
+		setSelectedMaker(makerNo)
+		setSelectedModel('')
+		setModelList([])
+		setSelectedDetailModel('')
+		setDetailModelList([])
+		setSelectedGrade('')
 		setGradeList([])
+		setSelectedDetailGrade('')
 		setDetailGradeList([])
 
 		if (!makerNo) return
 		try {
-			const response = await axios.get(`${API_BASE_URL}/models`, {
-				params: { maker: makerNo },
-			})
+			const response = await axios.get(
+				`${API_BASE_URL}/models?country=${country}`,
+				{
+					params: { maker: makerNo },
+				},
+			)
 			setModelList(response.data)
 		} catch (error) {
 			console.error('Ошибка при загрузке моделей:', error)
@@ -280,9 +175,12 @@ const Catalog = () => {
 
 	// 3) Выбор модели => getDetailModelList
 	const handleModelChange = async (modelNo) => {
-		updateFilter('selectedModel', modelNo)
-		updateFilter('selectedDetailModel', '')
+		setSelectedModel(modelNo)
+		setSelectedDetailModel('')
+		setDetailModelList([])
+		setSelectedGrade('')
 		setGradeList([])
+		setSelectedDetailGrade('')
 		setDetailGradeList([])
 
 		if (!modelNo) return
@@ -290,7 +188,6 @@ const Catalog = () => {
 			const response = await axios.get(`${API_BASE_URL}/detail-models`, {
 				params: { model: modelNo },
 			})
-			// Сохраняем список подробных моделей
 			setDetailModelList(response.data)
 		} catch (error) {
 			console.error('Ошибка при загрузке подробных моделей:', error)
@@ -299,8 +196,10 @@ const Catalog = () => {
 
 	// 4) Выбор подробной модели => getGradeList
 	const handleDetailModelChange = async (detailModelNo) => {
-		updateFilter('selectedDetailModel', detailModelNo)
+		setSelectedDetailModel(detailModelNo)
+		setSelectedGrade('')
 		setGradeList([])
+		setSelectedDetailGrade('')
 		setDetailGradeList([])
 
 		if (!detailModelNo) return
@@ -316,8 +215,8 @@ const Catalog = () => {
 
 	// 5) Выбор комплектации => getDetailGradeList
 	const handleGradeChange = async (gradeNo) => {
-		updateFilter('selectedGrade', gradeNo)
-		updateFilter('selectedDetailGrade', '')
+		setSelectedGrade(gradeNo)
+		setSelectedDetailGrade('')
 		setDetailGradeList([])
 
 		if (!gradeNo) return
@@ -333,58 +232,56 @@ const Catalog = () => {
 
 	// 6) Выбор детальной комплектации
 	const handleDetailGradeChange = (detailGradeNo) => {
-		updateFilter('selectedDetailGrade', detailGradeNo)
+		setSelectedDetailGrade(detailGradeNo)
 	}
 
 	// ------------------ Логика динамических списков "от"/"до" ------------------
 
 	// Цена
 	const handlePriceMinChange = (val) => {
-		updateFilter('priceMin', val)
-		if (filters.priceMax && Number(filters.priceMax) < Number(val)) {
-			updateFilter('priceMax', val)
+		setPriceMin(val)
+		if (priceMax && Number(priceMax) < Number(val)) {
+			setPriceMax(val)
 		}
 	}
 	const filteredPriceMaxOptions = priceOptions.filter(
 		(opt) =>
-			!filters.priceMin ||
+			!priceMin ||
 			opt.value === '' ||
-			(opt.value !== '' && Number(opt.value) >= Number(filters.priceMin)),
+			(opt.value !== '' && Number(opt.value) >= Number(priceMin)),
 	)
 
 	// Год
 	const handleYearMinChange = (val) => {
-		updateFilter('yearMin', val)
-		if (filters.yearMax && Number(filters.yearMax) < Number(val)) {
-			updateFilter('yearMax', val)
+		setYearMin(val)
+		if (yearMax && Number(yearMax) < Number(val)) {
+			setYearMax(val)
 		}
 	}
 	const filteredYearMaxOptions = yearOptions.filter(
 		(opt) =>
-			!filters.yearMin ||
+			!yearMin ||
 			opt.value === '' ||
-			(opt.value !== '' && Number(opt.value) >= Number(filters.yearMin)),
+			(opt.value !== '' && Number(opt.value) >= Number(yearMin)),
 	)
 
 	// Пробег
 	const handleUseKmMinChange = (val) => {
-		updateFilter('useKmMin', val)
-		if (filters.useKmMax && Number(filters.useKmMax) < Number(val)) {
-			updateFilter('useKmMax', val)
+		setUseKmMin(val)
+		if (useKmMax && Number(useKmMax) < Number(val)) {
+			setUseKmMax(val)
 		}
 	}
 	const filteredUseKmMaxOptions = useKmOptions.filter(
 		(opt) =>
-			!filters.useKmMin ||
+			!useKmMin ||
 			opt.value === '' ||
-			(opt.value !== '' && Number(opt.value) >= Number(filters.useKmMin)),
+			(opt.value !== '' && Number(opt.value) >= Number(useKmMin)),
 	)
 
 	// ------------------ Финальный поиск ------------------
-	const searchCars = useCallback(async () => {
+	const searchCars = async () => {
 		setLoading(true)
-
-		const currentFilters = { ...filters } // создаем копию текущих фильтров
 
 		const params = {
 			order: '',
@@ -392,22 +289,23 @@ const Catalog = () => {
 			view: 'image',
 			customSelect: `${carsPerPage}`,
 			carName: '',
-			maker: currentFilters.selectedMaker,
-			model: currentFilters.selectedModel,
-			dmodel: currentFilters.selectedDetailModel,
-			grade: currentFilters.selectedGrade,
-			dgrade: currentFilters.selectedDetailGrade,
-			'price-min': currentFilters.priceMin,
-			'price-max': currentFilters.priceMax,
-			'year-min': currentFilters.yearMin,
-			'year-max': currentFilters.yearMax,
-			'usekm-min': currentFilters.useKmMin,
-			'usekm-max': currentFilters.useKmMax,
-			fuel: currentFilters.fuel,
-			mission: currentFilters.mission,
-			color: currentFilters.color,
-			country: currentFilters.country,
-			carPlateNumber: currentFilters.carPlateNumber,
+			maker: selectedMaker,
+			model: selectedModel,
+			dmodel: selectedDetailModel,
+			grade: selectedGrade,
+			dgrade: selectedDetailGrade,
+			'price-min': priceMin,
+			'price-max': priceMax,
+			'year-min': yearMin,
+			'year-max': yearMax,
+			'usekm-min': useKmMin,
+			'usekm-max': useKmMax,
+			fuel,
+			mission,
+			color,
+			country,
+			carNo: '',
+			carPlateNumber,
 			'vehicle-model': '',
 			'vehicle-dmodel': '',
 			'vehicle-name': '',
@@ -436,110 +334,56 @@ const Catalog = () => {
 		} finally {
 			setLoading(false)
 		}
-	}, [filters, page])
+	}
 
 	const resetFilters = () => {
-		// Сначала показываем индикатор загрузки
-		setLoading(true)
-
-		// Сброс страницы и списков
+		// Сбрасываем состояние фильтров
+		setSelectedMaker('')
+		setSelectedModel('')
+		setSelectedDetailModel('')
+		setSelectedGrade('')
+		setSelectedDetailGrade('')
+		setPriceMin('')
+		setPriceMax('')
+		setYearMin('')
+		setYearMax('')
+		setUseKmMin('')
+		setUseKmMax('')
+		setFuel('')
+		setMission('')
+		setColor('')
+		setCarPlateNumber('')
 		setPage(1)
-		setModelList([])
-		setDetailModelList([])
-		setGradeList([])
-		setDetailGradeList([])
-
-		// Обновляем фильтры с гарантией выполнения запроса после обновления состояния
-		setFilters((prev) => {
-			const resetState = {
-				...prev, // сохраняем country
-				selectedMaker: '',
-				selectedModel: '',
-				selectedDetailModel: '',
-				selectedGrade: '',
-				selectedDetailGrade: '',
-				priceMin: '',
-				priceMax: '',
-				yearMin: '',
-				yearMax: '',
-				useKmMin: '',
-				useKmMax: '',
-				fuel: '',
-				mission: '',
-				color: '',
-				carPlateNumber: '',
-			}
-
-			setTimeout(() => {
-				// Важно! Передаем ПОЛНЫЙ набор параметров в том же формате, что и в searchCars
-				const params = {
-					order: '',
-					ascending: 'desc',
-					view: 'image',
-					customSelect: `${carsPerPage}`,
-					carName: '',
-					maker: '', // пустые значения для сброшенных фильтров
-					model: '',
-					dmodel: '',
-					grade: '',
-					dgrade: '',
-					'price-min': '',
-					'price-max': '',
-					'year-min': '',
-					'year-max': '',
-					'usekm-min': '',
-					'usekm-max': '',
-					fuel: '',
-					mission: '',
-					color: '',
-					country: resetState.country, // сохраняем текущую страну
-					carPlateNumber: '',
-					'vehicle-model': '',
-					'vehicle-dmodel': '',
-					'vehicle-name': '',
-					tab: 'model',
-					detailSearch: 'close',
-					type: '',
-					page: 1,
-				}
-
-				axios
-					.get(`${API_BASE_URL}/cars`, { params })
-					.then((response) => {
-						setCarList(response.data || [])
-						if (response.data && response.data.length > 0) {
-							setTotalPages(response.data.length < carsPerPage ? 1 : 2)
-						} else {
-							setTotalPages(1)
-						}
-					})
-					.catch((error) => {
-						console.error('Ошибка при загрузке автомобилей:', error)
-					})
-					.finally(() => {
-						setLoading(false)
-					})
-			}, 0)
-
-			return resetState
-		})
+		searchCars()
 	}
 
 	useEffect(() => {
 		const initialMakerList = async () => {
 			try {
-				const response = await axios.get(`${API_BASE_URL}/makers`, {
-					params: { country: filters.country },
-				})
+				const fullUrl = `https://ark-motors-backend-3a002a527613.herokuapp.com/makers?country=${country}`
+				const encodedUrl = encodeURIComponent(fullUrl)
+				const response = await axios.get(
+					`https://corsproxy.io/?url=${encodedUrl}`,
+				)
 				setMakerList(response.data)
 			} catch (error) {
 				console.error('Ошибка при загрузке производителей:', error)
 			}
 		}
+
 		window.scroll({ top: 0, behavior: 'smooth' }) // Прокручиваем страницу вверх
-		searchCars()
-		initialMakerList()
-	}, [filters.country, page])
+
+		// Загружаем автомобили только при изменении страницы, но не при изменении страны
+		// (т.к. это уже делается в handleCountryClick)
+		if (page > 1 || (makerList.length > 0 && country === 'foreign')) {
+			searchCars()
+		}
+
+		// Загружаем список производителей при первичной загрузке
+		if (makerList.length === 0) {
+			initialMakerList()
+		}
+	}, [page, country])
 
 	// ------------------ Обработчики пагинации ------------------
 	// Функция для создания массива страниц
@@ -578,27 +422,100 @@ const Catalog = () => {
 		if (page < totalPages) setPage(page + 1)
 	}
 
-	// Преобразуем makerList в формат для react-select
-	const options = makerList.map((maker) => {
-		const translatedName =
-			carBrandsTranslation[maker.MAKER_NAME] || maker.MAKER_NAME
-		return {
-			value: maker.MAKER_NO,
-			label: (
-				<span className='flex items-center gap-2'>
-					{brandLogos[translatedName] && (
-						<img
-							src={brandLogos[translatedName]}
-							alt={translatedName}
-							className='inline-block w-5 auto'
-						/>
-					)}
-					{translatedName}
-				</span>
-			),
-			searchLabel: carBrandsTranslation[translatedName] || translatedName,
-		}
-	})
+	const modelOptions = useMemo(() => {
+		if (!modelList || !selectedMaker) return []
+
+		const selectedMakerObj = makerList.find(
+			(maker) => maker.MAKER_NO === selectedMaker,
+		)
+		const brandKey =
+			carBrandsTranslation[selectedMakerObj?.MAKER_NAME] ||
+			selectedMakerObj?.MAKER_NAME
+
+		return modelList.map((model) => {
+			const translatedName =
+				carModelsTranslation[model.MODEL_NAME] || model.MODEL_NAME
+
+			const logo =
+				modelLogos?.[brandKey]?.[translatedName] ||
+				modelLogos?.[brandKey]?.[model.MODEL_NAME]
+
+			return {
+				value: model.MODEL_NO,
+				label: (
+					<span className='flex items-center gap-2'>
+						{logo && (
+							<img
+								src={logo}
+								alt={translatedName}
+								loading='lazy'
+								className='inline-block w-10 h-auto'
+							/>
+						)}
+						{translatedName}
+					</span>
+				),
+				searchLabel: translatedName,
+			}
+		})
+	}, [modelList, selectedMaker, makerList])
+
+	const excludedMakers = [
+		'Nissan',
+		'Daihatsu',
+		'동풍소콘',
+		'Rover',
+		'Renault',
+		'Mazda',
+		'Mitsubishi',
+		'Mitsuoka',
+		'북기은상',
+		'Buick',
+		'SAAB',
+		'Scion',
+		'Sunlon',
+		'Smart',
+		'Subaru',
+		'Suzuki',
+		'Citroën',
+		'Opel',
+		'Oldsmobile',
+		'Iveco',
+		'Isuzu',
+		'Zidou',
+		'Geely',
+		'포톤',
+		'Peugeot',
+		'Fiat',
+		'Honda',
+		'BYD',
+	]
+
+	const options = makerList
+		.filter((maker) => {
+			return !excludedMakers.includes(translateCarName(maker.MAKER_NAME))
+		})
+		.map((maker) => {
+			const translatedName =
+				carBrandsTranslation[maker.MAKER_NAME] || maker.MAKER_NAME
+			return {
+				value: maker.MAKER_NO,
+				label: (
+					<span className='flex items-center gap-2'>
+						{brandLogos[translatedName] && (
+							<img
+								src={brandLogos[translatedName]}
+								alt={translatedName}
+								loading='lazy'
+								className='inline-block w-5 auto'
+							/>
+						)}
+						{translatedName}
+					</span>
+				),
+				searchLabel: carBrandsTranslation[maker.MAKER_NAME] || maker.MAKER_NAME,
+			}
+		})
 
 	const customStyles = {
 		control: (provided) => ({
@@ -609,9 +526,11 @@ const Catalog = () => {
 			'&:hover': {
 				borderColor: '#9ca3af',
 			},
+			height: '100%',
 		}),
 		option: (provided, state) => ({
 			...provided,
+			height: '100%',
 			display: 'flex',
 			alignItems: 'center',
 			gap: '0.5rem',
@@ -638,666 +557,538 @@ const Catalog = () => {
 		return (
 			<Select
 				ignoreCase
-				value={options.find((option) => option.value === filters.selectedMaker)}
+				value={options.find((option) => option.value === selectedMaker)}
 				filterOption={customFilter} // Добавили кастомный фильтр
 				options={options}
 				onChange={handleChange}
-				placeholder='Выберите марку'
+				placeholder='Марка'
 				styles={customStyles}
-				className='w-full text-gray-800 rounded-lg shadow-sm'
+				className='w-full text-gray-800 rounded-lg shadow-sm h-[100%]'
 			/>
 		)
 	}
 
 	return (
-		<>
-			<Helmet>
-				<title>Каталог автомобилей из Кореи | АвтоВита</title>
-				<meta
-					name='description'
-					content='Купить авто из Кореи под ключ с доставкой. Корейские и иностранные автомобили в наличии.'
-				/>
-				<meta
-					name='keywords'
-					content='авто из Кореи, купить авто из Кореи, иномарки, корейские автомобили, AvtoVita, AvtoDom, avtovita, avtodom, авто из Южной Кореи'
-				/>
-				<meta
-					property='og:title'
-					content='Каталог автомобилей из Кореи | AvtoVita'
-				/>
-				<meta
-					property='og:description'
-					content='Купить авто из Кореи под ключ с доставкой. Корейские и иностранные автомобили в наличии.'
-				/>
-				<meta
-					property='og:image'
-					content='https://avtovita-avtodom.com/preview.png'
-				/>
-				<meta
-					property='og:url'
-					content='https://avtovita-avtodom.com/catalog'
-				/>
-			</Helmet>
-			{/* Остальная часть компонента */}
-
-			<div className='p-4 mt-35 md:mt-40 text-white min-h-screen'>
+		<div className='p-4 text-secondary-500 min-h-screen mt-30 md:mt-40'>
+			<div className='grid md:grid-cols-[0.8fr_3fr] gap-10 text-base'>
 				{/* Фильтры */}
-				<>
-					<div className='flex justify-center mb-6'>
-						<div className='relative flex items-center bg-gradient-to-r from-gray-100 to-gray-200 rounded-full w-[270px] h-[52px] shadow-inner px-1'>
-							<div
-								className={`absolute top-[4px] left-[4px] w-[130px] h-[44px] bg-white rounded-full shadow-md transition-transform duration-300 ease-in-out z-0 ${
-									selectedCategory === 'kor'
-										? 'translate-x-0'
-										: 'translate-x-[132px]'
-								}`}
-							></div>
-							<button
-								onClick={() => handleCountryClick('kor')}
-								className={`w-[130px] h-[44px] flex items-center justify-center gap-2 rounded-full transition-all duration-300 text-base font-semibold z-10 relative ${
-									selectedCategory === 'kor' ? 'text-red-600' : 'text-gray-600'
-								}`}
-							>
-								🇰🇷 Корейские
-							</button>
-							<button
-								onClick={() => handleCountryClick('foreign')}
-								className={`w-[130px] h-[44px] flex items-center justify-center gap-2 rounded-full transition-all duration-300 text-base font-semibold z-10 relative ${
-									selectedCategory === 'foreign'
-										? 'text-red-600'
-										: 'text-gray-600'
-								}`}
-							>
-								🌍 Иномарки
-							</button>
+				<div className='md:ml-5'>
+					<>
+						{/* Кнопки для выбора страны */}
+						<div className='flex justify-center gap-6 mb-8'>
+							{[
+								{ label: 'Корейские', value: 'kor', emoji: '🇰🇷' },
+								{ label: 'Иномарки', value: 'foreign', emoji: '🌍' },
+							].map(({ label, value, emoji }) => (
+								<button
+									key={value}
+									onClick={() => handleCountryClick(value)}
+									className={`
+										cursor-pointer flex items-center justify-center gap-2 
+										px-6 py-4 text-base font-bold rounded-lg 
+										transition-all duration-300 transform
+										${
+											country === value
+												? 'bg-gradient-to-r from-[#0e2cc2] to-[#a330f0] text-white scale-105 shadow-lg'
+												: 'bg-white text-gray-800 border-2 border-gray-200 hover:border-[#a330f0] hover:bg-[#f5ebff]'
+										}
+										active:scale-95 relative overflow-hidden
+									`}
+								>
+									<span className='relative z-10'>
+										{emoji} {label}
+									</span>
+									{country === value && (
+										<span className='absolute inset-0 bg-gradient-to-r from-[#3e4fdb] to-[#bf68f6] opacity-20 animate-pulse'></span>
+									)}
+								</button>
+							))}
 						</div>
-					</div>
 
-					{/* Если страна выбрана, показываем основные фильтры */}
-					{filters.country && (
-						<div className='shadow-lg md:p-10 max-w-6xl mx-auto flex flex-col md:flex-row md:gap-6 gap-4'>
-							<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-								{/* Производитель */}
-								<div className='flex-1'>
-									<label className='block text-gray-700 font-semibold mb-2'>
-										Марка:
-									</label>
-									<BrandSelector handleMakerChange={handleMakerChange} />
-								</div>
+						{/* Если страна выбрана, показываем основные фильтры */}
+						{country && (
+							<div className='w-full mx-auto flex flex-col md:flex-row'>
+								<div className='grid grid-cols-1 md:grid-cols-1 gap-6 w-full'>
+									{/* Производитель */}
+									<div className='flex-1'>
+										<BrandSelector handleMakerChange={handleMakerChange} />
+									</div>
 
-								{/* Модель */}
-								<div className='flex-1'>
-									<label className='block text-gray-700 font-semibold mb-2 tracking-wide'>
-										Модель:
-									</label>
-									<select
-										value={filters.selectedModel}
-										onChange={(e) => handleModelChange(e.target.value)}
-										className={`w-full border-2 p-3 rounded-lg shadow-sm transition duration-300 appearance-none pr-10 relative
-											${
-												filters.selectedMaker
-													? 'border-gray-300 bg-gray-100 text-gray-800 hover:border-gray-400 focus:ring-gray-400'
-													: 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed'
+									{/* Модель */}
+									<div className='flex-1'>
+										<Select
+											isDisabled={!selectedMaker}
+											value={
+												modelOptions.find(
+													(option) => option.value === selectedModel,
+												) || ''
 											}
-										`}
-										disabled={!filters.selectedMaker}
-										style={{
-											backgroundImage:
-												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-											backgroundPosition: 'right 12px center',
-											backgroundRepeat: 'no-repeat',
-											backgroundSize: '1rem',
-										}}
-									>
-										<option value='' className='text-gray-500'>
-											Выберите модель
-										</option>
-										{modelList
-											.sort((a, b) => (a.MODEL_NAME > b.MODEL_NAME ? 1 : -1))
-											.map((model) => (
+											options={modelOptions}
+											onChange={(selectedOption) =>
+												handleModelChange(selectedOption.value)
+											}
+											placeholder='Модель'
+											styles={customStyles}
+											className='w-full text-gray-800 rounded-lg shadow-sm h-[100%]'
+										/>
+									</div>
+
+									{/* Подробная модель */}
+									<div className='flex-1'>
+										<select
+											value={selectedDetailModel}
+											onChange={(e) => handleDetailModelChange(e.target.value)}
+											className={`w-full border-1 p-3 rounded-lg shadow-md transition duration-300 appearance-none pr-10 relative
+										${
+											selectedModel
+												? 'border-[#0e2cc2] bg-white text-black hover:border-[#a330f0] focus:ring-[#a330f0]'
+												: 'bg-[#dcdcdc] border-[#c9c9c9] text-gray-400 cursor-not-allowed'
+										}
+									`}
+											disabled={!selectedModel}
+											style={{
+												backgroundImage:
+													'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="black"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+												backgroundPosition: 'right 10px center',
+												backgroundRepeat: 'no-repeat',
+												backgroundSize: '1rem',
+											}}
+										>
+											<option value='' className='text-gray-400'>
+												Поколение
+											</option>
+											{detailModelList?.map((dmodel) => (
 												<option
-													key={model.MODEL_NO}
-													value={model.MODEL_NO}
-													className='text-gray-800'
+													key={dmodel.DETAIL_MODEL_NO}
+													value={dmodel.DETAIL_MODEL_NO}
+													className='text-white'
 												>
-													{carModelsTranslation[model.MODEL_NAME] ||
-														model.MODEL_NAME}
+													{carTrimsTranslation[dmodel.DETAIL_MODEL_NAME] ||
+														dmodel.DETAIL_MODEL_NAME}
 												</option>
 											))}
-									</select>
-								</div>
+										</select>
+									</div>
 
-								{/* Поколение */}
-								<div className='flex-1'>
-									<label className='block text-gray-700 font-semibold mb-2 tracking-wide'>
-										Поколение:
-									</label>
-									<select
-										value={filters.selectedDetailModel}
-										onChange={(e) => handleDetailModelChange(e.target.value)}
-										className={`w-full border-2 p-3 rounded-lg shadow-sm transition duration-300 appearance-none pr-10 relative
-											${
-												filters.selectedModel
-													? 'border-gray-300 bg-gray-100 text-gray-800 hover:border-gray-400 focus:ring-gray-400'
-													: 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed'
-											}
-										`}
-										disabled={!filters.selectedModel}
-										style={{
-											backgroundImage:
-												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-											backgroundPosition: 'right 10px center',
-											backgroundRepeat: 'no-repeat',
-											backgroundSize: '1rem',
-										}}
-									>
-										<option value='' className='text-gray-500'>
-											Выберите подробную модель
-										</option>
-										{detailModelList.map((dmodel) => (
-											<option
-												key={dmodel.DETAIL_MODEL_NO}
-												value={dmodel.DETAIL_MODEL_NO}
-												className='text-gray-800'
-											>
-												{translateTrim(dmodel.DETAIL_MODEL_NAME) ||
-													dmodel.DETAIL_MODEL_NAME}
+									{/* Комплектация */}
+									<div className='flex-1'>
+										<select
+											value={selectedGrade}
+											onChange={(e) => handleGradeChange(e.target.value)}
+											className={`w-full border-2 p-3 pr-10 rounded-lg shadow-md transition duration-300 appearance-none relative
+										${
+											selectedDetailModel
+												? 'border-[#0e2cc2] bg-white text-black hover:border-[#a330f0] focus:ring-[#a330f0]'
+												: 'bg-[#dcdcdc] border-[#c9c9c9] text-gray-400 cursor-not-allowed'
+										}
+									`}
+											disabled={!selectedDetailModel}
+											style={{
+												backgroundImage:
+													'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="black"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+												backgroundPosition: 'right 12px center',
+												backgroundRepeat: 'no-repeat',
+												backgroundSize: '1rem',
+											}}
+										>
+											<option value='' className='text-gray-400'>
+												Объём
 											</option>
-										))}
-									</select>
-								</div>
+											{gradeList.map((grade) => (
+												<option
+													key={grade.GRADE_NO}
+													value={grade.GRADE_NO}
+													className='text-white'
+												>
+													{translateFuelType(grade.GRADE_NAME) ||
+														grade.GRADE_NAME}
+												</option>
+											))}
+										</select>
+									</div>
 
-								{/* Комплектация */}
-								<div className='flex-1'>
-									<label className='block text-gray-700 font-semibold mb-2 tracking-wide'>
-										Комплектация:
+									{/* Детальная комплектация */}
+									<div className='flex-1'>
+										<select
+											value={selectedDetailGrade}
+											onChange={(e) => handleDetailGradeChange(e.target.value)}
+											className={`w-full border-2 p-3 pr-10 rounded-lg shadow-md transition duration-300 appearance-none relative
+										${
+											selectedGrade
+												? 'border-[#0e2cc2] bg-white text-black hover:border-[#a330f0] focus:ring-[#a330f0]'
+												: 'bg-[#dcdcdc] border-[#c9c9c9] text-gray-400 cursor-not-allowed'
+										}
+									`}
+											disabled={!selectedGrade}
+											style={{
+												backgroundImage:
+													'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="black"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+												backgroundPosition: 'right 12px center',
+												backgroundRepeat: 'no-repeat',
+												backgroundSize: '1rem',
+											}}
+										>
+											<option value='' className='text-gray-400'>
+												Комплектация
+											</option>
+											{detailGradeList.map((dgrade) => (
+												<option
+													key={dgrade.DETAIL_GRADE_NO}
+													value={dgrade.DETAIL_GRADE_NO}
+													className='text-white'
+												>
+													{translateFuelType(dgrade.DETAIL_GRADE_NAME)}
+												</option>
+											))}
+										</select>
+									</div>
+								</div>
+							</div>
+						)}
+					</>
+
+					{/* Дополнительные фильтры (шторка) */}
+					<div className='bg-white text-black mt-5'>
+						<div className='mx-auto w-full'>
+							<div className='grid grid-cols-1 md:grid-cols-1 gap-6 w-full'>
+								{/* Цена от */}
+								<div>
+									<label className='block text-[#0e2cc2] font-semibold mb-1 tracking-wide text-sm'>
+										Цена от:
 									</label>
 									<select
-										value={filters.selectedGrade}
-										onChange={(e) => handleGradeChange(e.target.value)}
-										className={`w-full border-2 p-3 pr-10 rounded-lg shadow-sm transition duration-300 appearance-none relative
-											${
-												filters.selectedDetailModel
-													? 'border-gray-300 bg-gray-100 text-gray-800 hover:border-gray-400 focus:ring-gray-400'
-													: 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed'
-											}
-										`}
-										disabled={!filters.selectedDetailModel}
+										value={priceMin}
+										onChange={(e) => handlePriceMinChange(e.target.value)}
+										className='w-full border border-[#a330f0] p-3 pr-10 rounded-lg shadow-md bg-white text-black focus:ring-[#0e2cc2] focus:border-[#0e2cc2] transition duration-300 ease-in-out appearance-none relative'
 										style={{
 											backgroundImage:
-												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="black"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
 											backgroundPosition: 'right 12px center',
 											backgroundRepeat: 'no-repeat',
 											backgroundSize: '1rem',
 										}}
 									>
-										<option value='' className='text-gray-500'>
-											Выберите комплектацию
-										</option>
-										{gradeList.map((grade) => (
-											<option
-												key={grade.GRADE_NO}
-												value={grade.GRADE_NO}
-												className='text-gray-800'
-											>
-												{translateFuelType(grade.GRADE_NAME) ||
-													grade.GRADE_NAME}
+										{priceOptions.map((opt) => (
+											<option key={opt.value} value={opt.value}>
+												{opt.label}
 											</option>
 										))}
 									</select>
 								</div>
 
-								{/* Детальная комплектация */}
-								<div className='flex-1'>
-									<label className='block text-gray-700 font-semibold mb-2 tracking-wide'>
-										Детальная комплектация:
+								{/* Цена до */}
+								<div>
+									<label className='block text-[#0e2cc2] font-semibold mb-1 tracking-wide text-sm'>
+										Цена до:
 									</label>
 									<select
-										value={filters.selectedDetailGrade}
-										onChange={(e) => handleDetailGradeChange(e.target.value)}
-										className={`w-full border-2 p-3 pr-10 rounded-lg shadow-sm transition duration-300 appearance-none relative
-											${
-												filters.selectedGrade
-													? 'border-gray-300 bg-gray-100 text-gray-800 hover:border-gray-400 focus:ring-gray-400'
-													: 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed'
-											}
-										`}
-										disabled={!filters.selectedGrade}
+										value={priceMax}
+										onChange={(e) => setPriceMax(e.target.value)}
+										className='w-full border border-[#a330f0] p-3 pr-10 rounded-lg shadow-md bg-white text-black focus:ring-[#0e2cc2] focus:border-[#0e2cc2] transition duration-300 ease-in-out appearance-none relative'
 										style={{
 											backgroundImage:
-												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="black"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
 											backgroundPosition: 'right 12px center',
 											backgroundRepeat: 'no-repeat',
 											backgroundSize: '1rem',
 										}}
 									>
-										<option value='' className='text-gray-500'>
-											Выберите детальную комплектацию
-										</option>
-										{detailGradeList.map((dgrade) => (
-											<option
-												key={dgrade.DETAIL_GRADE_NO}
-												value={dgrade.DETAIL_GRADE_NO}
-												className='text-gray-800'
-											>
-												{translateFuelType(dgrade.DETAIL_GRADE_NAME)}
+										{filteredPriceMaxOptions.map((opt) => (
+											<option key={opt.value} value={opt.value}>
+												{opt.label}
+											</option>
+										))}
+									</select>
+								</div>
+
+								{/* Год от */}
+								<div>
+									<label className='block text-[#0e2cc2] font-semibold mb-1 tracking-wide text-sm'>
+										Год от:
+									</label>
+									<select
+										value={yearMin}
+										onChange={(e) => handleYearMinChange(e.target.value)}
+										className='w-full border border-[#a330f0] p-3 pr-10 rounded-lg shadow-md bg-white text-black focus:ring-[#0e2cc2] focus:border-[#0e2cc2] transition duration-300 ease-in-out appearance-none relative'
+										style={{
+											backgroundImage:
+												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="black"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+											backgroundPosition: 'right 12px center',
+											backgroundRepeat: 'no-repeat',
+											backgroundSize: '1rem',
+										}}
+									>
+										{yearOptions.map((opt) => (
+											<option key={opt.value} value={opt.value}>
+												{opt.label}
+											</option>
+										))}
+									</select>
+								</div>
+
+								{/* Год до */}
+								<div>
+									<label className='block text-[#0e2cc2] font-semibold mb-1 tracking-wide text-sm'>
+										Год до:
+									</label>
+									<select
+										value={yearMax}
+										onChange={(e) => setYearMax(e.target.value)}
+										className='w-full border border-[#a330f0] p-3 pr-10 rounded-lg shadow-md bg-white text-black focus:ring-[#0e2cc2] focus:border-[#0e2cc2] transition duration-300 ease-in-out appearance-none relative'
+										style={{
+											backgroundImage:
+												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="black"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+											backgroundPosition: 'right 12px center',
+											backgroundRepeat: 'no-repeat',
+											backgroundSize: '1rem',
+										}}
+									>
+										{filteredYearMaxOptions.map((opt) => (
+											<option key={opt.value} value={opt.value}>
+												{opt.label}
+											</option>
+										))}
+									</select>
+								</div>
+
+								{/* Пробег от */}
+								<div>
+									<label className='block text-[#0e2cc2] font-semibold mb-1 tracking-wide text-sm'>
+										Пробег от:
+									</label>
+									<select
+										value={useKmMin}
+										onChange={(e) => handleUseKmMinChange(e.target.value)}
+										className='w-full border border-[#a330f0] p-3 pr-10 rounded-lg shadow-md bg-white text-black focus:ring-[#0e2cc2] focus:border-[#0e2cc2] transition duration-300 ease-in-out appearance-none relative'
+										style={{
+											backgroundImage:
+												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="black"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+											backgroundPosition: 'right 12px center',
+											backgroundRepeat: 'no-repeat',
+											backgroundSize: '1rem',
+										}}
+									>
+										{useKmOptions.map((opt) => (
+											<option key={opt.value} value={opt.value}>
+												{opt.label}
+											</option>
+										))}
+									</select>
+								</div>
+
+								{/* Пробег до */}
+								<div>
+									<label className='block text-[#0e2cc2] font-semibold mb-1 tracking-wide text-sm'>
+										Пробег до:
+									</label>
+									<select
+										value={useKmMax}
+										onChange={(e) => setUseKmMax(e.target.value)}
+										className='w-full border border-[#a330f0] p-3 pr-10 rounded-lg shadow-md bg-white text-black focus:ring-[#0e2cc2] focus:border-[#0e2cc2] transition duration-300 ease-in-out appearance-none relative'
+										style={{
+											backgroundImage:
+												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="black"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+											backgroundPosition: 'right 12px center',
+											backgroundRepeat: 'no-repeat',
+											backgroundSize: '1rem',
+										}}
+									>
+										{filteredUseKmMaxOptions.map((opt) => (
+											<option key={opt.value} value={opt.value}>
+												{opt.label}
+											</option>
+										))}
+									</select>
+								</div>
+
+								{/* Топливо */}
+								<div>
+									<label className='block text-[#0e2cc2] font-semibold mb-1 tracking-wide text-sm'>
+										Топливо:
+									</label>
+									<select
+										value={fuel}
+										onChange={(e) => setFuel(e.target.value)}
+										className='w-full border border-[#a330f0] p-3 pr-10 rounded-lg shadow-md bg-white text-black focus:ring-[#0e2cc2] focus:border-[#0e2cc2] transition duration-300 ease-in-out appearance-none relative'
+										style={{
+											backgroundImage:
+												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="black"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+											backgroundPosition: 'right 12px center',
+											backgroundRepeat: 'no-repeat',
+											backgroundSize: '1rem',
+										}}
+									>
+										{fuelOptions.map((opt) => (
+											<option key={opt.value} value={opt.value}>
+												{opt.label}
+											</option>
+										))}
+									</select>
+								</div>
+
+								{/* Трансмиссия */}
+								<div>
+									<label className='block text-black font-semibold mb-1 tracking-wide text-sm'>
+										Трансмиссия:
+									</label>
+									<select
+										value={mission}
+										onChange={(e) => setMission(e.target.value)}
+										className='w-full border border-black p-3 pr-10 rounded-lg shadow-md bg-white text-black focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+										style={{
+											backgroundImage:
+												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="black"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+											backgroundPosition: 'right 12px center',
+											backgroundRepeat: 'no-repeat',
+											backgroundSize: '1rem',
+										}}
+									>
+										{missionOptions.map((opt) => (
+											<option key={opt.value} value={opt.value}>
+												{opt.label}
+											</option>
+										))}
+									</select>
+								</div>
+
+								{/* Цвет */}
+								<div>
+									<label className='block text-black font-semibold tracking-wide text-sm'>
+										Цвет:
+									</label>
+									<select
+										value={color}
+										onChange={(e) => setColor(e.target.value)}
+										className='w-full border border-black p-3 pr-10 rounded-lg shadow-md bg-white text-black focus:ring-avtoVitaGold focus:border-avtoVitaGold transition duration-300 ease-in-out appearance-none relative'
+										style={{
+											backgroundImage:
+												'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="black"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
+											backgroundPosition: 'right 12px center',
+											backgroundRepeat: 'no-repeat',
+											backgroundSize: '1rem',
+										}}
+									>
+										{colorOptions.map((opt) => (
+											<option key={opt.value} value={opt.value}>
+												{opt.label}
 											</option>
 										))}
 									</select>
 								</div>
 
 								{/* Номер авто */}
-								<div className='flex-1'>
-									<label className='block text-gray-700 font-medium mb-2'>
-										Номер авто:
-									</label>
-									<input
-										type='text'
-										value={filters.carPlateNumber}
-										onChange={(e) =>
-											updateFilter('carPlateNumber', e.target.value)
-										}
-										maxLength={9}
-										className='text-black w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
-										placeholder='Введите номер авто'
-									/>
-								</div>
-							</div>
-						</div>
-					)}
-				</>
-
-				{/* Кнопка показа/скрытия */}
-				<div className='text-center'>
-					<button
-						onClick={toggleFilters}
-						className={`
-							mt-5 m-auto cursor-pointer flex items-center justify-center px-4 py-2 md:px-6 md:py-3 font-semibold shadow-sm transition-all duration-300
-							border-2 text-base md:text-lg rounded-lg w-full md:w-auto
-							${
-								isFiltersOpen
-									? 'bg-gray-200 text-gray-800 border-gray-300 scale-105 shadow-md'
-									: 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 hover:text-gray-800 hover:border-gray-400'
-							}
-							active:scale-95
-						`}
-					>
-						<span>
-							{isFiltersOpen ? 'Скрыть Доп. фильтры' : 'Показать Доп. фильтры'}
-						</span>
-					</button>
-				</div>
-
-				{/* Дополнительные фильтры (шторка) */}
-				<div
-					className={`
-					overflow-hidden transition-all duration-500 ease-in-out
-					${
-						isFiltersOpen
-							? 'max-h-[1000px] opacity-100 scale-100'
-							: 'max-h-0 opacity-0 scale-95'
-					}
-					 text-gray-800 py-4
-				`}
-				>
-					<div className='max-w-6xl mx-auto'>
-						<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-							{/* Цена от */}
-							<div>
-								<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
-									Цена от:
-								</label>
-								<select
-									value={filters.priceMin}
-									onChange={(e) => handlePriceMinChange(e.target.value)}
-									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
-									style={{
-										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-										backgroundPosition: 'right 12px center',
-										backgroundRepeat: 'no-repeat',
-										backgroundSize: '1rem',
-									}}
-								>
-									{priceOptions.map((opt) => (
-										<option
-											key={opt.value}
-											value={opt.value}
-											className='text-gray-700'
-										>
-											{opt.label}
-										</option>
-									))}
-								</select>
-							</div>
-
-							{/* Цена до */}
-							<div>
-								<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
-									Цена до:
-								</label>
-								<select
-									value={filters.priceMax}
-									onChange={(e) => updateFilter('priceMax', e.target.value)}
-									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
-									style={{
-										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-										backgroundPosition: 'right 12px center',
-										backgroundRepeat: 'no-repeat',
-										backgroundSize: '1rem',
-									}}
-								>
-									{filteredPriceMaxOptions.map((opt) => (
-										<option
-											key={opt.value}
-											value={opt.value}
-											className='text-gray-700'
-										>
-											{opt.label}
-										</option>
-									))}
-								</select>
-							</div>
-
-							{/* Год от */}
-							<div>
-								<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
-									Год от:
-								</label>
-								<select
-									value={filters.yearMin}
-									onChange={(e) => handleYearMinChange(e.target.value)}
-									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
-									style={{
-										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-										backgroundPosition: 'right 12px center',
-										backgroundRepeat: 'no-repeat',
-										backgroundSize: '1rem',
-									}}
-								>
-									{yearOptions.map((opt) => (
-										<option
-											key={opt.value}
-											value={opt.value}
-											className='text-gray-700'
-										>
-											{opt.label}
-										</option>
-									))}
-								</select>
-							</div>
-
-							{/* Год до */}
-							<div>
-								<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
-									Год до:
-								</label>
-								<select
-									value={filters.yearMax}
-									onChange={(e) => updateFilter('yearMax', e.target.value)}
-									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
-									style={{
-										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-										backgroundPosition: 'right 12px center',
-										backgroundRepeat: 'no-repeat',
-										backgroundSize: '1rem',
-									}}
-								>
-									{filteredYearMaxOptions.map((opt) => (
-										<option
-											key={opt.value}
-											value={opt.value}
-											className='text-gray-700'
-										>
-											{opt.label}
-										</option>
-									))}
-								</select>
-							</div>
-
-							{/* Пробег от */}
-							<div>
-								<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
-									Пробег от:
-								</label>
-								<select
-									value={filters.useKmMin}
-									onChange={(e) => handleUseKmMinChange(e.target.value)}
-									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
-									style={{
-										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-										backgroundPosition: 'right 12px center',
-										backgroundRepeat: 'no-repeat',
-										backgroundSize: '1rem',
-									}}
-								>
-									{useKmOptions.map((opt) => (
-										<option
-											key={opt.value}
-											value={opt.value}
-											className='text-gray-700'
-										>
-											{opt.label}
-										</option>
-									))}
-								</select>
-							</div>
-
-							{/* Пробег до */}
-							<div>
-								<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
-									Пробег до:
-								</label>
-								<select
-									value={filters.useKmMax}
-									onChange={(e) => updateFilter('useKmMax', e.target.value)}
-									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
-									style={{
-										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-										backgroundPosition: 'right 12px center',
-										backgroundRepeat: 'no-repeat',
-										backgroundSize: '1rem',
-									}}
-								>
-									{filteredUseKmMaxOptions.map((opt) => (
-										<option
-											key={opt.value}
-											value={opt.value}
-											className='text-gray-700'
-										>
-											{opt.label}
-										</option>
-									))}
-								</select>
-							</div>
-
-							{/* Топливо */}
-							<div>
-								<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
-									Топливо:
-								</label>
-								<select
-									value={filters.fuel}
-									onChange={(e) => updateFilter('fuel', e.target.value)}
-									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
-									style={{
-										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-										backgroundPosition: 'right 12px center',
-										backgroundRepeat: 'no-repeat',
-										backgroundSize: '1rem',
-									}}
-								>
-									{fuelOptions.map((opt) => (
-										<option
-											key={opt.value}
-											value={opt.value}
-											className='text-gray-700'
-										>
-											{opt.label}
-										</option>
-									))}
-								</select>
-							</div>
-
-							{/* Трансмиссия */}
-							<div>
-								<label className='block text-gray-600 font-semibold mb-2 tracking-wide'>
-									Трансмиссия:
-								</label>
-								<select
-									value={filters.mission}
-									onChange={(e) => updateFilter('mission', e.target.value)}
-									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
-									style={{
-										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-										backgroundPosition: 'right 12px center',
-										backgroundRepeat: 'no-repeat',
-										backgroundSize: '1rem',
-									}}
-								>
-									{missionOptions.map((opt) => (
-										<option
-											key={opt.value}
-											value={opt.value}
-											className='text-gray-700'
-										>
-											{opt.label}
-										</option>
-									))}
-								</select>
-							</div>
-
-							{/* Цвет */}
-							<div>
-								<label className='block text-gray-600 font-semibold tracking-wide'>
-									Цвет:
-								</label>
-								<select
-									value={filters.color}
-									onChange={(e) => updateFilter('color', e.target.value)}
-									className='w-full border border-gray-300 p-3 pr-10 rounded-lg shadow-sm bg-gray-100 text-gray-800 focus:ring-gray-400 focus:border-gray-400 transition duration-300 ease-in-out appearance-none relative'
-									style={{
-										backgroundImage:
-											'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>\')',
-										backgroundPosition: 'right 12px center',
-										backgroundRepeat: 'no-repeat',
-										backgroundSize: '1rem',
-									}}
-								>
-									{colorOptions.map((opt) => (
-										<option
-											key={opt.value}
-											value={opt.value}
-											className='text-gray-700'
-										>
-											{opt.label}
-										</option>
-									))}
-								</select>
+								{/* <div>
+										<label className='block text-gray-700 font-medium mb-2'>
+											Номер авто:
+										</label>
+										<input
+											type='text'
+											value={carPlateNumber}
+											onChange={(e) => setCarPlateNumber(e.target.value)}
+											maxLength={9}
+											className='w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-avtoVitaDark focus:border-avtoVitaDark transition'
+											placeholder='Введите номер авто'
+										/>
+									</div> */}
 							</div>
 						</div>
 					</div>
-				</div>
 
-				{/* Кнопка поиска и сброса фильтров */}
-				<div className='flex flex-wrap gap-6 justify-center'>
-					{/* Кнопка "Поиск" */}
-					<button
-						onClick={searchCars}
-						disabled={!filters.country}
-						className='cursor-pointer px-8 py-3 rounded-full font-semibold bg-gray-100 text-gray-800 hover:bg-gray-200 transition duration-300 ease-in-out shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 border border-gray-300'
-					>
-						🔍 <span>Поиск</span>
-					</button>
+					{/* Кнопка поиска */}
+					<div className='flex flex-wrap gap-6 justify-center mt-5'>
+						{/* Кнопка "Поиск" */}
+						<button
+							onClick={searchCars}
+							disabled={!country}
+							className='cursor-pointer px-6 py-2 rounded-full font-semibold bg-[#0e2cc2] text-white hover:bg-[#3e4fdb] transition duration-300 ease-in-out shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm'
+						>
+							🔍 <span>Поиск</span>
+						</button>
 
-					{/* Кнопка "Сбросить фильтры" */}
-					<button
-						onClick={resetFilters}
-						className='cursor-pointer px-8 py-3 rounded-full font-semibold bg-gray-100 text-gray-800 hover:bg-gray-200 transition duration-300 ease-in-out shadow-md flex items-center gap-2 border border-gray-300'
-					>
-						🔄 <span>Сбросить</span>
-					</button>
+						{/* Кнопка "Сбросить фильтры" */}
+						<button
+							onClick={resetFilters}
+							className='cursor-pointer px-6 py-2 rounded-full font-semibold bg-[#a330f0] text-white hover:bg-[#bf68f6] transition duration-300 ease-in-out shadow-lg flex items-center gap-2 text-sm'
+						>
+							🔄 <span>Сбросить</span>
+						</button>
+					</div>
 				</div>
 
 				{/* Отображение автомобилей */}
-				<div className='mt-6'>
+				<div className='md:mt-6'>
+					<h4 className='mb-5 text-center md:text-left text-lg'>
+						Недавно добавленные автомобили
+					</h4>
 					{loading ? (
 						<div className='flex justify-center items-center h-32'>
 							<Loader />
-							{/* <p>Загрузка...</p> */}
 						</div>
 					) : carList.length > 0 ? (
 						<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-							{carList
-								.sort((a, b) => (a.year > b.year ? -1 : 1))
-								.map((car, idx) => (
+							<Suspense fallback={<Loader />}>
+								{carList.map((car, idx) => (
 									<CarListItem car={car} key={idx} />
 								))}
+							</Suspense>
 						</div>
 					) : (
-						<Message text='Автомобили не найдены' i n='❌' />
+						<Message text='Автомобили не найдены' icon='❌' />
 					)}
-				</div>
 
-				{/* Пагинация */}
-				{carList.length > 0 && totalPages > 1 && (
-					<div className='mt-6 flex justify-center items-center gap-2'>
-						<button
-							onClick={goToFirstPage}
-							disabled={page === 1}
-							className='cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
-						>
-							&laquo;
-						</button>
-						<button
-							onClick={goToPrevPage}
-							disabled={page === 1}
-							className='px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
-						>
-							&lt;
-						</button>
-
-						{getPageNumbers().map((pageNum) => (
+					{/* Пагинация */}
+					{carList.length > 0 && totalPages > 1 && (
+						<div className='mt-6 flex justify-center items-center gap-2'>
 							<button
-								key={pageNum}
-								onClick={() => goToPage(pageNum)}
-								className={`cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300
+								onClick={goToFirstPage}
+								disabled={page === 1}
+								className='cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
+							>
+								&laquo;
+							</button>
+							<button
+								onClick={goToPrevPage}
+								disabled={page === 1}
+								className='px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
+							>
+								&lt;
+							</button>
+
+							{getPageNumbers().map((pageNum) => (
+								<button
+									key={pageNum}
+									onClick={() => goToPage(pageNum)}
+									className={`cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300
                     ${
 											pageNum === page
 												? 'bg-yellow-500 text-black scale-110 shadow-lg'
 												: 'bg-gray-800 hover:bg-yellow-400 hover:text-black'
 										}
                 `}
-							>
-								{pageNum}
-							</button>
-						))}
+								>
+									{pageNum}
+								</button>
+							))}
 
-						<button
-							onClick={goToNextPage}
-							disabled={page === totalPages}
-							className='cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
-						>
-							&gt;
-						</button>
-						<button
-							onClick={goToLastPage}
-							disabled={page === totalPages}
-							className='cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
-						>
-							&raquo;
-						</button>
-					</div>
-				)}
+							<button
+								onClick={goToNextPage}
+								disabled={page === totalPages}
+								className='cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
+							>
+								&gt;
+							</button>
+							<button
+								onClick={goToLastPage}
+								disabled={page === totalPages}
+								className='cursor-pointer px-4 py-2 rounded-lg text-white font-semibold transition-all duration-300 bg-gray-700 hover:bg-gray-600 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
+							>
+								&raquo;
+							</button>
+						</div>
+					)}
+				</div>
 			</div>
-		</>
+		</div>
 	)
 }
 
