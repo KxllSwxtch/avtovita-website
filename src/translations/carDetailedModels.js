@@ -1,4 +1,5 @@
 const carDetailedModelsTranslation = {
+	시리즈: '-series',
 	카이엔: 'Cayenne',
 	'50주년': '50th Anniversary',
 	그린: 'Green',

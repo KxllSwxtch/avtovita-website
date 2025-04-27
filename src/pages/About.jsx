@@ -7,14 +7,14 @@ import {
 
 const About = () => {
 	return (
-		<div className='bg-gradient-to-b from-white via-gray-50 to-white text-gray-800 mt-20'>
+		<div className='bg-white text-gray-800 mt-20'>
 			{/* Введение */}
 			<section className='py-16 px-6 text-center'>
 				<div className='max-w-4xl mx-auto'>
-					<h2 className='text-5xl font-bold text-red-600 mb-6'>О нас</h2>
+					<h2 className='text-5xl font-bold text-[#0e2cc2] mb-6'>О нас</h2>
 					<p className='text-lg text-gray-600 leading-relaxed'>
 						Мы — компания{' '}
-						<span className='text-red-600 font-semibold'>AVTOVITA</span>,
+						<span className='text-[#a330f0] font-semibold'>AVTOVITA</span>,
 						специализируемся на экспорте автомобилей из Южной Кореи в Россию,
 						Казахстан, Кыргызстан и другие страны. Помогаем клиентам находить
 						качественные автомобили по выгодным ценам, сопровождаем на всех
@@ -24,9 +24,9 @@ const About = () => {
 			</section>
 
 			{/* Наша миссия */}
-			<section className='py-16 px-6 bg-white text-center shadow-md'>
+			<section className='py-16 px-6 border-t border-gray-100'>
 				<div className='max-w-4xl mx-auto'>
-					<h3 className='text-4xl font-semibold text-red-600 mb-4'>
+					<h3 className='text-4xl font-semibold text-[#0e2cc2] mb-4 text-center'>
 						Наша миссия
 					</h3>
 					<p className='text-lg text-gray-600 leading-relaxed'>
@@ -38,34 +38,34 @@ const About = () => {
 			</section>
 
 			{/* Наши преимущества */}
-			<section className='py-16 px-6 text-center'>
+			<section className='py-16 px-6 bg-gray-50'>
 				<div className='max-w-6xl mx-auto'>
-					<h3 className='text-4xl font-semibold text-red-600 mb-8'>
+					<h3 className='text-4xl font-semibold text-[#0e2cc2] mb-12 text-center'>
 						Почему выбирают нас?
 					</h3>
-					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
-						<div className='p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col justify-center items-center'>
-							<FaCheckCircle className='text-red-600 text-5xl mb-4' />
+					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10'>
+						<div className='p-6 flex flex-col justify-center items-center'>
+							<FaCheckCircle className='text-[#a330f0] text-5xl mb-4' />
 							<h4 className='text-2xl font-semibold text-gray-800'>
 								Прозрачность
 							</h4>
-							<p className='text-gray-600 mt-2'>
+							<p className='text-gray-600 mt-2 text-center'>
 								Работаем официально, без скрытых платежей.
 							</p>
 						</div>
-						<div className='p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col justify-center items-center'>
-							<FaUsers className='text-red-600 text-5xl mb-4' />
+						<div className='p-6 flex flex-col justify-center items-center'>
+							<FaUsers className='text-[#a330f0] text-5xl mb-4' />
 							<h4 className='text-2xl font-semibold text-gray-800'>
 								Опытная команда
 							</h4>
-							<p className='text-gray-600 mt-2'>
+							<p className='text-gray-600 mt-2 text-center'>
 								Наши специалисты знают рынок Кореи изнутри.
 							</p>
 						</div>
-						<div className='p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col justify-center items-center'>
-							<FaHandshake className='text-red-600 text-5xl mb-4' />
+						<div className='p-6 flex flex-col justify-center items-center'>
+							<FaHandshake className='text-[#a330f0] text-5xl mb-4' />
 							<h4 className='text-2xl font-semibold text-gray-800'>Гарантии</h4>
-							<p className='text-gray-600 mt-2'>
+							<p className='text-gray-600 mt-2 text-center'>
 								Проверяем автомобили перед покупкой, работаем только с
 								проверенными продавцами.
 							</p>
@@ -75,52 +75,54 @@ const About = () => {
 			</section>
 
 			{/* Команда */}
-			<section className='py-16 px-6 bg-white text-center shadow-md'>
+			<section className='py-16 px-6'>
 				<div className='max-w-6xl mx-auto'>
-					<h3 className='text-4xl font-semibold text-red-600 mb-8'>
+					<h3 className='text-4xl font-semibold text-[#0e2cc2] mb-8 text-center'>
 						Наша команда
 					</h3>
-					<p className='text-lg text-gray-600 mb-6'>
+					<p className='text-lg text-gray-600 mb-10 text-center'>
 						Наши специалисты всегда готовы помочь вам.
 					</p>
 					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
-						<div className='p-6 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300'>
-							<h4 className='text-2xl font-semibold text-gray-800'>Виталий</h4>
-							<p className='text-gray-600'>Менеджер по продажам</p>
-						</div>
-						<div className='p-6 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300'>
+						<div className='p-6 border-l-4 border-[#0e2cc2] bg-gray-50'>
 							<h4 className='text-2xl font-semibold text-gray-800'>
 								Ким Евгений
 							</h4>
-							<p className='text-gray-600'>Специалист по логистике</p>
 						</div>
-						<div className='p-6 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300'>
-							<h4 className='text-2xl font-semibold text-gray-800'>Цой Евгений</h4>
+						<div className='p-6 border-l-4 border-[#0e2cc2] bg-gray-50'>
+							<h4 className='text-2xl font-semibold text-gray-800'>
+								Югай Виталий
+							</h4>
+						</div>
+						{/* <div className='p-6 border-l-4 border-[#0e2cc2] bg-gray-50'>
+							<h4 className='text-2xl font-semibold text-gray-800'>
+								Цой Евгений
+							</h4>
 							<p className='text-gray-600'>Финансовый консультант</p>
-						</div>
+						</div> */}
 					</div>
 				</div>
 			</section>
 
 			{/* Частые вопросы (FAQ) */}
-			<section className='py-16 px-6 text-center'>
+			<section className='py-16 px-6 bg-gray-50'>
 				<div className='max-w-6xl mx-auto'>
-					<h3 className='text-4xl font-semibold text-red-600 mb-8'>
+					<h3 className='text-4xl font-semibold text-[#0e2cc2] mb-12 text-center'>
 						Частые вопросы
 					</h3>
-					<div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
-						<div className='p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 text-left'>
+					<div className='grid grid-cols-1 md:grid-cols-2 gap-10'>
+						<div className='p-6 border-b border-gray-200 text-left'>
 							<h4 className='text-2xl font-semibold text-gray-800 flex items-center gap-2'>
-								<FaQuestionCircle className='text-red-600' />
+								<FaQuestionCircle className='text-[#a330f0]' />
 								Как выбрать авто?
 							</h4>
 							<p className='text-gray-600 mt-2'>
 								Вы можете воспользоваться нашим каталогом и фильтрами поиска.
 							</p>
 						</div>
-						<div className='p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 text-left'>
+						<div className='p-6 border-b border-gray-200 text-left'>
 							<h4 className='text-2xl font-semibold text-gray-800 flex items-center gap-2'>
-								<FaQuestionCircle className='text-red-600' />
+								<FaQuestionCircle className='text-[#a330f0]' />
 								Какие гарантии у меня есть?
 							</h4>
 							<p className='text-gray-600 mt-2'>

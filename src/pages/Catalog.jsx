@@ -12,7 +12,7 @@ import {
 	modelLogos,
 	translateCarName,
 } from '../utils'
-import { Loader, Message } from '../components'
+import { Message } from '../components'
 const CarListItem = lazy(() => import('../components/CarListItem'))
 import {
 	carBrandsTranslation,
@@ -69,25 +69,23 @@ const Catalog = () => {
 	const [carPlateNumber, setCarPlateNumber] = useState('')
 
 	const [carList, setCarList] = useState([])
-	const [loading, setLoading] = useState(true)
+	const [loading, setLoading] = useState(false)
 	const [page, setPage] = useState(1) // Текущая страница
 	const [totalPages, setTotalPages] = useState(7000) // Всего страниц
-	const [isFiltersOpen, setIsFiltersOpen] = useState(false)
-
-	const toggleFilters = () => {
-		setIsFiltersOpen((prev) => !prev)
-	}
 
 	// ------------------ Запросы к API ------------------
 	// 1) Выбор страны => getMakerList
 	const handleCountryClick = async (ctry) => {
+		// Если выбрана та же страна, не делаем ничего
+		if (ctry === country) return
+
 		// Устанавливаем loading сразу
 		setLoading(true)
 
 		// Сбрасываем состояние
 		setCountry(ctry)
 		setSelectedMaker('')
-		setMakerList([])
+		setMakerList([]) // Очищаем список производителей, чтобы они перезагрузились
 		setSelectedModel('')
 		setModelList([])
 		setSelectedDetailModel('')
@@ -97,54 +95,6 @@ const Catalog = () => {
 		setSelectedDetailGrade('')
 		setDetailGradeList([])
 		setPage(1) // Сбрасываем страницу на первую
-
-		try {
-			// Сначала загружаем производителей
-			const response = await axios.get(`${API_BASE_URL}/makers`, {
-				params: { country: ctry },
-			})
-			setMakerList(response.data)
-
-			// Затем сразу загружаем автомобили для выбранной страны
-			await searchCarsForCountry(ctry)
-		} catch (error) {
-			console.error('Ошибка при загрузке производителей:', error)
-			setLoading(false) // Сбрасываем состояние загрузки в случае ошибки
-		}
-	}
-
-	// Новая функция для загрузки автомобилей по стране
-	const searchCarsForCountry = async (ctry) => {
-		try {
-			const params = {
-				order: '',
-				ascending: 'desc',
-				view: 'image',
-				customSelect: `${carsPerPage}`,
-				country: ctry,
-				page: 1,
-			}
-
-			const response = await axios.get(`${API_BASE_URL}/cars`, { params })
-			const cars = response.data || []
-
-			// Обновляем список автомобилей
-			setCarList(cars)
-
-			// Определяем количество страниц
-			if (cars.length < carsPerPage) {
-				setTotalPages(1) // Если меньше, значит это последняя страница
-			} else {
-				setTotalPages(2) // Если машин >= 24, то загружаем ещё одну страницу
-			}
-		} catch (error) {
-			console.error('Ошибка при загрузке автомобилей:', error)
-		} finally {
-			// Добавляем небольшую задержку перед скрытием лоадера
-			setTimeout(() => {
-				setLoading(false)
-			}, 300)
-		}
 	}
 
 	// 2) Выбор производителя => getModelList
@@ -280,59 +230,20 @@ const Catalog = () => {
 	)
 
 	// ------------------ Финальный поиск ------------------
-	const searchCars = async () => {
-		setLoading(true)
+	const searchCars = () => {
+		// Если уже выполняется загрузка, не запускаем повторный запрос
+		if (loading) return
 
-		const params = {
-			order: '',
-			ascending: 'desc',
-			view: 'image',
-			customSelect: `${carsPerPage}`,
-			carName: '',
-			maker: selectedMaker,
-			model: selectedModel,
-			dmodel: selectedDetailModel,
-			grade: selectedGrade,
-			dgrade: selectedDetailGrade,
-			'price-min': priceMin,
-			'price-max': priceMax,
-			'year-min': yearMin,
-			'year-max': yearMax,
-			'usekm-min': useKmMin,
-			'usekm-max': useKmMax,
-			fuel,
-			mission,
-			color,
-			country,
-			carNo: '',
-			carPlateNumber,
-			'vehicle-model': '',
-			'vehicle-dmodel': '',
-			'vehicle-name': '',
-			tab: 'model',
-			detailSearch: 'close',
-			type: '',
-			page, // номер страницы
-		}
+		// Сбрасываем страницу на первую при новом поиске
+		if (page !== 1) {
+			setPage(1)
+			// useEffect запустится автоматически из-за изменения страницы
+		} else {
+			// Если мы уже на первой странице, нужно явно запустить загрузку
+			setLoading(true)
 
-		try {
-			const response = await axios.get(`${API_BASE_URL}/cars`, { params })
-
-			const cars = response.data || []
-
-			// Обновляем список автомобилей
-			setCarList(cars)
-
-			// Определяем количество страниц
-			if (cars.length < carsPerPage) {
-				setTotalPages(page) // Если меньше, значит это последняя страница
-			} else {
-				setTotalPages(page + 1) // Если машин >= 24, то загружаем ещё одну страницу
-			}
-		} catch (error) {
-			console.error('Ошибка при загрузке автомобилей:', error)
-		} finally {
-			setLoading(false)
+			// Устанавливаем флаг загрузки и позволяем useEffect обработать запрос
+			// с текущими параметрами фильтров
 		}
 	}
 
@@ -358,32 +269,92 @@ const Catalog = () => {
 	}
 
 	useEffect(() => {
-		const initialMakerList = async () => {
+		// Функция для начальной загрузки данных
+		const loadInitialData = async () => {
+			// Если уже загружаем, не делаем ничего
+			if (loading) return
+
+			// Устанавливаем loading в true
+			setLoading(true)
+
+			// Создаем таймер для защиты от зависшего запроса
+			const loadingTimeout = setTimeout(() => {
+				console.error('Превышено время ожидания загрузки')
+				setLoading(false) // Сбрасываем состояние загрузки если запрос завис
+			}, 10000) // 10 секунд на завершение загрузки
+
 			try {
-				const fullUrl = `https://ark-motors-backend-3a002a527613.herokuapp.com/makers?country=${country}`
-				const encodedUrl = encodeURIComponent(fullUrl)
-				const response = await axios.get(
-					`https://corsproxy.io/?url=${encodedUrl}`,
-				)
-				setMakerList(response.data)
+				// 1. Загружаем список производителей, если еще не загружен
+				if (makerList.length === 0) {
+					try {
+						const fullUrl = `${API_BASE_URL}/makers?country=${country}`
+						const response = await axios.get(fullUrl)
+						setMakerList(response.data)
+					} catch (error) {
+						console.error('Ошибка при загрузке производителей:', error)
+					}
+				}
+
+				// 2. Загружаем автомобили для выбранной страны и страницы
+				const params = {
+					order: '',
+					ascending: 'desc',
+					view: 'image',
+					customSelect: `${carsPerPage}`,
+					country,
+					page,
+					// Добавляем остальные параметры фильтрации только если они заданы
+					...(selectedMaker && { maker: selectedMaker }),
+					...(selectedModel && { model: selectedModel }),
+					...(selectedDetailModel && { dmodel: selectedDetailModel }),
+					...(selectedGrade && { grade: selectedGrade }),
+					...(selectedDetailGrade && { dgrade: selectedDetailGrade }),
+					...(priceMin && { 'price-min': priceMin }),
+					...(priceMax && { 'price-max': priceMax }),
+					...(yearMin && { 'year-min': yearMin }),
+					...(yearMax && { 'year-max': yearMax }),
+					...(useKmMin && { 'usekm-min': useKmMin }),
+					...(useKmMax && { 'usekm-max': useKmMax }),
+					...(fuel && { fuel }),
+					...(mission && { mission }),
+					...(color && { color }),
+					...(carPlateNumber && { carPlateNumber }),
+				}
+
+				const response = await axios.get(`${API_BASE_URL}/cars`, { params })
+				const cars = response.data || []
+
+				// Обновляем список автомобилей
+				setCarList(cars)
+
+				// Обновляем количество страниц
+				if (cars.length < carsPerPage) {
+					setTotalPages(page) // Если меньше, значит это последняя или единственная страница
+				} else {
+					setTotalPages(page + 1) // Если машин >= carsPerPage, то есть еще страницы
+				}
+
+				// Очищаем таймер загрузки, так как запрос успешно завершился
+				clearTimeout(loadingTimeout)
 			} catch (error) {
-				console.error('Ошибка при загрузке производителей:', error)
+				console.error('Ошибка при загрузке данных:', error)
+				// Очищаем таймер в случае ошибки
+				clearTimeout(loadingTimeout)
+			} finally {
+				window.scroll({ top: 0, behavior: 'smooth' }) // Прокручиваем страницу вверх
+
+				// Устанавливаем таймаут для скрытия лоадера
+				setTimeout(() => {
+					setLoading(false)
+				}, 300)
 			}
 		}
 
-		window.scroll({ top: 0, behavior: 'smooth' }) // Прокручиваем страницу вверх
+		// Вызываем loadInitialData только если страница открыта впервые или изменились параметры
+		loadInitialData()
 
-		// Загружаем автомобили только при изменении страницы, но не при изменении страны
-		// (т.к. это уже делается в handleCountryClick)
-		if (page > 1 || (makerList.length > 0 && country === 'foreign')) {
-			searchCars()
-		}
-
-		// Загружаем список производителей при первичной загрузке
-		if (makerList.length === 0) {
-			initialMakerList()
-		}
-	}, [page, country])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [country, page])
 
 	// ------------------ Обработчики пагинации ------------------
 	// Функция для создания массива страниц
@@ -575,7 +546,7 @@ const Catalog = () => {
 				<div className='md:ml-5'>
 					<>
 						{/* Кнопки для выбора страны */}
-						<div className='flex justify-center gap-6 mb-8'>
+						<div className='flex justify-center gap-4 mb-6'>
 							{[
 								{ label: 'Корейские', value: 'kor', emoji: '🇰🇷' },
 								{ label: 'Иномарки', value: 'foreign', emoji: '🌍' },
@@ -584,23 +555,19 @@ const Catalog = () => {
 									key={value}
 									onClick={() => handleCountryClick(value)}
 									className={`
-										cursor-pointer flex items-center justify-center gap-2 
-										px-6 py-4 text-base font-bold rounded-lg 
-										transition-all duration-300 transform
+										flex items-center justify-center gap-2 
+										px-4 py-2 text-sm rounded 
+										transition-duration-200
+										cursor-pointer
 										${
 											country === value
-												? 'bg-gradient-to-r from-[#0e2cc2] to-[#a330f0] text-white scale-105 shadow-lg'
-												: 'bg-white text-gray-800 border-2 border-gray-200 hover:border-[#a330f0] hover:bg-[#f5ebff]'
+												? 'bg-[#0e2cc2] text-white'
+												: 'bg-white text-gray-700 border border-gray-200 hover:border-gray-300'
 										}
-										active:scale-95 relative overflow-hidden
 									`}
 								>
-									<span className='relative z-10'>
-										{emoji} {label}
-									</span>
-									{country === value && (
-										<span className='absolute inset-0 bg-gradient-to-r from-[#3e4fdb] to-[#bf68f6] opacity-20 animate-pulse'></span>
-									)}
+									<span>{emoji}</span>
+									<span>{label}</span>
 								</button>
 							))}
 						</div>
@@ -1022,11 +989,16 @@ const Catalog = () => {
 					</h4>
 					{loading ? (
 						<div className='flex justify-center items-center h-32'>
-							<Loader />
+							<div className='w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin'></div>
+							<span className='ml-3 text-gray-700'>Загрузка...</span>
 						</div>
 					) : carList.length > 0 ? (
 						<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-							<Suspense fallback={<Loader />}>
+							<Suspense
+								fallback={
+									<div className='w-8 h-8 border-2 border-gray-300 border-t-transparent rounded-full animate-spin'></div>
+								}
+							>
 								{carList.map((car, idx) => (
 									<CarListItem car={car} key={idx} />
 								))}

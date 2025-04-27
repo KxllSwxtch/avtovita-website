@@ -1,4 +1,5 @@
 const carTrimsTranslation = {
+	시리즈: '-series',
 	카이엔: 'Cayenne',
 	그랜드: 'Grand',
 	마칸: 'Macan',

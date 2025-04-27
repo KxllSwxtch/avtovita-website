@@ -1,57 +1,32 @@
 import { motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
 
 const Loader = () => {
-	const [progress, setProgress] = useState(0)
-
-	useEffect(() => {
-		const timer = setInterval(() => {
-			setProgress((oldProgress) => {
-				const newProgress = Math.min(oldProgress + Math.random() * 10, 100)
-				if (newProgress === 100) {
-					clearInterval(timer)
-				}
-				return newProgress
-			})
-		}, 200)
-
-		return () => {
-			clearInterval(timer)
-		}
-	}, [])
-
-	const circleVariants = {
-		initial: { scale: 0, opacity: 0 },
+	// Анимация движения автомобиля
+	const carVariants = {
+		initial: { x: -100, opacity: 0 },
 		animate: {
-			scale: 1,
+			x: [0, 15, 0, 15, 0], // Легкое покачивание машины
 			opacity: 1,
 			transition: {
-				duration: 0.5,
-				type: 'spring',
-				stiffness: 260,
-				damping: 20,
+				x: {
+					duration: 1.5,
+					repeat: Infinity,
+					ease: 'easeInOut',
+				},
+				opacity: { duration: 0.5 },
 			},
 		},
 	}
 
-	const dotsVariants = {
-		initial: { opacity: 0 },
+	// Анимация вращения колес
+	const wheelVariants = {
+		initial: { rotate: 0 },
 		animate: {
-			opacity: 1,
+			rotate: 360,
 			transition: {
-				staggerChildren: 0.2,
-			},
-		},
-	}
-
-	const dotVariant = {
-		initial: { y: 0 },
-		animate: {
-			y: [0, -10, 0],
-			transition: {
-				duration: 0.8,
+				duration: 1,
 				repeat: Infinity,
-				ease: 'easeInOut',
+				ease: 'linear',
 			},
 		},
 	}
@@ -63,48 +38,89 @@ const Loader = () => {
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
 		>
-			{/* Затемнение с размытием */}
+			{/* Полупрозрачный фон */}
 			<div className='absolute inset-0 bg-white/90 backdrop-blur-sm'></div>
 
 			<div className='relative flex flex-col items-center z-10'>
-				{/* Прогресс бар */}
+				{/* Анимация автомобиля */}
 				<motion.div
-					className='w-48 h-1.5 bg-gray-200 rounded-full mt-8 overflow-hidden'
-					initial={{ width: 0, opacity: 0 }}
-					animate={{ width: 192, opacity: 1 }}
-					transition={{ delay: 0.5, duration: 0.5 }}
+					variants={carVariants}
+					initial='initial'
+					animate='animate'
+					className='relative mb-6'
 				>
-					<motion.div
-						className='h-full bg-black'
-						style={{ width: `${progress}%` }}
-						initial={{ width: '0%' }}
-						animate={{ width: `${progress}%` }}
-						transition={{ duration: 0.3 }}
-					/>
+					{/* Кузов автомобиля */}
+					<svg
+						width='120'
+						height='50'
+						viewBox='0 0 120 50'
+						fill='none'
+						xmlns='http://www.w3.org/2000/svg'
+					>
+						{/* Кузов */}
+						<motion.path
+							d='M30,35 L25,20 L40,12 L70,12 L90,20 L95,35 Z'
+							fill='#0e2cc2'
+							stroke='#0e2cc2'
+							strokeWidth='2'
+						/>
+						{/* Окна */}
+						<path
+							d='M40,20 L45,13 L65,13 L70,20 Z'
+							fill='white'
+							opacity='0.7'
+						/>
+
+						{/* Передние фары */}
+						<circle cx='25' cy='30' r='3' fill='#ffcc00' />
+						<circle cx='95' cy='30' r='3' fill='#ffcc00' />
+
+						{/* Колеса */}
+						<motion.g variants={wheelVariants}>
+							<circle cx='35' cy='35' r='10' fill='#333' />
+							<circle cx='35' cy='35' r='5' fill='#aaa' />
+							<path
+								d='M35,30 L35,40 M30,35 L40,35'
+								stroke='white'
+								strokeWidth='1.5'
+							/>
+						</motion.g>
+
+						<motion.g variants={wheelVariants}>
+							<circle cx='85' cy='35' r='10' fill='#333' />
+							<circle cx='85' cy='35' r='5' fill='#aaa' />
+							<path
+								d='M85,30 L85,40 M80,35 L90,35'
+								stroke='white'
+								strokeWidth='1.5'
+							/>
+						</motion.g>
+					</svg>
 				</motion.div>
 
-				{/* Текст загрузки с анимированными точками */}
+				{/* Текст загрузки */}
 				<motion.div
-					className='mt-6 text-lg font-medium text-black flex items-center'
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ delay: 0.7 }}
+					className='flex flex-col items-center gap-2'
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					transition={{ delay: 0.5 }}
 				>
-					<span>Загрузка</span>
-					<motion.div
-						className='flex ml-1 items-center'
-						variants={dotsVariants}
-						initial='initial'
-						animate='animate'
-					>
-						{[0, 1, 2].map((i) => (
-							<motion.span
-								key={i}
-								variants={dotVariant}
-								className='w-1 h-1 mx-0.5 bg-black rounded-full'
-							/>
-						))}
-					</motion.div>
+					<div className='text-lg font-medium text-[#0e2cc2]'>Загрузка</div>
+
+					{/* Индикатор загрузки */}
+					<div className='w-48 h-1.5 bg-gray-100 rounded-full overflow-hidden'>
+						<motion.div
+							className='h-full bg-gradient-to-r from-[#0e2cc2] to-[#a330f0]'
+							initial={{ width: 0 }}
+							animate={{ width: '100%' }}
+							transition={{
+								duration: 2,
+								repeat: Infinity,
+								repeatType: 'reverse',
+								ease: 'easeInOut',
+							}}
+						/>
+					</div>
 				</motion.div>
 			</div>
 		</motion.div>
