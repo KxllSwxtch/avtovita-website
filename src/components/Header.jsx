@@ -49,15 +49,13 @@ const Header = () => {
 					<img
 						src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1741410943/avtovita/logo_transparent2.png'
 						alt='AVTOVITA Logo'
-						className='h-22 md:h-26'
+						className='h-20 md:h-20'
 					/>
 				</Link>
 
 				{/* Контакты посередине */}
-				<div className='flex flex-col md:flex-row items-center text-center space-y-1 md:space-y-0 md:space-x-10 text-xs md:text-sm mr-5 md:mr-0'>
-					<p className='text-[#0e2cc2] flex justify-center items-center'>
-						{/* Удален блок с фото и контактами Цой Юрия */}
-					</p>
+				{/* <div className='flex flex-col md:flex-row items-center text-center space-y-1 md:space-y-0 md:space-x-10 text-xs md:text-sm mr-5 md:mr-0'>
+					<p className='text-[#0e2cc2] flex justify-center items-center'></p>
 					<p className='text-[#0e2cc2] flex justify-center items-center'>
 						<img
 							src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1741407263/avtovita/yevgenii.jpg'
@@ -90,17 +88,7 @@ const Header = () => {
 							</a>
 						</span>
 					</p>
-
-					{/* <p className='text-gray-800'>
-						Цой Евгений:{' '}
-						<a
-							href='tel:+821044168778'
-							className='text-red-500 hover:underline'
-						>
-							+82 (10)-4416-8778
-						</a>
-					</p> */}
-				</div>
+				</div> */}
 
 				{/* Меню (Desktop) */}
 				<nav className='hidden md:flex gap-6 text-lg font-medium'>

@@ -4,7 +4,14 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 
 // Local imports
 import { Header, Footer, Loader, LogoLoader } from './components'
-import { Home, About, Catalog, CarDetails, Contacts } from './pages'
+import {
+	Home,
+	About,
+	Catalog,
+	CarDetails,
+	Contacts,
+	ExportCatalog,
+} from './pages'
 
 const App = () => {
 	const [loading, setLoading] = useState(true)
@@ -40,9 +47,10 @@ const App = () => {
 						<Routes>
 							<Route path='/' element={<Home />} />
 							<Route path='/about' element={<About />} />
-							<Route path='/catalog' element={<Catalog />} />
+							{/* <Route path='/catalog' element={<Catalog />} /> */}
+							<Route path='/catalog' element={<ExportCatalog />} />
 							<Route path='/contacts' element={<Contacts />} />
-							<Route path='/catalog/:slug/:carId' element={<CarDetails />} />
+							<Route path='/catalog/:carId' element={<CarDetails />} />
 							<Route
 								path='*'
 								element={

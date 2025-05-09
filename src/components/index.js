@@ -11,6 +11,8 @@ import ContactsSection from './ContactsSection'
 import WhyUsSection from './WhyUsSection'
 import ImageSlider from './ImageSlider'
 import Calculator from './Calculator'
+import CarCard from './CarCard'
+import CarInspection from './CarInspection'
 
 export {
 	Header,
@@ -26,4 +28,6 @@ export {
 	ImageSlider,
 	Calculator,
 	Loader,
+	CarCard,
+	CarInspection,
 }

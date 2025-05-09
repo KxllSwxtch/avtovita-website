@@ -7,6 +7,8 @@ import colorOptions from './colorOptions'
 import translateCarName from './translateCarName'
 import brandLogos from './brandLogos'
 import modelLogos from './modelLogos'
+import formatDate from './formatDate'
+import transformBadgeValue from './transformBadgeValue'
 
 export {
 	priceOptions,
@@ -18,4 +20,6 @@ export {
 	translateCarName,
 	brandLogos,
 	modelLogos,
+	formatDate,
+	transformBadgeValue,
 }

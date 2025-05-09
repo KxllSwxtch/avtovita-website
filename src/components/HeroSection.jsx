@@ -162,7 +162,7 @@ const HeroSection = () => {
 				>
 					<Link
 						to='/catalog'
-						className='group relative overflow-hidden bg-[#0e2cc2] hover:bg-[#0e2cc2] transition-all duration-300 text-white font-medium py-3 px-8 rounded-md shadow-sm hover:shadow-lg inline-block'
+						className='group relative overflow-hidden bg-[#0e2cc2] hover:bg-[#0e2cc2c4] transition-all duration-300 text-white font-medium py-3 px-8 rounded-md shadow-sm hover:shadow-lg inline-block'
 					>
 						<motion.span
 							className='absolute inset-0 bg-[#a330f0] transform origin-left'

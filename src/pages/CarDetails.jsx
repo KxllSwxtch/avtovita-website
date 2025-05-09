@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
 import axios from 'axios'
-
-import { translateCarName } from '../utils'
-import { carModelsTranslation } from '../translations'
-import { ImageSlider, Loader, Calculator } from '../components'
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Navigation, Pagination } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
+import { Loader, CarInspection } from '../components'
 
 const translations = {
 	price: 'Цена в Корее (₩)',
@@ -12,6 +14,7 @@ const translations = {
 	최초등록일: 'Дата первой регистрации',
 	연료: 'Тип топлива',
 	휘발유: 'Бензин',
+	가솔린: 'Бензин',
 	경유: 'Дизель',
 	전기: 'Электро',
 	하이브리드: 'Гибрид',
@@ -33,158 +36,295 @@ const translations = {
 	세금미납: 'Задолженность по налогам',
 	없음: 'Отсутствует',
 	제시번호: 'Номер предложения',
+	'가솔린+전기': 'Гибрид',
 }
 
-const API_BASE_URL = 'https://ark-motors-backend-3a002a527613.herokuapp.com'
+const colorTranslations = {
+	흰색: 'Белый',
+	검정색: 'Чёрный',
+	회색: 'Серый',
+	파란색: 'Синий',
+	빨간색: 'Красный',
+	은색: 'Серебристый',
+	녹색: 'Зелёный',
+	노란색: 'Жёлтый',
+	주황색: 'Оранжевый',
+	보라색: 'Фиолетовый',
+	갈색: 'Коричневый',
+	베이지색: 'Бежевый',
+	분홍색: 'Розовый',
+	금색: 'Золотой',
+	청록색: 'Бирюзовый',
+	기타: 'Другой',
+	쥐색: 'Тёмно-серый',
+	은회색: 'Серебристый',
+}
 
 const CarDetails = () => {
+	const [vehicleId, setVehicleId] = useState(null)
+	const [usdKrwRate, setUsdKrwRate] = useState(null)
+	const [car, setCar] = useState(null)
+	const [loading, setLoading] = useState(true)
+	const [error, setError] = useState(null)
+	const [drivetrain, setDrivetrain] = useState('')
+
 	const { carId } = useParams()
 
-	const [carData, setCarData] = useState(null)
-	const [loading, setLoading] = useState(true)
-	const [images, setImages] = useState([])
-	const [carName, setCarName] = useState('')
-
 	useEffect(() => {
-		const fetchCarDetails = async () => {
+		const fetchCar = async () => {
 			try {
-				const response = await axios.get(`${API_BASE_URL}/car-details`, {
-					params: { carId },
-				})
-				// Сервер возвращает JSON с полями carName и carData
-				setCarName(response.data.carName)
-				setCarData(response.data.carData)
-			} catch (error) {
-				console.error('Ошибка при загрузке деталей автомобиля:', error)
+				setLoading(true)
+				const response = await axios.get(
+					`https://api.encar.com/v1/readside/vehicle/${carId}`,
+				)
+
+				setCar(response.data)
+				setVehicleId(response?.data?.vehicleId)
+			} catch (err) {
+				setError('Ошибка при загрузке данных')
+				console.error(err)
 			} finally {
 				setLoading(false)
 			}
 		}
 
-		const fetchCarImages = async () => {
+		if (carId) fetchCar()
+	}, [carId])
+
+	useEffect(() => {
+		if (!vehicleId) return
+
+		const fetchInspectionData = async () => {
 			try {
-				const response = await axios.get(`${API_BASE_URL}/car-images`, {
-					params: { carId },
-				})
-				setImages(response.data.images)
-			} catch (error) {
-				console.error('Ошибка загрузки изображений:', error)
+				const gradeDrive = car?.category?.gradeEnglishName?.toUpperCase()
+				if (gradeDrive?.includes('2WD')) {
+					setDrivetrain('2WD')
+					return
+				}
+				if (gradeDrive?.includes('4WD') || gradeDrive?.includes('AWD')) {
+					setDrivetrain('AWD / 4WD')
+					return
+				}
+				if (gradeDrive?.includes('RWD')) {
+					setDrivetrain('RWD')
+					return
+				}
+				const response = await axios.get(
+					`https://api.encar.com/v1/readside/inspection/vehicle/${vehicleId}`,
+				)
+
+				const data = response?.data
+				if (!data?.inners) {
+					setDrivetrain('')
+					return
+				}
+
+				const powertrain = data.inners.find(
+					(item) =>
+						item.type?.code === 'S03' && item.type?.title === '동력전달',
+				)
+
+				if (!powertrain || !powertrain.children) {
+					setDrivetrain('')
+					return
+				}
+
+				const drivetrainText = powertrain?.children?.find(
+					(c) =>
+						typeof c.description === 'string' && c.description.includes('WD'),
+				)?.description
+				const titles = powertrain.children.map((c) => c.type?.title)
+				const hasDifferential = titles.includes('디피렌셜 기어')
+				const hasCVJoint = titles.includes('등속조인트')
+				const hasDriveShaft = titles.includes('추친축 및 베어링')
+
+				if (drivetrainText) {
+					setDrivetrain(drivetrainText)
+				} else if (hasDifferential && hasCVJoint && hasDriveShaft) {
+					setDrivetrain('AWD / 4WD')
+				} else if (hasDifferential && (hasDriveShaft || hasCVJoint)) {
+					setDrivetrain('RWD')
+				} else if (!hasDifferential && hasCVJoint) {
+					setDrivetrain('FWD')
+				} else {
+					setDrivetrain('2WD')
+				}
+			} catch {
+				console.warn(
+					'Inspection fetch failed or empty, fallback to empty drivetrain.',
+				)
+				setDrivetrain('')
 			}
 		}
 
-		fetchCarDetails()
-		fetchCarImages()
-	}, [carId])
+		fetchInspectionData()
+	}, [vehicleId])
+
+	useEffect(() => {
+		const fetchUsdKrwRate = async () => {
+			try {
+				const response = await axios.get(
+					'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json',
+				)
+
+				if (response.status === 200) {
+					const jsonData = response.data
+					const rate = jsonData['usd']['krw']
+					setUsdKrwRate(rate)
+				}
+			} catch (error) {
+				console.error(error)
+			}
+		}
+
+		fetchUsdKrwRate()
+	}, [])
+
+	const handleAddToFavorites = () => {
+		alert('Функция добавления в избранное временно недоступна')
+	}
 
 	if (loading) return <Loader />
+	if (error) return <p className='text-center text-red-500'>{error}</p>
+	if (!car) return <p className='text-center text-lg'>Автомобиль не найден</p>
+
+	// Получение URL первой фотографии
+	const getPhotoUrl = (path) =>
+		`https://ci.encar.com/carpicture${path}?impolicy=heightRate&rh=696&cw=1160&ch=696&cg=Center&wtmk=https://ci.encar.com/wt_mark/w_mark_04.png&t=20250401111058`
+	const sortedPhotos = car?.photos?.sort((a, b) => (a.path > b.path ? 1 : -1))
+	const uniquePhotos = [
+		...new Map(car?.photos?.map((photo) => [photo.path, photo])).values(),
+	]
+
+	const formattedYearMonth = `${car?.category?.yearMonth.substring(
+		4,
+	)}/${car?.category?.yearMonth.substring(0, 4)}`
+
+	const carPriceKorea = car?.advertisement?.price * 10000
+	const carName = car?.category?.manufacturerEnglishName
+	const formattedCarName = carName?.replaceAll('_', ' ')
+
+	const modelGroup = car?.category?.modelGroupEnglishName
+	const formattedModelGroup = modelGroup === 'Canival' ? 'Carnival' : modelGroup
 
 	return (
-		<div className='container mx-auto p-4 max-w-6xl mt-30'>
-			{/* Основной контейнер с фото слева и информацией справа */}
-			<div className='grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-10'>
-				{/* Фотографии автомобиля */}
-				<div className='overflow-hidden'>
-					{images.length > 0 ? (
-						<ImageSlider images={images} />
-					) : (
-						<p className='text-center text-gray-500'>Фотографии отсутствуют</p>
-					)}
+		<div className='container mx-auto mt-24 md:mt-30 p-4 md:p-6 bg-white shadow-lg rounded-lg'>
+			<h1 className='text-3xl font-bold text-center mb-6'>
+				{formattedCarName} {formattedModelGroup}{' '}
+				{car?.category?.gradeEnglishName}
+			</h1>
 
-					<div className='hidden md:block'>
-						<Calculator />
-					</div>
+			{/* Слайдер с фото */}
+			{sortedPhotos.length > 0 && (
+				<div className='max-w-2xl mx-auto mb-'>
+					<Swiper
+						modules={[Navigation, Pagination]}
+						spaceBetween={10}
+						slidesPerView={1}
+						navigation
+						pagination={{ clickable: true }}
+						className='rounded-lg shadow-lg'
+					>
+						{uniquePhotos.map((photo, index) => (
+							<SwiperSlide key={index}>
+								<img
+									src={getPhotoUrl(photo.path)}
+									alt={`Car image ${index + 1}`}
+									className='w-full h-auto rounded-lg'
+								/>
+							</SwiperSlide>
+						))}
+					</Swiper>
 				</div>
+			)}
 
-				{/* Информация об автомобиле */}
-				<div className='bg-white rounded-lg shadow-lg p-8'>
-					<h2 className='text-2xl font-bold mb-6 text-gray-800 text-center'>
-						{carName ? translateCarName(carName) : 'Модель не указана'}
-					</h2>
+			{/* <div className='flex justify-end mb-4'>
+				<button
+					onClick={handleAddToFavorites}
+					className='bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition cursor-pointer'
+				>
+					❤️ Добавить в избранное
+				</button>
+			</div> */}
+			{/* Данные об автомобиле */}
+			<div className='mt-6 p-5 bg-gray-50 shadow-md rounded-lg'>
+				<p className='text-gray-600'>
+					<strong>Дата регистрации:</strong> {formattedYearMonth}
+				</p>
+				<p className='text-gray-600'>
+					<strong>Объём двигателя:</strong>{' '}
+					{car?.spec?.displacement.toLocaleString()} см³
+				</p>
+				<p className='text-gray-600'>
+					<strong>Пробег:</strong> {car?.spec?.mileage.toLocaleString()} км
+				</p>
+				<p className='text-gray-600'>
+					<strong>Трансмиссия:</strong>{' '}
+					{translations[car?.spec?.transmissionName]}
+				</p>
+				{drivetrain && (
+					<p className='text-gray-600'>
+						<strong>Привод:</strong> {drivetrain}
+					</p>
+				)}
+				<p className='text-gray-600'>
+					<strong>Тип топлива:</strong>{' '}
+					{translations[car?.spec?.fuelName] || car?.spec?.fuelName}
+				</p>
+				<p className='text-gray-600'>
+					<strong>Цвет:</strong>{' '}
+					{colorTranslations[car?.spec?.colorName] || car?.spec?.colorName}
+				</p>
+				<>
+					<CarInspection car={car} />
+				</>
 
-					{/* Компактное расположение данных в табличном стиле */}
-					<div className='border-t border-gray-200'>
-						{carData ? (
-							<table className='w-full text-left mt-4'>
-								<tbody>
-									{Object.entries(carData).map(([key, value], index) => (
-										<tr
-											key={index}
-											className={`border-b border-gray-100 transition duration-300 hover:bg-gray-50 ${
-												index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
-											}`}
-										>
-											{/* Название характеристики */}
-											<td className='py-3 px-2 text-sm font-medium text-gray-600 w-1/3 md:w-1/4'>
-												{translations[key] || key}
-											</td>
-											{/* Значение характеристики */}
-											<td className='py-3 px-2 text-sm text-gray-800 text-right'>
-												<b>
-													{translations[value] ||
-														carModelsTranslation[value] ||
-														value.toLocaleString()}
-												</b>
-											</td>
-										</tr>
-									))}
-								</tbody>
-							</table>
-						) : (
-							<p className='text-center text-gray-500'>Автомобиль не найден</p>
-						)}
-					</div>
-				</div>
+				{usdKrwRate && (
+					<p className='mt-10 mb-2'>
+						<span className='text-gray-500 text-sm'>
+							USDT - KRW: ₩{Math.floor(usdKrwRate - 15).toLocaleString()}
+						</span>
+					</p>
+				)}
+				<p className='text-gray-800 font-bold text-lg'>
+					<strong>Стоимость автомобиля:</strong> ₩
+					{carPriceKorea.toLocaleString()}
+				</p>
 			</div>
 
-			<div className='mt-10 md:hidden'>
-				<Calculator />
-			</div>
-
-			<div className='mt-10 p-8 bg-white border border-gray-100'>
-				<h3 className='text-4xl font-bold text-gray-800 mb-8 text-center'>
-					Контакты для связи
-				</h3>
-				<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-					{/* Ким Евгений */}
-					<div className='p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-200'>
-						<p className='text-lg font-semibold text-gray-700 mb-1'>
-							Ким Евгений
-						</p>
+			{/* Контакты менеджеров */}
+			<div className='mt-6 p-5 bg-white shadow-md rounded-lg text-center flex justify-center gap-20'>
+				<div>
+					<h2 className='text-xl font-semibold mb-4'>Контакты</h2>
+					<p className='text-gray-700 mb-2'>
+						<strong>Ким Евгений:</strong>{' '}
 						<a
-							href='tel:+821042252627'
-							className='block text-xl text-red-600 hover:text-red-500 transition duration-300'
+							href='tel:821042252627'
+							className='text-blue-600 hover:underline'
 						>
 							+82 10-4225-2627
 						</a>
-					</div>
-
-					{/* Виталий */}
-					<div className='p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-200'>
-						<p className='text-lg font-semibold text-gray-700 mb-1'>
-							Виталий Югай
-						</p>
+					</p>
+					<p className='text-gray-700 mb-2'>
+						<strong>Югай Виталий:</strong>{' '}
 						<a
-							href='tel:+821093441782'
-							className='block text-xl text-red-600 hover:text-red-500 transition duration-300'
+							href='tel:821093441782'
+							className='text-blue-600 hover:underline'
 						>
 							+82 10-9344-1782
 						</a>
-					</div>
-
-					{/* Цой Евгений */}
-					{/* <div className='p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-200'>
-						<p className='text-lg font-semibold text-gray-700 mb-1'>
-							Цой Евгений
-						</p>
-						<a
-							href='tel:+821044168778'
-							className='block text-xl text-red-600 hover:text-red-500 transition duration-300'
-						>
-							+82 10-4416-8778
-						</a>
-					</div> */}
+					</p>
 				</div>
 			</div>
+
+			<a
+				href='https://t.me/+Ndi8rrAfpg00ZGJl'
+				target='_blank'
+				rel='noopener noreferrer'
+				className='fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-full shadow-lg text-lg font-semibold z-50 transition duration-300 animate-bounce flex items-center justify-center w-16 h-16'
+			>
+				💬
+			</a>
 		</div>
 	)
 }
