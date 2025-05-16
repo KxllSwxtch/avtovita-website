@@ -124,14 +124,14 @@ const Catalog = () => {
 		// Fetch manufacturers list
 		const fetchManufacturers = async () => {
 			try {
-				const url = `https://encar-proxy.habsida.net/api/nav?count=true&q=(And.Hidden.N._.SellType.%EC%9D%BC%EB%B0%98._.CarType.A.)&inav=%7CMetadata%7CSort`
+				const url = `https://encar-proxy.habsida.net/api/nav?count=true&q=(And.Hidden.N._.CarType.A._.SellType.%EC%9D%BC%EB%B0%98.)&inav=%7CMetadata%7CSort`
 				const response = await axios.get(url)
 				const data = response.data
 
 				if (data) {
 					setTotalCars(data?.Count || 0)
 					const manufacturers =
-						data?.iNav?.Nodes[2]?.Facets[0]?.Refinements?.Nodes[0]?.Facets || []
+						data?.iNav?.Nodes[1]?.Facets[0]?.Refinements?.Nodes[0]?.Facets || []
 					setManufacturers(manufacturers)
 				}
 			} catch (error) {
