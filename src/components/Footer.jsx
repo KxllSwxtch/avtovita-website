@@ -13,7 +13,7 @@ const Footer = () => {
 				{/* Логотип и описание */}
 				<div className='text-center md:text-left flex flex-col items-center md:items-start'>
 					<img
-						src='https://res.cloudinary.com/pomegranitedesign/image/upload/v1741410943/avtovita/logo_transparent2.png'
+						src='logo.png'
 						alt='AvtoVita Logo'
 						className='w-32'
 					/>

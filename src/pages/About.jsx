@@ -85,21 +85,29 @@ const About = () => {
 					</p>
 					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
 						<div className='p-6 border-l-4 border-[#0e2cc2] bg-gray-50'>
+							<img src="/team/yevgenii.jpeg" alt="Ким Евгений" className="w-full h-48 object-cover mb-4 rounded-lg" />
 							<h4 className='text-2xl font-semibold text-gray-800'>
 								Ким Евгений
 							</h4>
 						</div>
 						<div className='p-6 border-l-4 border-[#0e2cc2] bg-gray-50'>
+							<img src="/team/vitalii.jpeg" alt="Югай Виталий" className="w-full h-48 object-cover mb-4 rounded-lg" />
 							<h4 className='text-2xl font-semibold text-gray-800'>
 								Югай Виталий
 							</h4>
 						</div>
-						{/* <div className='p-6 border-l-4 border-[#0e2cc2] bg-gray-50'>
+						<div className='p-6 border-l-4 border-[#0e2cc2] bg-gray-50'>
+							<img src="/team/konstantin.jpeg" alt="Ким Константин" className="w-full h-48 object-cover mb-4 rounded-lg" />
 							<h4 className='text-2xl font-semibold text-gray-800'>
-								Цой Евгений
+								Ким Константин
 							</h4>
-							<p className='text-gray-600'>Финансовый консультант</p>
-						</div> */}
+						</div>
+						<div className='p-6 border-l-4 border-[#0e2cc2] bg-gray-50'>
+							<img src="/team/sergey.jpeg" alt="Пак Сергей" className="w-full h-48 object-cover mb-4 rounded-lg" />
+							<h4 className='text-2xl font-semibold text-gray-800'>
+								Пак Сергей
+							</h4>
+						</div>
 					</div>
 				</div>
 			</section>

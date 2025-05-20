@@ -28,8 +28,8 @@ const Contacts = () => {
 							<h3 className='text-3xl font-semibold text-[#0e2cc2] mb-4'>
 								Головной офис
 							</h3>
-							<img
-								src='https://res.cloudinary.com/dt0nkqowc/image/upload/v1743116189/AvtoVita/avtodome_logo_wuwh07.jpg'
+							<img	
+								src=''
 								alt='Главный офис'
 								className='w-full h-auto mb-4'
 							/>
@@ -56,7 +56,25 @@ const Contacts = () => {
 										+82 (10)-9344-1782
 									</a>
 								</p>
-								<div className='flex gap-4 text-2xl mt-2'>
+								<p className='flex items-center gap-2'>
+									📞 <span className='font-semibold'>Ким Константин:</span>{' '}
+									<a
+										href='tel:+821093441782'
+										className='text-[#0e2cc2] hover:text-[#a330f0] transition-colors'
+									>
+										+82 (10)-9344-1782
+									</a>
+								</p>
+								<p className='flex items-center gap-2'>
+									📞 <span className='font-semibold'>Пак Сергей:</span>{' '}
+									<a
+										href='tel:+821093441782'
+										className='text-[#0e2cc2] hover:text-[#a330f0] transition-colors'
+									>
+										+82 (10)-2473-5718
+									</a>
+								</p>
+								{/* <div className='flex gap-4 text-2xl mt-2'>
 									<a
 										href='#'
 										className='text-[#0e2cc2] hover:text-[#a330f0] transition-colors'
@@ -75,7 +93,7 @@ const Contacts = () => {
 									>
 										<FaInstagram />
 									</a>
-								</div>
+								</div> */}
 							</div>
 						</div>
 					</div>
