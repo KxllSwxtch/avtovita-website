@@ -13,7 +13,7 @@ const Footer = () => {
 				{/* Логотип и описание */}
 				<div className='text-center md:text-left flex flex-col items-center md:items-start'>
 					<img
-						src='logo.png'
+						src='/logo.png'
 						alt='AvtoVita Logo'
 						className='w-32'
 					/>
