@@ -84,16 +84,16 @@ const Footer = () => {
           <p className="text-sm text-gray-600">
             Ким Константин:{" "}
             <a
-              href="tel:+821093441782"
+              href="tel:+821099802444"
               className="text-gray-600 hover:text-red-500 transition"
             >
-              +82 (10)-9344-1782
+              +82 (10)-9980-2444
             </a>
           </p>
           <p className="text-sm text-gray-600">
             Пак Сергей:{" "}
             <a
-              href="tel:+821093441782"
+              href="tel:+821024735718"
               className="text-gray-600 hover:text-red-500 transition"
             >
               +82 (10)-2473-5718
