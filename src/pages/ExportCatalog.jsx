@@ -124,7 +124,7 @@ const Catalog = () => {
     // Fetch manufacturers list
     const fetchManufacturers = async () => {
       try {
-        const url = `https://encar-proxy.onrender.com/api/nav?count=true&q=(And.Hidden.N._.CarType.A._.SellType.%EC%9D%BC%EB%B0%98.)&inav=%7CMetadata%7CSort`
+        const url = `https://encar-proxy-main.onrender.com/api/nav?count=true&q=(And.Hidden.N._.CarType.A._.SellType.%EC%9D%BC%EB%B0%98.)&inav=%7CMetadata%7CSort`
         const response = await axios.get(url)
         const data = response.data
 
@@ -177,7 +177,7 @@ const Catalog = () => {
     try {
       // Only fetch model groups if manufacturer is selected
       if (selectedManufacturer) {
-        const url = `https://encar-proxy.onrender.com/api/nav?count=true&q=(And.Hidden.N._.SellType.%EC%9D%BC%EB%B0%98._.(C.CarType.A._.Manufacturer.${selectedManufacturer}.))&inav=%7CMetadata%7CSort`
+        const url = `https://encar-proxy-main.onrender.com/api/nav?count=true&q=(And.Hidden.N._.SellType.%EC%9D%BC%EB%B0%98._.(C.CarType.A._.Manufacturer.${selectedManufacturer}.))&inav=%7CMetadata%7CSort`
         const response = await axios.get(url)
         const data = response?.data
 
@@ -207,7 +207,7 @@ const Catalog = () => {
 
       // Only fetch models if model group is selected
       if (selectedManufacturer && selectedModelGroup) {
-        const url = `https://encar-proxy.onrender.com/api/nav?count=true&q=(And.Hidden.N._.SellType.%EC%9D%BC%EB%B0%98._.(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.ModelGroup.${selectedModelGroup}.)))&inav=%7CMetadata%7CSort`
+        const url = `https://encar-proxy-main.onrender.com/api/nav?count=true&q=(And.Hidden.N._.SellType.%EC%9D%BC%EB%B0%98._.(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.ModelGroup.${selectedModelGroup}.)))&inav=%7CMetadata%7CSort`
         const response = await axios.get(url)
         const data = response?.data
 
@@ -247,7 +247,7 @@ const Catalog = () => {
 
       // Only fetch configurations if model is selected
       if (selectedManufacturer && selectedModelGroup && selectedModel) {
-        const url = `https://encar-proxy.onrender.com/api/nav?count=true&q=(And.Hidden.N._.(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.(C.ModelGroup.${selectedModelGroup}._.Model.${selectedModel}.))))&inav=%7CMetadata%7CSort`
+        const url = `https://encar-proxy-main.onrender.com/api/nav?count=true&q=(And.Hidden.N._.(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.(C.ModelGroup.${selectedModelGroup}._.Model.${selectedModel}.))))&inav=%7CMetadata%7CSort`
         const response = await axios.get(url)
         const data = response?.data
 
@@ -281,7 +281,7 @@ const Catalog = () => {
         selectedModel &&
         selectedConfiguration
       ) {
-        const url = `https://encar-proxy.onrender.com/api/nav?count=true&q=(And.Hidden.N._.(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.(C.ModelGroup.${selectedModelGroup}._.(C.Model.${selectedModel}._.BadgeGroup.${selectedConfiguration}.)))))&inav=%7CMetadata%7CSort`
+        const url = `https://encar-proxy-main.onrender.com/api/nav?count=true&q=(And.Hidden.N._.(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.(C.ModelGroup.${selectedModelGroup}._.(C.Model.${selectedModel}._.BadgeGroup.${selectedConfiguration}.)))))&inav=%7CMetadata%7CSort`
         const response = await axios.get(url)
         const data = response?.data
 
@@ -320,7 +320,7 @@ const Catalog = () => {
         selectedConfiguration &&
         selectedBadge
       ) {
-        const url = `https://encar-proxy.onrender.com/api/nav?count=true&q=(And.Hidden.N._.SellType.%EC%9D%BC%EB%B0%98._.(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.(C.ModelGroup.${selectedModelGroup}._.(C.Model.${selectedModel}._.(C.BadgeGroup.${selectedConfiguration}._.Badge.${transformBadgeValue(
+        const url = `https://encar-proxy-main.onrender.com/api/nav?count=true&q=(And.Hidden.N._.SellType.%EC%9D%BC%EB%B0%98._.(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.(C.ModelGroup.${selectedModelGroup}._.(C.Model.${selectedModel}._.(C.BadgeGroup.${selectedConfiguration}._.Badge.${transformBadgeValue(
           selectedBadge
         )}.))))))&inav=%7CMetadata%7CSort`
 
@@ -511,7 +511,7 @@ const Catalog = () => {
     const itemsPerPage = 20
     const offset = (currentPage - 1) * itemsPerPage
 
-    const url = `https://encar-proxy.onrender.com/api/catalog?count=true&q=${encodedQuery}&sr=${encodeURIComponent(
+    const url = `https://encar-proxy-main.onrender.com/api/catalog?count=true&q=${encodedQuery}&sr=${encodeURIComponent(
       sortOptions[sortOption]
     )}%7C${offset}%7C${itemsPerPage}`
 
