@@ -10,20 +10,6 @@ const ContactsSection = () => {
 				</p>
 
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mt-10 mx-auto w-full">
-					{/* Ким Евгений */}
-					<div className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-[#0e2cc2]/10">
-						<FaPhone className="text-[#a330f0] text-4xl mb-4" />
-						<h3 className="text-xl font-semibold text-[#0e2cc2]">
-							Ким Евгений
-						</h3>
-						<a
-							href="tel:+821042252627"
-							className="text-[#4a4a7b] mt-2 hover:text-[#a330f0] transition duration-200"
-						>
-							+82 10-4225-2627
-						</a>
-					</div>
-
 					{/* Виталий */}
 					<div className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-[#0e2cc2]/10">
 						<FaPhone className="text-[#a330f0] text-4xl mb-4" />
@@ -35,6 +21,20 @@ const ContactsSection = () => {
 							className="text-[#4a4a7b] mt-2 hover:text-[#a330f0] transition duration-200"
 						>
 							+82 10-9344-1782
+						</a>
+					</div>
+
+					{/* Ким Евгений */}
+					<div className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-[#0e2cc2]/10">
+						<FaPhone className="text-[#a330f0] text-4xl mb-4" />
+						<h3 className="text-xl font-semibold text-[#0e2cc2]">
+							Ким Евгений
+						</h3>
+						<a
+							href="tel:+821042252627"
+							className="text-[#4a4a7b] mt-2 hover:text-[#a330f0] transition duration-200"
+						>
+							+82 10-4225-2627
 						</a>
 					</div>
 

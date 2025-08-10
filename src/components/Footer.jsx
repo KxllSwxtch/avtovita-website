@@ -58,21 +58,21 @@ const Footer = () => {
 				<div className="text-center md:text-left">
 					<h2 className="text-lg font-bold text-gray-800 mb-3">Контакты</h2>
 					<p className="text-sm text-gray-600">
-						Ким Евгений:{' '}
-						<a
-							href="tel:+821042252627"
-							className="text-gray-600 hover:text-red-500 transition"
-						>
-							+82 (10)-4225-2627
-						</a>
-					</p>
-					<p className="text-sm text-gray-600">
 						Югай Виталий:{' '}
 						<a
 							href="tel:+821093441782"
 							className="text-gray-600 hover:text-red-500 transition"
 						>
 							+82 (10)-9344-1782
+						</a>
+					</p>
+					<p className="text-sm text-gray-600">
+						Ким Евгений:{' '}
+						<a
+							href="tel:+821042252627"
+							className="text-gray-600 hover:text-red-500 transition"
+						>
+							+82 (10)-4225-2627
 						</a>
 					</p>
 					<p className="text-sm text-gray-600">

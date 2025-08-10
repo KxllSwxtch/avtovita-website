@@ -30,21 +30,21 @@ const Contacts = () => {
 									Korea, 경기 안산시 단원구 풍전로 53, 451호 The중고차
 								</p>
 								<p className="flex items-center gap-2">
-									📞 <span className="font-semibold">Ким Евгений:</span>{' '}
-									<a
-										href="tel:+821042252627"
-										className="text-[#0e2cc2] hover:text-[#a330f0] transition-colors"
-									>
-										+82 (10)-4225-2627
-									</a>
-								</p>
-								<p className="flex items-center gap-2">
 									📞 <span className="font-semibold">Югай Виталий:</span>{' '}
 									<a
 										href="tel:+821093441782"
 										className="text-[#0e2cc2] hover:text-[#a330f0] transition-colors"
 									>
 										+82 (10)-9344-1782
+									</a>
+								</p>
+								<p className="flex items-center gap-2">
+									📞 <span className="font-semibold">Ким Евгений:</span>{' '}
+									<a
+										href="tel:+821042252627"
+										className="text-[#0e2cc2] hover:text-[#a330f0] transition-colors"
+									>
+										+82 (10)-4225-2627
 									</a>
 								</p>
 								<p className="flex items-center gap-2">
