@@ -1,86 +1,117 @@
-import { FaPhone } from 'react-icons/fa'
+import { motion } from 'framer-motion'
+import { FaPhone, FaWhatsapp, FaTelegram, FaInstagram, FaYoutube } from 'react-icons/fa'
+
+const contacts = [
+	{
+		name: 'Югай Виталий',
+		phone: '+82 10-9344-1782',
+		href: 'tel:+821093441782',
+	},
+	{
+		name: 'Ким Евгений',
+		phone: '+82 10-4225-2627',
+		href: 'tel:+821042252627',
+	},
+	{
+		name: 'Шек Роман',
+		phone: '+82 10-7921-1421',
+		href: 'tel:+821079211421',
+	},
+]
+
+const socials = [
+	{
+		icon: FaWhatsapp,
+		href: 'https://wa.me/821012345678',
+		label: 'WhatsApp',
+	},
+	{
+		icon: FaTelegram,
+		href: 'https://t.me/avtovita',
+		label: 'Telegram',
+	},
+	{
+		icon: FaInstagram,
+		href: 'https://instagram.com/avtovita',
+		label: 'Instagram',
+	},
+	{
+		icon: FaYoutube,
+		href: 'https://youtube.com/avtovita',
+		label: 'YouTube',
+	},
+]
 
 const ContactsSection = () => {
 	return (
-		<section className="bg-[#f0f0ff] text-white py-16 px-6">
-			<div className="max-w-6xl mx-auto text-center">
-				<h2 className="text-4xl font-bold text-[#0e2cc2] mb-6">Контакты</h2>
-				<p className="text-lg text-[#4a4a7b] max-w-3xl mx-auto">
-					Свяжитесь с нами удобным способом!
-				</p>
+		<section className='bg-[#1a1a1a] py-20 px-6'>
+			<div className='max-w-6xl mx-auto text-center'>
+				<motion.div
+					initial={{ opacity: 0, y: 40 }}
+					whileInView={{ opacity: 1, y: 0 }}
+					viewport={{ once: true, amount: 0.2 }}
+					transition={{ duration: 0.6, ease: 'easeOut' }}
+				>
+					<h2 className='text-4xl font-bold text-white mb-6'>
+						Свяжитесь с{' '}
+						<span className='text-avtoVitaGold'>нами</span>
+					</h2>
+					<p className='text-lg text-gray-400 max-w-3xl mx-auto'>
+						Свяжитесь с нами удобным способом!
+					</p>
+				</motion.div>
 
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mt-10 mx-auto w-full">
-					{/* Виталий */}
-					<div className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-[#0e2cc2]/10">
-						<FaPhone className="text-[#a330f0] text-4xl mb-4" />
-						<h3 className="text-xl font-semibold text-[#0e2cc2]">
-							Югай Виталий
-						</h3>
-						<a
-							href="tel:+821093441782"
-							className="text-[#4a4a7b] mt-2 hover:text-[#a330f0] transition duration-200"
+				<div className='grid grid-cols-1 md:grid-cols-3 gap-8 mt-12'>
+					{contacts.map((contact, index) => (
+						<motion.div
+							key={contact.name}
+							initial={{ opacity: 0, y: 40 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							viewport={{ once: true, amount: 0.2 }}
+							transition={{
+								duration: 0.5,
+								delay: index * 0.15,
+								ease: 'easeOut',
+							}}
+							className='p-8 bg-[#1e1e1e] rounded-xl border border-avtoVitaGold/20 hover:border-avtoVitaGold/40 hover:shadow-[0_0_20px_rgba(255,215,0,0.08)] transition duration-300 flex flex-col items-center text-center'
 						>
-							+82 10-9344-1782
-						</a>
-					</div>
-
-					{/* Ким Евгений */}
-					<div className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-[#0e2cc2]/10">
-						<FaPhone className="text-[#a330f0] text-4xl mb-4" />
-						<h3 className="text-xl font-semibold text-[#0e2cc2]">
-							Ким Евгений
-						</h3>
-						<a
-							href="tel:+821042252627"
-							className="text-[#4a4a7b] mt-2 hover:text-[#a330f0] transition duration-200"
-						>
-							+82 10-4225-2627
-						</a>
-					</div>
-
-					<div className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-[#0e2cc2]/10">
-						<FaPhone className="text-[#a330f0] text-4xl mb-4" />
-						<h3 className="text-xl font-semibold text-[#0e2cc2]">Шек Роман</h3>
-						<a
-							href="tel:+821079211421"
-							className="text-[#4a4a7b] mt-2 hover:text-[#a330f0] transition duration-200"
-						>
-							+82 10-7921-1421
-						</a>
-					</div>
+							<div className='w-14 h-14 bg-avtoVitaGold/10 rounded-full flex items-center justify-center mb-5'>
+								<FaPhone className='text-avtoVitaGold text-xl' />
+							</div>
+							<h3 className='text-xl font-semibold text-white mb-2'>
+								{contact.name}
+							</h3>
+							<a
+								href={contact.href}
+								className='text-avtoVitaGold hover:text-avtoVitaGoldDark transition duration-200 text-lg'
+							>
+								{contact.phone}
+							</a>
+						</motion.div>
+					))}
 				</div>
 
-				{/* Соцсети */}
-				{/* <div className='mt-10 flex justify-center gap-6'>
-					<a
-						target='_blank'
-						href='https://wa.me/821012345678'
-						className='text-3xl text-green-500 hover:text-green-600 transition'
-					>
-						<FaWhatsapp />
-					</a>
-					<a
-						target='_blank'
-						href='https://t.me/avtovita'
-						className='text-3xl text-blue-500 hover:text-blue-600 transition'
-					>
-						<FaTelegram />
-					</a>
-					<a
-						target='_blank'
-						href='https://instagram.com/avtovita'
-						className='text-3xl text-pink-500 hover:text-pink-600 transition'
-					>
-						<FaInstagram />
-					</a>
-					<a
-						target='_blank'
-						href='https://youtube.com/avtovita'
-						className='text-3xl text-red-500 hover:text-red-600 transition'
-					>
-						<FaYoutube />
-					</a>
-				</div> */}
+				{/* Social links */}
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					whileInView={{ opacity: 1, y: 0 }}
+					viewport={{ once: true, amount: 0.2 }}
+					transition={{ duration: 0.5, delay: 0.5, ease: 'easeOut' }}
+					className='mt-12 flex justify-center gap-5'
+				>
+					{socials.map((social) => (
+						<a
+							key={social.label}
+							target='_blank'
+							rel='noopener noreferrer'
+							href={social.href}
+							aria-label={social.label}
+							className='w-12 h-12 rounded-full border border-avtoVitaGold/30 flex items-center justify-center text-avtoVitaGold hover:bg-avtoVitaGold hover:text-avtoVitaBlack transition duration-300'
+						>
+							<social.icon className='text-xl' />
+						</a>
+					))}
+				</motion.div>
 			</div>
 		</section>
 	)

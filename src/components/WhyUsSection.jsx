@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import {
 	FaTruck,
 	FaDollarSign,
@@ -5,58 +6,67 @@ import {
 	FaCheckCircle,
 } from 'react-icons/fa'
 
+const benefits = [
+	{
+		icon: FaTruck,
+		title: 'Прямые поставки',
+		text: 'Автомобили напрямую из Южной Кореи без посредников.',
+	},
+	{
+		icon: FaDollarSign,
+		title: 'Честные цены',
+		text: 'Прозрачная стоимость без скрытых комиссий и переплат.',
+	},
+	{
+		icon: FaHandshake,
+		title: 'Полный цикл услуг',
+		text: 'От подбора авто до доставки и таможенного оформления.',
+	},
+	{
+		icon: FaCheckCircle,
+		title: 'Гарантия качества',
+		text: 'Только проверенные автомобили с полной историей.',
+	},
+]
+
 const BenefitsSection = () => {
 	return (
-		<section className='bg-[#f0f0ff] text-black py-16 px-6'>
-			<div className='max-w-6xl mx-auto text-center'>
-				<h2 className='text-4xl font-bold text-[#0e2cc2] mb-8'>
-					Почему выбирают нас?
-				</h2>
+		<section className='bg-[#1a1a1a] border-t border-avtoVitaGold/10 py-20 px-6'>
+			<div className='max-w-6xl mx-auto'>
+				<motion.h2
+					initial={{ opacity: 0, y: 40 }}
+					whileInView={{ opacity: 1, y: 0 }}
+					viewport={{ once: true, amount: 0.2 }}
+					transition={{ duration: 0.6, ease: 'easeOut' }}
+					className='text-4xl font-bold text-white text-center mb-12'
+				>
+					Почему выбирают{' '}
+					<span className='text-avtoVitaGold'>нас?</span>
+				</motion.h2>
 
 				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
-					{/* Прямая поставка */}
-					<div className='p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-[#0e2cc2]/10'>
-						<FaTruck className='text-[#a330f0] text-5xl mb-4' />
-						<h3 className='text-xl font-semibold text-[#0e2cc2]'>
-							Прямые поставки
-						</h3>
-						<p className='text-[#4a4a7b] mt-2'>
-							Автомобили напрямую из Южной Кореи без посредников.
-						</p>
-					</div>
-
-					{/* Честные цены */}
-					<div className='p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-[#0e2cc2]/10'>
-						<FaDollarSign className='text-[#a330f0] text-5xl mb-4' />
-						<h3 className='text-xl font-semibold text-[#0e2cc2]'>
-							Честные цены
-						</h3>
-						<p className='text-[#4a4a7b] mt-2'>
-							Прозрачная стоимость без скрытых комиссий и переплат.
-						</p>
-					</div>
-
-					{/* Полный цикл услуг */}
-					<div className='p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-[#0e2cc2]/10'>
-						<FaHandshake className='text-[#a330f0] text-5xl mb-4' />
-						<h3 className='text-xl font-semibold text-[#0e2cc2]'>
-							Полный цикл услуг
-						</h3>
-						<p className='text-[#4a4a7b] mt-2'>
-							От подбора авто до доставки и таможенного оформления.
-						</p>
-					</div>
-
-					{/* Гарантия качества */}
-					<div className='p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-[#0e2cc2]/10'>
-						<FaCheckCircle className='text-[#a330f0] text-5xl mb-4' />
-						<h3 className='text-xl font-semibold text-[#0e2cc2]'>
-							Гарантия качества
-						</h3>
-						<p className='text-[#4a4a7b] mt-2'>
-							Только проверенные автомобили с полной историей.
-						</p>
-					</div>
+					{benefits.map((item, index) => (
+						<motion.div
+							key={item.title}
+							initial={{ opacity: 0, x: -30 }}
+							whileInView={{ opacity: 1, x: 0 }}
+							viewport={{ once: true, amount: 0.2 }}
+							transition={{
+								duration: 0.5,
+								delay: index * 0.15,
+								ease: 'easeOut',
+							}}
+							className='border-l-2 border-avtoVitaGold pl-6 py-4 bg-white/[0.02] hover:border-avtoVitaGold hover:bg-avtoVitaGold/[0.03] hover:shadow-[0_0_20px_rgba(255,215,0,0.06)] transition duration-300'
+						>
+							<item.icon className='text-avtoVitaGold text-3xl mb-4' />
+							<h3 className='text-lg font-semibold text-white mb-2'>
+								{item.title}
+							</h3>
+							<p className='text-gray-500 text-sm leading-relaxed'>
+								{item.text}
+							</p>
+						</motion.div>
+					))}
 				</div>
 			</div>
 		</section>

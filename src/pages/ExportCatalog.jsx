@@ -29,7 +29,6 @@ const useDebounce = (value, delay) => {
 const Catalog = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const filtersReady = useRef(true)
   const urlParams = useRef({
     manufacturer: null,
     modelGroup: null,
@@ -39,6 +38,8 @@ const Catalog = () => {
   // Track if this is the first render
   const isInitialMount = useRef(true)
   const fetchInProgress = useRef(false)
+  const [fetchTrigger, setFetchTrigger] = useState(0)
+  const pendingUrlParams = useRef(false)
 
   const [sortOption, setSortOption] = useState("newest")
   const [loading, setLoading] = useState(false)
@@ -142,6 +143,12 @@ const Catalog = () => {
     fetchUsdKrwRate()
     fetchManufacturers()
 
+    // Trigger initial fetch only if no URL params (URL params will trigger after cascade)
+    const searchParams = new URLSearchParams(location.search)
+    if (!searchParams.get("manufacturer")) {
+      setFetchTrigger((prev) => prev + 1)
+    }
+
     // Mark initial mount as complete
     isInitialMount.current = false
   }, []) // Empty dependency - run once on mount
@@ -156,6 +163,7 @@ const Catalog = () => {
     }
 
     if (urlParams.current.manufacturer && !selectedManufacturer) {
+      pendingUrlParams.current = true
       setSelectedManufacturer(urlParams.current.manufacturer)
     }
   }, [location.search, selectedManufacturer])
@@ -202,6 +210,12 @@ const Catalog = () => {
               setSelectedModelGroup(urlParams.current.modelGroup)
             }
           }
+
+          // If URL params only had manufacturer, trigger fetch now
+          if (pendingUrlParams.current && !urlParams.current.modelGroup) {
+            pendingUrlParams.current = false
+            setFetchTrigger((prev) => prev + 1)
+          }
         }
       }
 
@@ -241,6 +255,12 @@ const Catalog = () => {
               modelGroup: null,
               model: null,
             }
+          }
+
+          // If URL params had modelGroup (with or without model), trigger fetch now
+          if (pendingUrlParams.current && !urlParams.current.model) {
+            pendingUrlParams.current = false
+            setFetchTrigger((prev) => prev + 1)
           }
         }
       }
@@ -560,12 +580,18 @@ const Catalog = () => {
     sortOptions,
   ])
 
-  // Trigger car fetch when filters or page changes
+  // Keep a ref to the latest fetchCars so fetchTrigger doesn't need it as a dependency
+  const fetchCarsRef = useRef(fetchCars)
   useEffect(() => {
-    if (filtersReady.current) {
-      fetchCars()
-    }
+    fetchCarsRef.current = fetchCars
   }, [fetchCars])
+
+  // Only fetch cars when explicitly triggered
+  useEffect(() => {
+    if (fetchTrigger > 0) {
+      fetchCarsRef.current()
+    }
+  }, [fetchTrigger])
 
   const handleManufacturerChange = useCallback(
     (e) => {
@@ -668,6 +694,7 @@ const Catalog = () => {
     setPriceEnd("")
     setSearchByNumber("")
     setCurrentPage(1)
+    setFetchTrigger((prev) => prev + 1)
     navigate("/catalog")
   }, [navigate])
 
@@ -736,7 +763,10 @@ const Catalog = () => {
         <div className="flex flex-wrap justify-center items-center gap-2 px-4 max-w-full">
           {currentPage > 1 && (
             <button
-              onClick={() => setCurrentPage(currentPage - 1)}
+              onClick={() => {
+                setCurrentPage(currentPage - 1)
+                setFetchTrigger((prev) => prev + 1)
+              }}
               className="cursor-pointer w-10 h-10 flex items-center justify-center border rounded-md text-sm font-medium shadow-sm bg-white text-gray-800 hover:bg-gray-100"
             >
               ‹
@@ -745,7 +775,10 @@ const Catalog = () => {
           {visiblePages.map((page) => (
             <button
               key={page}
-              onClick={() => setCurrentPage(page)}
+              onClick={() => {
+                setCurrentPage(page)
+                setFetchTrigger((prev) => prev + 1)
+              }}
               className={`cursor-pointer w-10 h-10 flex items-center justify-center border rounded-md text-sm font-medium shadow-sm transition-all duration-200 ${
                 currentPage === page
                   ? "bg-black text-white"
@@ -757,7 +790,10 @@ const Catalog = () => {
           ))}
           {currentPage < lastPage && (
             <button
-              onClick={() => setCurrentPage(currentPage + 1)}
+              onClick={() => {
+                setCurrentPage(currentPage + 1)
+                setFetchTrigger((prev) => prev + 1)
+              }}
               className="cursor-pointer w-10 h-10 flex items-center justify-center border rounded-md text-sm font-medium shadow-sm bg-white text-gray-800 hover:bg-gray-100"
             >
               ›
@@ -781,6 +817,7 @@ const Catalog = () => {
           onChange={(e) => {
             setSortOption(e.target.value)
             setCurrentPage(1)
+            setFetchTrigger((prev) => prev + 1)
           }}
         >
           <option value="newest">Сначала новые</option>
@@ -1039,6 +1076,15 @@ const Catalog = () => {
           />
 
           <button
+            className="w-full bg-avtoVitaGold text-black font-semibold py-2 px-4 mt-5 rounded hover:bg-avtoVitaGoldDark hover:text-white transition cursor-pointer"
+            onClick={() => {
+              setCurrentPage(1)
+              setFetchTrigger((prev) => prev + 1)
+            }}
+          >
+            Применить
+          </button>
+          <button
             className="w-full bg-red-500 text-white py-2 px-4 mt-5 rounded hover:bg-red-600 transition cursor-pointer"
             onClick={resetFilters}
           >
@@ -1062,6 +1108,7 @@ const Catalog = () => {
                 onChange={(e) => {
                   setSortOption(e.target.value)
                   setCurrentPage(1)
+                  setFetchTrigger((prev) => prev + 1)
                 }}
               >
                 <option value="newest">Сначала новые</option>
