@@ -1,70 +1,39 @@
-import { useEffect, useState } from 'react'
-import { AnimatePresence } from 'framer-motion'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { lazy, Suspense } from 'react'
+import { Routes, Route } from 'react-router-dom'
 
-// Local imports
-import { Header, Footer, Loader, LogoLoader } from './components'
-import {
-	Home,
-	About,
-	Catalog,
-	CarDetails,
-	Contacts,
-	ExportCatalog,
-} from './pages'
+import { Header, Footer, Loader } from './components'
+
+const Home = lazy(() => import('./pages/Home'))
+const About = lazy(() => import('./pages/About'))
+const ExportCatalog = lazy(() => import('./pages/ExportCatalog'))
+const CarDetails = lazy(() => import('./pages/CarDetails'))
+const Contacts = lazy(() => import('./pages/Contacts'))
 
 const App = () => {
-	const [loading, setLoading] = useState(true)
-
-	// Определяем, на какой странице находится пользователь
-	const location = useLocation()
-
-	useEffect(() => {
-		// Показываем лоадер при каждом изменении маршрута
-		setLoading(true)
-		const timeout = setTimeout(() => {
-			setLoading(false) // Скрываем лоадер через 2 секунды
-		}, 2000)
-
-		return () => clearTimeout(timeout)
-	}, [location])
-
 	return (
-		<>
-			<AnimatePresence>
-				{loading &&
-					(location.pathname === '/' ? (
-						<Loader onComplete={() => setLoading(false)} />
-					) : (
-						<Loader />
-					))}
-			</AnimatePresence>
-
-			{!loading && (
-				<div className='flex flex-col min-h-screen'>
-					<Header />
-					<main className='flex-grow'>
-						<Routes>
-							<Route path='/' element={<Home />} />
-							<Route path='/about' element={<About />} />
-							{/* <Route path='/catalog' element={<Catalog />} /> */}
-							<Route path='/catalog' element={<ExportCatalog />} />
-							<Route path='/contacts' element={<Contacts />} />
-							<Route path='/catalog/:carId' element={<CarDetails />} />
-							<Route
-								path='*'
-								element={
-									<div className='container mx-auto p-4'>
-										Страница не найдена
-									</div>
-								}
-							/>
-						</Routes>
-					</main>
-					<Footer />
-				</div>
-			)}
-		</>
+		<div className='flex flex-col min-h-screen'>
+			<Header />
+			<main className='flex-grow'>
+				<Suspense fallback={<Loader />}>
+					<Routes>
+						<Route path='/' element={<Home />} />
+						<Route path='/about' element={<About />} />
+						<Route path='/catalog' element={<ExportCatalog />} />
+						<Route path='/contacts' element={<Contacts />} />
+						<Route path='/catalog/:carId' element={<CarDetails />} />
+						<Route
+							path='*'
+							element={
+								<div className='container mx-auto p-4'>
+									Страница не найдена
+								</div>
+							}
+						/>
+					</Routes>
+				</Suspense>
+			</main>
+			<Footer />
+		</div>
 	)
 }
 

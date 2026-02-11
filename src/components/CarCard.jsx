@@ -7,6 +7,11 @@ const CarCard = ({ car, usdKrwRate }) => {
 	const carPriceKrw = car?.Price * 10000
 	const carPriceUsd = Math.round(carPriceKrw / usdKrwRate).toLocaleString()
 
+	const carTitle = [car.Manufacturer, car.Model, car?.Badge, car?.BadgeDetail]
+		.map(part => translateSmartly(part))
+		.filter(part => part && typeof part === 'string' && part.trim() && !/^\(\s*\)$/.test(part.trim()))
+		.join(' ')
+
 	return (
 		<div className='rounded-2xl shadow-xl bg-white overflow-hidden border border-gray-200 flex flex-col'>
 			<div className='relative w-full overflow-hidden'>
@@ -14,14 +19,14 @@ const CarCard = ({ car, usdKrwRate }) => {
 					src={`https://ci.encar.com${car.Photo}001.jpg?impolicy=heightRate&rh=696&cw=1400&ch=696&cg=Center&wtmk=https://ci.encar.com/wt_mark/w_mark_04.png&t=20250401111058`}
 					alt={`${car.Manufacturer} ${car.Model}`}
 					className='object-cover object-center'
+					loading='lazy'
 				/>
 			</div>
 
 			<div className='p-6 flex flex-col flex-grow justify-between'>
 				<div>
 					<h2 className='text-lg font-bold text-center text-gray-900 mb-4'>
-						{translateSmartly(car.Manufacturer)} {translateSmartly(car.Model)}{' '}
-						{translateSmartly(car?.Badge)} {translateSmartly(car?.BadgeDetail)}
+						{carTitle}
 					</h2>
 					<div className='text-gray-600 text-base space-y-2'>
 						<div className='flex justify-between border-b border-dotted pb-1'>

@@ -1,10 +1,16 @@
-import axios from "axios"
 import { useState, useEffect, useRef, useCallback, useMemo, memo } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { translations, translateSmartly } from "../translations"
-import { formatDate, transformBadgeValue } from "../utils"
+import { formatDate } from "../utils"
 import { Loader } from "../components"
 import { CarCard as BaseCarCard } from "../components"
+import {
+  useCurrencyRate,
+  useManufacturers,
+  useCatalogSearch,
+  useFilterCascade,
+  useCatalogFilters,
+} from "../hooks"
 
 // Memoize CarCard to prevent unnecessary re-renders
 const CarCard = memo(BaseCarCard)
@@ -34,126 +40,75 @@ const Catalog = () => {
     modelGroup: null,
     model: null,
   })
-
-  // Track if this is the first render
   const isInitialMount = useRef(true)
-  const fetchInProgress = useRef(false)
-  const [fetchTrigger, setFetchTrigger] = useState(0)
   const pendingUrlParams = useRef(false)
 
-  const [sortOption, setSortOption] = useState("newest")
-  const [loading, setLoading] = useState(false)
-  const [searchByNumber, setSearchByNumber] = useState("")
-  const debouncedSearchByNumber = useDebounce(searchByNumber, 500)
+  const [fetchTrigger, setFetchTrigger] = useState(0)
 
-  const [currentPage, setCurrentPage] = useState(1)
-  const [totalCars, setTotalCars] = useState(0)
-
-  const [priceStart, setPriceStart] = useState("")
-  const [priceEnd, setPriceEnd] = useState("")
-
-  const [mileageStart, setMileageStart] = useState("")
-  const [mileageEnd, setMileageEnd] = useState("")
-
-  const [endYear, setEndYear] = useState("")
-  const [endMonth, setEndMonth] = useState("00")
-
-  const [startYear, setStartYear] = useState("")
-  const [startMonth, setStartMonth] = useState("00")
-
-  const [usdKrwRate, setUsdKrwRate] = useState(null)
-
-  const [cars, setCars] = useState([])
-
-  const [manufacturers, setManufacturers] = useState(null)
-  const [selectedManufacturer, setSelectedManufacturer] = useState("")
-
-  const [modelGroups, setModelGroups] = useState(null)
-  const [selectedModelGroup, setSelectedModelGroup] = useState("")
-
-  const [models, setModels] = useState(null)
-  const [selectedModel, setSelectedModel] = useState("")
-
-  const [configurations, setConfigurations] = useState(null)
-  const [selectedConfiguration, setSelectedConfiguration] = useState("")
-
-  const [badges, setBadges] = useState(null)
-  const [selectedBadge, setSelectedBadge] = useState("")
-
-  const [badgeDetails, setBadgeDetails] = useState(null)
-  const [selectedBadgeDetails, setSelectedBadgeDetails] = useState("")
-
-  const [error, setError] = useState("")
-
-  const sortOptions = useMemo(
-    () => ({
-      newest: "|ModifiedDate",
-      priceAsc: "|PriceAsc",
-      priceDesc: "|PriceDesc",
-      mileageAsc: "|MileageAsc",
-      mileageDesc: "|MileageDesc",
-      yearDesc: "|Year",
-    }),
-    []
+  // Get saved page from localStorage
+  const savedPage = useRef(
+    parseInt(localStorage.getItem("exportCatalogCurrentPage"), 10) || 1,
   )
 
-  // Load initial data & set up URL params
+  // Consolidated filter state via useReducer
+  const {
+    filters,
+    setField,
+    setManufacturer,
+    setModelGroup,
+    setModel,
+    setConfiguration,
+    setBadge,
+    setBadgeDetails,
+    resetAll,
+  } = useCatalogFilters(savedPage.current)
+
+  // Debounce search by number
+  const debouncedSearchByNumber = useDebounce(filters.searchByNumber, 500)
+
+  // Build search filters with debounced search value
+  const searchFilters = useMemo(
+    () => ({ ...filters, searchByNumber: debouncedSearchByNumber }),
+    [filters, debouncedSearchByNumber],
+  )
+
+  // React Query hooks
+  const { data: usdKrwRate } = useCurrencyRate()
+  const { data: manufacturersData } = useManufacturers()
+  const cascade = useFilterCascade(filters)
+  const {
+    data: catalogData,
+    isLoading: loading,
+    error: catalogError,
+  } = useCatalogSearch(searchFilters, fetchTrigger)
+
+  // Derived data
+  const manufacturers = manufacturersData?.manufacturers || null
+
+  const modelGroups = cascade.modelGroupsQuery.data?.modelGroups || null
+  const models = cascade.modelsQuery.data?.models || null
+  const configurations =
+    cascade.configurationsQuery.data?.configurations || null
+  const badges = cascade.badgesQuery.data?.badges || null
+  const badgeDetails = cascade.badgeDetailsQuery.data?.badgeDetails || null
+
+  const cars = catalogData?.cars || []
+  const catalogTotal = catalogData?.total || 0
+  const error = catalogError?.message || ""
+
+  // Save currentPage to localStorage
   useEffect(() => {
-    // Load saved page
-    const savedPage = localStorage.getItem("exportCatalogCurrentPage")
-    if (savedPage) {
-      setCurrentPage(parseInt(savedPage, 10))
-    }
+    const timeoutId = setTimeout(() => {
+      localStorage.setItem(
+        "exportCatalogCurrentPage",
+        filters.currentPage.toString(),
+      )
+    }, 300)
 
-    // Fetch USD to KRW exchange rate
-    const fetchUsdKrwRate = async () => {
-      try {
-        const response = await axios.get(
-          "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json"
-        )
+    return () => clearTimeout(timeoutId)
+  }, [filters.currentPage])
 
-        if (response.status === 200) {
-          const jsonData = response.data
-          const rate = jsonData["usd"]["krw"]
-          setUsdKrwRate(rate)
-        }
-      } catch (e) {
-        console.error(e)
-      }
-    }
-
-    // Fetch manufacturers list
-    const fetchManufacturers = async () => {
-      try {
-        const url = `https://encar-proxy-main.onrender.com/api/nav?count=true&q=(And.Hidden.N._.CarType.A._.SellType.%EC%9D%BC%EB%B0%98.)&inav=%7CMetadata%7CSort`
-        const response = await axios.get(url)
-        const data = response.data
-
-        if (data) {
-          setTotalCars(data?.Count || 0)
-          const manufacturers =
-            data?.iNav?.Nodes[1]?.Facets[0]?.Refinements?.Nodes[0]?.Facets || []
-          setManufacturers(manufacturers)
-        }
-      } catch (error) {
-        console.error("Error fetching manufacturers:", error)
-      }
-    }
-
-    fetchUsdKrwRate()
-    fetchManufacturers()
-
-    // Trigger initial fetch only if no URL params (URL params will trigger after cascade)
-    const searchParams = new URLSearchParams(location.search)
-    if (!searchParams.get("manufacturer")) {
-      setFetchTrigger((prev) => prev + 1)
-    }
-
-    // Mark initial mount as complete
-    isInitialMount.current = false
-  }, []) // Empty dependency - run once on mount
-
-  // Handle URL params
+  // Handle URL params on mount
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search)
     urlParams.current = {
@@ -162,560 +117,125 @@ const Catalog = () => {
       model: searchParams.get("model"),
     }
 
-    if (urlParams.current.manufacturer && !selectedManufacturer) {
+    if (urlParams.current.manufacturer) {
       pendingUrlParams.current = true
-      setSelectedManufacturer(urlParams.current.manufacturer)
-    }
-  }, [location.search, selectedManufacturer])
-
-  // Save currentPage to localStorage
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      localStorage.setItem("exportCatalogCurrentPage", currentPage.toString())
-    }, 300)
-
-    return () => clearTimeout(timeoutId)
-  }, [currentPage])
-
-  // Combined fetch function to get all filter cascades
-  const fetchFilterData = useCallback(async () => {
-    if (fetchInProgress.current) return
-    fetchInProgress.current = true
-
-    try {
-      // Only fetch model groups if manufacturer is selected
-      if (selectedManufacturer) {
-        const url = `https://encar-proxy-main.onrender.com/api/nav?count=true&q=(And.Hidden.N._.SellType.%EC%9D%BC%EB%B0%98._.(C.CarType.A._.Manufacturer.${selectedManufacturer}.))&inav=%7CMetadata%7CSort`
-        const response = await axios.get(url)
-        const data = response?.data
-
-        if (data) {
-          setTotalCars(data?.Count || 0)
-          const allManufacturers =
-            data?.iNav?.Nodes[2]?.Facets[0]?.Refinements?.Nodes[0]?.Facets || []
-          const filteredManufacturer = allManufacturers.find(
-            (item) => item.IsSelected === true
-          )
-          const models =
-            filteredManufacturer?.Refinements?.Nodes[0]?.Facets || []
-
-          setModelGroups(models)
-
-          // Handle URL params for model group
-          if (urlParams.current.modelGroup && !selectedModelGroup) {
-            const modelExists = models?.some(
-              (model) => model.Value === urlParams.current.modelGroup
-            )
-            if (modelExists) {
-              setSelectedModelGroup(urlParams.current.modelGroup)
-            }
-          }
-
-          // If URL params only had manufacturer, trigger fetch now
-          if (pendingUrlParams.current && !urlParams.current.modelGroup) {
-            pendingUrlParams.current = false
-            setFetchTrigger((prev) => prev + 1)
-          }
-        }
-      }
-
-      // Only fetch models if model group is selected
-      if (selectedManufacturer && selectedModelGroup) {
-        const url = `https://encar-proxy-main.onrender.com/api/nav?count=true&q=(And.Hidden.N._.SellType.%EC%9D%BC%EB%B0%98._.(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.ModelGroup.${selectedModelGroup}.)))&inav=%7CMetadata%7CSort`
-        const response = await axios.get(url)
-        const data = response?.data
-
-        if (data) {
-          setTotalCars(data?.Count || 0)
-          const allManufacturers =
-            data?.iNav?.Nodes[2]?.Facets[0]?.Refinements?.Nodes[0]?.Facets || []
-          const filteredManufacturer = allManufacturers.find(
-            (item) => item.IsSelected === true
-          )
-          const modelGroup =
-            filteredManufacturer?.Refinements?.Nodes[0]?.Facets || []
-          const filteredModel = modelGroup.find(
-            (item) => item.IsSelected === true
-          )
-          const models = filteredModel?.Refinements?.Nodes[0]?.Facets || []
-
-          setModels(models)
-
-          // Handle URL params for model
-          if (urlParams.current.model && !selectedModel) {
-            const modelExists = models?.some(
-              (model) => model.Value === urlParams.current.model
-            )
-            if (modelExists) {
-              setSelectedModel(urlParams.current.model)
-            }
-            // Reset URL params after they've been processed
-            urlParams.current = {
-              manufacturer: null,
-              modelGroup: null,
-              model: null,
-            }
-          }
-
-          // If URL params had modelGroup (with or without model), trigger fetch now
-          if (pendingUrlParams.current && !urlParams.current.model) {
-            pendingUrlParams.current = false
-            setFetchTrigger((prev) => prev + 1)
-          }
-        }
-      }
-
-      // Only fetch configurations if model is selected
-      if (selectedManufacturer && selectedModelGroup && selectedModel) {
-        const url = `https://encar-proxy-main.onrender.com/api/nav?count=true&q=(And.Hidden.N._.(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.(C.ModelGroup.${selectedModelGroup}._.Model.${selectedModel}.))))&inav=%7CMetadata%7CSort`
-        const response = await axios.get(url)
-        const data = response?.data
-
-        if (data) {
-          setTotalCars(data?.Count || 0)
-          const allManufacturers =
-            data?.iNav?.Nodes[1]?.Facets[0]?.Refinements?.Nodes[0]?.Facets || []
-          const filteredManufacturer = allManufacturers.find(
-            (item) => item.IsSelected === true
-          )
-          const modelGroup =
-            filteredManufacturer?.Refinements?.Nodes[0]?.Facets || []
-          const filteredModel = modelGroup?.find(
-            (item) => item.IsSelected === true
-          )
-          const models = filteredModel?.Refinements?.Nodes[0]?.Facets || []
-          const filteredConfiguration = models?.find(
-            (item) => item.IsSelected === true
-          )
-          const configurations =
-            filteredConfiguration?.Refinements?.Nodes[0]?.Facets || []
-
-          setConfigurations(configurations)
-        }
-      }
-
-      // Only fetch badges if configuration is selected
-      if (
-        selectedManufacturer &&
-        selectedModelGroup &&
-        selectedModel &&
-        selectedConfiguration
-      ) {
-        const url = `https://encar-proxy-main.onrender.com/api/nav?count=true&q=(And.Hidden.N._.(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.(C.ModelGroup.${selectedModelGroup}._.(C.Model.${selectedModel}._.BadgeGroup.${selectedConfiguration}.)))))&inav=%7CMetadata%7CSort`
-        const response = await axios.get(url)
-        const data = response?.data
-
-        if (data) {
-          setTotalCars(data?.Count || 0)
-          const allManufacturers =
-            data?.iNav?.Nodes[1]?.Facets[0]?.Refinements?.Nodes[0]?.Facets || []
-          const filteredManufacturer = allManufacturers.find(
-            (item) => item.IsSelected === true
-          )
-          const modelGroup =
-            filteredManufacturer?.Refinements?.Nodes[0]?.Facets || []
-          const filteredModel = modelGroup?.find(
-            (item) => item.IsSelected === true
-          )
-          const models = filteredModel?.Refinements?.Nodes[0]?.Facets || []
-          const filteredConfiguration = models?.find(
-            (item) => item.IsSelected === true
-          )
-          const configurations =
-            filteredConfiguration?.Refinements?.Nodes[0]?.Facets || []
-          const filteredBadgeGroup = configurations?.find(
-            (item) => item.IsSelected === true
-          )
-          const badges = filteredBadgeGroup?.Refinements?.Nodes[0]?.Facets || []
-
-          setBadges(badges)
-        }
-      }
-
-      // Only fetch badge details if badge is selected
-      if (
-        selectedManufacturer &&
-        selectedModelGroup &&
-        selectedModel &&
-        selectedConfiguration &&
-        selectedBadge
-      ) {
-        const url = `https://encar-proxy-main.onrender.com/api/nav?count=true&q=(And.Hidden.N._.SellType.%EC%9D%BC%EB%B0%98._.(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.(C.ModelGroup.${selectedModelGroup}._.(C.Model.${selectedModel}._.(C.BadgeGroup.${selectedConfiguration}._.Badge.${transformBadgeValue(
-          selectedBadge
-        )}.))))))&inav=%7CMetadata%7CSort`
-
-        const response = await axios.get(url)
-        const data = response?.data
-
-        if (data) {
-          setTotalCars(data?.Count || 0)
-          const allManufacturers =
-            data?.iNav?.Nodes[2]?.Facets[0]?.Refinements?.Nodes[0]?.Facets || []
-          const filteredManufacturer = allManufacturers?.find(
-            (item) => item.IsSelected
-          )
-          const modelGroup =
-            filteredManufacturer?.Refinements?.Nodes[0]?.Facets || []
-          const filteredModel = modelGroup?.find((item) => item.IsSelected)
-          const models = filteredModel?.Refinements?.Nodes[0]?.Facets || []
-          const filteredConfiguration = models?.find((item) => item.IsSelected)
-          const configurations =
-            filteredConfiguration?.Refinements?.Nodes[0]?.Facets || []
-          const filteredBadgeGroup = configurations?.find(
-            (item) => item.IsSelected
-          )
-          const badges = filteredBadgeGroup?.Refinements?.Nodes[0]?.Facets || []
-          const filteredBadge = badges?.find((item) => item.IsSelected)
-          const badgeDetails =
-            filteredBadge?.Refinements?.Nodes[0]?.Facets || []
-
-          setBadgeDetails(badgeDetails)
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching filter data:", error)
-    } finally {
-      fetchInProgress.current = false
-    }
-  }, [
-    selectedManufacturer,
-    selectedModelGroup,
-    selectedModel,
-    selectedConfiguration,
-    selectedBadge,
-  ])
-
-  // Trigger filter data fetching when selections change
-  useEffect(() => {
-    fetchFilterData()
-  }, [fetchFilterData])
-
-  // Reset dependent filters when parent filter changes
-  useEffect(() => {
-    if (!selectedManufacturer) {
-      setSelectedModelGroup("")
-      setSelectedModel("")
-      setSelectedConfiguration("")
-      setSelectedBadge("")
-      setSelectedBadgeDetails("")
-    }
-  }, [selectedManufacturer])
-
-  useEffect(() => {
-    if (!selectedModelGroup) {
-      setSelectedModel("")
-      setSelectedConfiguration("")
-      setSelectedBadge("")
-      setSelectedBadgeDetails("")
-    }
-  }, [selectedModelGroup])
-
-  useEffect(() => {
-    if (!selectedModel) {
-      setSelectedConfiguration("")
-      setSelectedBadge("")
-      setSelectedBadgeDetails("")
-    }
-  }, [selectedModel])
-
-  useEffect(() => {
-    if (!selectedConfiguration) {
-      setSelectedBadge("")
-      setSelectedBadgeDetails("")
-    }
-  }, [selectedConfiguration])
-
-  useEffect(() => {
-    if (!selectedBadge) {
-      setSelectedBadgeDetails("")
-    }
-  }, [selectedBadge])
-
-  // Main function to fetch cars based on all filters
-  const fetchCars = useCallback(async () => {
-    setLoading(true)
-    setError("")
-
-    let queryParts = []
-    let filters = []
-
-    if (debouncedSearchByNumber) {
-      queryParts.push(
-        `(And.Hidden.N._.CarType.A._.Simple.keyword(${debouncedSearchByNumber}).)`
-      )
+      setManufacturer(urlParams.current.manufacturer)
     } else {
-      queryParts.push("(And.Hidden.N._.SellType.일반._.")
+      setFetchTrigger((prev) => prev + 1)
     }
 
-    if (selectedManufacturer) {
-      if (
-        selectedModelGroup &&
-        selectedModel &&
-        selectedConfiguration &&
-        selectedBadge &&
-        selectedBadgeDetails
-      ) {
-        queryParts.push(
-          `(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.(C.ModelGroup.${selectedModelGroup}._.(C.Model.${selectedModel}._.(C.BadgeGroup.${selectedConfiguration}._.(C.Badge.${transformBadgeValue(
-            selectedBadge
-          )}._.BadgeDetail.${selectedBadgeDetails}.))))))`
-        )
-      } else if (
-        selectedModelGroup &&
-        selectedModel &&
-        selectedConfiguration &&
-        selectedBadge
-      ) {
-        queryParts.push(
-          `(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.(C.ModelGroup.${selectedModelGroup}._.(C.Model.${selectedModel}._.(C.BadgeGroup.${selectedConfiguration}._.Badge.${transformBadgeValue(
-            selectedBadge
-          )}.)))))`
-        )
-      } else if (selectedModelGroup && selectedModel && selectedConfiguration) {
-        queryParts.push(
-          `(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.(C.ModelGroup.${selectedModelGroup}._.(C.Model.${selectedModel}._.BadgeGroup.${selectedConfiguration}.))))`
-        )
-      } else if (selectedModelGroup && selectedModel) {
-        queryParts.push(
-          `(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.(C.ModelGroup.${selectedModelGroup}._.Model.${selectedModel}.)))`
-        )
-      } else if (selectedModelGroup) {
-        queryParts.push(
-          `(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.ModelGroup.${selectedModelGroup}.))`
-        )
-      } else {
-        queryParts.push(`(C.CarType.A._.Manufacturer.${selectedManufacturer}.)`)
-      }
-    } else {
-      queryParts.push("CarType.A.")
-    }
+    isInitialMount.current = false
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-    if (mileageStart && mileageEnd) {
-      filters.push(`Mileage.range(${mileageStart}..${mileageEnd}).`)
-    } else if (mileageStart) {
-      filters.push(`Mileage.range(${mileageStart}..).`)
-    } else if (mileageEnd) {
-      filters.push(`Mileage.range(..${mileageEnd}).`)
-    }
-
-    if (startYear && startMonth && endYear && endMonth) {
-      filters.push(
-        `Year.range(${startYear}${startMonth}..${endYear}${endMonth}).`
-      )
-    } else if (startYear && startMonth) {
-      filters.push(`Year.range(${startYear}${startMonth}..).`)
-    } else if (endYear && endMonth) {
-      filters.push(`Year.range(..${endYear}${endMonth}).`)
-    } else if (startYear && endYear) {
-      filters.push(`Year.range(${startYear}00..${endYear}99).`)
-    } else if (startYear) {
-      filters.push(`Year.range(${startYear}00..).`)
-    } else if (endYear) {
-      filters.push(`Year.range(..${endYear}99).`)
-    }
-
-    if (priceStart && priceEnd) {
-      filters.push(`Price.range(${priceStart}..${priceEnd}).`)
-    } else if (priceStart) {
-      filters.push(`Price.range(${priceStart}..).`)
-    } else if (priceEnd) {
-      filters.push(`Price.range(..${priceEnd}).`)
-    }
-
-    let query =
-      queryParts.join("") +
-      (filters.length ? `_.${filters.join("_.")}` : "") +
-      ")"
-
-    const encodedQuery = encodeURIComponent(query)
-    const itemsPerPage = 20
-    const offset = (currentPage - 1) * itemsPerPage
-
-    const url = `https://encar-proxy-main.onrender.com/api/catalog?count=true&q=${encodedQuery}&sr=${encodeURIComponent(
-      sortOptions[sortOption]
-    )}%7C${offset}%7C${itemsPerPage}`
-
-    try {
-      const response = await axios.get(url)
-
-      if (response.data && response.data.error) {
-        console.error("Получен ответ с ошибкой:", response.data.error)
-        setError(
-          "На сайте ведутся технические работы. Пожалуйста, попробуйте позже."
-        )
-        setCars([])
-        setLoading(false)
-        return
-      }
-
-      setCars(response.data?.SearchResults || [])
-      setLoading(false)
-      window.scrollTo({ top: 0, behavior: "smooth" })
-    } catch (error) {
-      console.error("Ошибка при загрузке автомобилей:", error)
-      setError(
-        "На сайте ведутся технические работы. Пожалуйста, попробуйте позже."
-      )
-      setCars([])
-      setLoading(false)
-    }
-  }, [
-    debouncedSearchByNumber,
-    selectedManufacturer,
-    selectedModelGroup,
-    selectedModel,
-    selectedConfiguration,
-    selectedBadge,
-    selectedBadgeDetails,
-    startYear,
-    startMonth,
-    endYear,
-    endMonth,
-    mileageStart,
-    mileageEnd,
-    priceStart,
-    priceEnd,
-    currentPage,
-    sortOption,
-    sortOptions,
-  ])
-
-  // Keep a ref to the latest fetchCars so fetchTrigger doesn't need it as a dependency
-  const fetchCarsRef = useRef(fetchCars)
+  // Handle URL param cascade: apply modelGroup when modelGroups load
   useEffect(() => {
-    fetchCarsRef.current = fetchCars
-  }, [fetchCars])
-
-  // Only fetch cars when explicitly triggered
-  useEffect(() => {
-    if (fetchTrigger > 0) {
-      fetchCarsRef.current()
+    if (
+      urlParams.current.modelGroup &&
+      !filters.selectedModelGroup &&
+      modelGroups
+    ) {
+      const modelExists = modelGroups?.some(
+        (m) => m.Value === urlParams.current.modelGroup,
+      )
+      if (modelExists) {
+        setModelGroup(urlParams.current.modelGroup)
+      }
+      if (!urlParams.current.model) {
+        pendingUrlParams.current = false
+        setFetchTrigger((prev) => prev + 1)
+      }
+    } else if (
+      pendingUrlParams.current &&
+      !urlParams.current.modelGroup &&
+      modelGroups
+    ) {
+      pendingUrlParams.current = false
+      setFetchTrigger((prev) => prev + 1)
     }
-  }, [fetchTrigger])
+  }, [modelGroups]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Handle URL param cascade: apply model when models load
+  useEffect(() => {
+    if (urlParams.current.model && !filters.selectedModel && models) {
+      const modelExists = models?.some(
+        (m) => m.Value === urlParams.current.model,
+      )
+      if (modelExists) {
+        setModel(urlParams.current.model)
+      }
+      // Reset URL params after they've been processed
+      urlParams.current = { manufacturer: null, modelGroup: null, model: null }
+      pendingUrlParams.current = false
+      setFetchTrigger((prev) => prev + 1)
+    }
+  }, [models]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleManufacturerChange = useCallback(
     (e) => {
-      const value = e.target.value
-      setSelectedModelGroup("")
-      setSelectedModel("")
-      setSelectedConfiguration("")
-      setSelectedBadge("")
-      setSelectedBadgeDetails("")
-      setSelectedManufacturer(value)
-      setCurrentPage(1)
-
-      if (value) {
-        navigate(`/catalog?manufacturer=${value}`)
-      } else {
-        navigate("/catalog")
-      }
+      setManufacturer(e.target.value)
     },
-    [navigate]
+    [setManufacturer],
   )
 
   const handleModelGroupChange = useCallback(
     (e) => {
-      const value = e.target.value
-      setSelectedModel("")
-      setSelectedConfiguration("")
-      setSelectedBadge("")
-      setSelectedBadgeDetails("")
-      setSelectedModelGroup(value)
-      setCurrentPage(1)
-
-      if (value) {
-        navigate(
-          `/catalog?manufacturer=${selectedManufacturer}&modelGroup=${value}`
-        )
-      } else {
-        navigate(`/catalog?manufacturer=${selectedManufacturer}`)
-      }
+      setModelGroup(e.target.value)
     },
-    [navigate, selectedManufacturer]
+    [setModelGroup],
   )
 
   const handleModelChange = useCallback(
     (e) => {
-      const value = e.target.value
-      setSelectedConfiguration("")
-      setSelectedBadge("")
-      setSelectedBadgeDetails("")
-      setSelectedModel(value)
-      setCurrentPage(1)
-
-      if (value) {
-        navigate(
-          `/catalog?manufacturer=${selectedManufacturer}&modelGroup=${selectedModelGroup}&model=${value}`
-        )
-      } else {
-        navigate(
-          `/catalog?manufacturer=${selectedManufacturer}&modelGroup=${selectedModelGroup}`
-        )
-      }
+      setModel(e.target.value)
     },
-    [navigate, selectedManufacturer, selectedModelGroup]
+    [setModel],
   )
 
-  const handleConfigurationChange = useCallback((e) => {
-    const value = e.target.value
-    setSelectedBadge("")
-    setSelectedBadgeDetails("")
-    setSelectedConfiguration(value)
-    setCurrentPage(1)
-  }, [])
+  const handleConfigurationChange = useCallback(
+    (e) => {
+      setConfiguration(e.target.value)
+    },
+    [setConfiguration],
+  )
 
-  const handleBadgeChange = useCallback((e) => {
-    const value = e.target.value
-    setSelectedBadgeDetails("")
-    setSelectedBadge(value)
-    setCurrentPage(1)
-  }, [])
+  const handleBadgeChange = useCallback(
+    (e) => {
+      setBadge(e.target.value)
+    },
+    [setBadge],
+  )
 
-  const handleBadgeDetailsChange = useCallback((e) => {
-    const value = e.target.value
-    setSelectedBadgeDetails(value)
-    setCurrentPage(1)
-  }, [])
+  const handleBadgeDetailsChange = useCallback(
+    (e) => {
+      setBadgeDetails(e.target.value)
+    },
+    [setBadgeDetails],
+  )
 
   const resetFilters = useCallback(() => {
-    setSelectedManufacturer("")
-    setSelectedModelGroup("")
-    setSelectedModel("")
-    setSelectedConfiguration("")
-    setSelectedBadge("")
-    setSelectedBadgeDetails("")
-    setStartYear("")
-    setStartMonth("00")
-    setEndYear("")
-    setEndMonth("00")
-    setMileageStart("")
-    setMileageEnd("")
-    setPriceStart("")
-    setPriceEnd("")
-    setSearchByNumber("")
-    setCurrentPage(1)
+    resetAll()
     setFetchTrigger((prev) => prev + 1)
     navigate("/catalog")
-  }, [navigate])
+  }, [navigate, resetAll])
 
   // Memoize select options to prevent recalculations on every render
   const yearOptions = useMemo(() => {
-    const endYearValue = endYear || new Date().getFullYear()
+    const endYearValue = filters.endYear || new Date().getFullYear()
     return Array.from(
       { length: endYearValue - 1979 },
-      (_, i) => 1980 + i
+      (_, i) => 1980 + i,
     ).reverse()
-  }, [endYear])
+  }, [filters.endYear])
 
   const endYearOptions = useMemo(() => {
-    const startYearValue = startYear || 1980
+    const startYearValue = filters.startYear || 1980
     return Array.from(
       {
         length: new Date().getFullYear() - startYearValue + 1,
       },
-      (_, i) => startYearValue + i
+      (_, i) => startYearValue + i,
     ).reverse()
-  }, [startYear])
+  }, [filters.startYear])
 
   const monthNames = useMemo(
     () => [
@@ -732,39 +252,39 @@ const Catalog = () => {
       "Ноябрь",
       "Декабрь",
     ],
-    []
+    [],
   )
 
   const mileageOptions = useMemo(
     () => Array.from({ length: 20 }, (_, i) => (i + 1) * 10000),
-    []
+    [],
   )
 
   const priceOptions = useMemo(
     () => Array.from({ length: 100 }, (_, i) => (i + 1) * 100),
-    []
+    [],
   )
 
   const renderPagination = useMemo(() => {
-    if (!(cars.length > 0 && totalCars > 20)) return null
+    if (!(cars.length > 0 && catalogTotal > 20)) return null
 
-    const lastPage = Math.ceil(totalCars / 20)
+    const lastPage = Math.ceil(catalogTotal / 20)
     const visiblePages = Array.from(
-      { length: Math.ceil(totalCars / 20) },
-      (_, i) => i + 1
+      { length: Math.ceil(catalogTotal / 20) },
+      (_, i) => i + 1,
     ).filter((page) => {
-      if (currentPage <= 3) return page <= 5
-      if (currentPage >= lastPage - 2) return page >= lastPage - 4
-      return page >= currentPage - 2 && page <= currentPage + 2
+      if (filters.currentPage <= 3) return page <= 5
+      if (filters.currentPage >= lastPage - 2) return page >= lastPage - 4
+      return page >= filters.currentPage - 2 && page <= filters.currentPage + 2
     })
 
     return (
       <div className="flex justify-center mt-10 mb-10">
         <div className="flex flex-wrap justify-center items-center gap-2 px-4 max-w-full">
-          {currentPage > 1 && (
+          {filters.currentPage > 1 && (
             <button
               onClick={() => {
-                setCurrentPage(currentPage - 1)
+                setField("currentPage", filters.currentPage - 1)
                 setFetchTrigger((prev) => prev + 1)
               }}
               className="cursor-pointer w-10 h-10 flex items-center justify-center border rounded-md text-sm font-medium shadow-sm bg-white text-gray-800 hover:bg-gray-100"
@@ -776,11 +296,11 @@ const Catalog = () => {
             <button
               key={page}
               onClick={() => {
-                setCurrentPage(page)
+                setField("currentPage", page)
                 setFetchTrigger((prev) => prev + 1)
               }}
               className={`cursor-pointer w-10 h-10 flex items-center justify-center border rounded-md text-sm font-medium shadow-sm transition-all duration-200 ${
-                currentPage === page
+                filters.currentPage === page
                   ? "bg-black text-white"
                   : "bg-white text-gray-800 hover:bg-gray-100"
               }`}
@@ -788,10 +308,10 @@ const Catalog = () => {
               {page}
             </button>
           ))}
-          {currentPage < lastPage && (
+          {filters.currentPage < lastPage && (
             <button
               onClick={() => {
-                setCurrentPage(currentPage + 1)
+                setField("currentPage", filters.currentPage + 1)
                 setFetchTrigger((prev) => prev + 1)
               }}
               className="cursor-pointer w-10 h-10 flex items-center justify-center border rounded-md text-sm font-medium shadow-sm bg-white text-gray-800 hover:bg-gray-100"
@@ -802,21 +322,18 @@ const Catalog = () => {
         </div>
       </div>
     )
-  }, [cars.length, totalCars, currentPage])
+  }, [cars.length, catalogTotal, filters.currentPage, setField])
 
   return (
     <div className="md:mt-40 mt-35 px-6">
-      <h1 className="text-3xl font-bold text-center mb-5">
-        Каталог автомобилей
-      </h1>
       <div className="md:flex flex-col items-end md:mr-20 md:block hidden">
         <label htmlFor="sortOptions">Сортировать по</label>
         <select
           className="border border-gray-300 rounded-md px-4 py-2 shadow-sm"
-          value={sortOption}
+          value={filters.sortOption}
           onChange={(e) => {
-            setSortOption(e.target.value)
-            setCurrentPage(1)
+            setField("sortOption", e.target.value)
+            setField("currentPage", 1)
             setFetchTrigger((prev) => prev + 1)
           }}
         >
@@ -832,7 +349,7 @@ const Catalog = () => {
         <div className="md:col-span-1.5">
           <select
             className="w-full border border-gray-300 rounded-md px-3 py-2 mt-4"
-            value={selectedManufacturer}
+            value={filters.selectedManufacturer}
             onChange={handleManufacturerChange}
           >
             <option value="">Марка</option>
@@ -846,9 +363,9 @@ const Catalog = () => {
               ))}
           </select>
           <select
-            disabled={selectedManufacturer.length === 0}
+            disabled={filters.selectedManufacturer.length === 0}
             className="w-full border border-gray-300 rounded-md px-3 py-2 mt-4 disabled:bg-gray-200"
-            value={selectedModelGroup}
+            value={filters.selectedModelGroup}
             onChange={handleModelGroupChange}
           >
             <option value="">Модель</option>
@@ -862,9 +379,9 @@ const Catalog = () => {
               ))}
           </select>
           <select
-            disabled={selectedModelGroup.length === 0}
+            disabled={filters.selectedModelGroup.length === 0}
             className="w-full border border-gray-300 rounded-md px-3 py-2 mt-4 disabled:bg-gray-200"
-            value={selectedModel}
+            value={filters.selectedModel}
             onChange={handleModelChange}
           >
             <option value="">Поколение</option>
@@ -882,9 +399,9 @@ const Catalog = () => {
               ))}
           </select>
           <select
-            disabled={selectedModel.length === 0}
+            disabled={filters.selectedModel.length === 0}
             className="w-full border border-gray-300 rounded-md px-3 py-2 mt-4 disabled:bg-gray-200"
-            value={selectedConfiguration}
+            value={filters.selectedConfiguration}
             onChange={handleConfigurationChange}
           >
             <option value="">Конфигурация</option>
@@ -898,9 +415,9 @@ const Catalog = () => {
               ))}
           </select>
           <select
-            disabled={selectedConfiguration.length === 0}
+            disabled={filters.selectedConfiguration.length === 0}
             className="w-full border border-gray-300 rounded-md px-3 py-2 mt-4 disabled:bg-gray-200"
-            value={selectedBadge}
+            value={filters.selectedBadge}
             onChange={handleBadgeChange}
           >
             <option value="">Выберите конфигурацию</option>
@@ -914,9 +431,9 @@ const Catalog = () => {
           </select>
 
           <select
-            disabled={selectedBadge.length === 0}
+            disabled={filters.selectedBadge.length === 0}
             className="w-full border border-gray-300 rounded-md px-3 py-2 mt-4 disabled:bg-gray-200"
-            value={selectedBadgeDetails}
+            value={filters.selectedBadgeDetails}
             onChange={handleBadgeDetailsChange}
           >
             <option value="">Выберите комплектацию</option>
@@ -932,8 +449,8 @@ const Catalog = () => {
           <div className="grid grid-cols-2 gap-3">
             <select
               className="w-full border border-gray-300 rounded-md px-3 py-2 mt-4 disabled:bg-gray-200"
-              value={startYear}
-              onChange={(e) => setStartYear(parseInt(e.target.value))}
+              value={filters.startYear}
+              onChange={(e) => setField("startYear", parseInt(e.target.value))}
             >
               <option value="">Год от</option>
               {yearOptions.map((year) => (
@@ -945,8 +462,8 @@ const Catalog = () => {
 
             <select
               className="w-full border border-gray-300 rounded-md px-3 py-2 mt-4 disabled:bg-gray-200"
-              value={startMonth}
-              onChange={(e) => setStartMonth(e.target.value)}
+              value={filters.startMonth}
+              onChange={(e) => setField("startMonth", e.target.value)}
             >
               <option value="">Месяц от</option>
               {monthNames.map((month, index) => (
@@ -959,8 +476,8 @@ const Catalog = () => {
           <div className="grid grid-cols-2 gap-3">
             <select
               className="w-full border border-gray-300 rounded-md px-3 py-2 mt-4 disabled:bg-gray-200"
-              value={endYear}
-              onChange={(e) => setEndYear(parseInt(e.target.value))}
+              value={filters.endYear}
+              onChange={(e) => setField("endYear", parseInt(e.target.value))}
             >
               <option value="">Год до</option>
               {endYearOptions.map((year) => (
@@ -972,8 +489,8 @@ const Catalog = () => {
 
             <select
               className="w-full border border-gray-300 rounded-md px-3 py-2 mt-4 disabled:bg-gray-200"
-              value={endMonth}
-              onChange={(e) => setEndMonth(e.target.value)}
+              value={filters.endMonth}
+              onChange={(e) => setField("endMonth", e.target.value)}
             >
               <option value="">Месяц до</option>
               {Array.from({ length: 12 }, (_, i) => {
@@ -982,7 +499,8 @@ const Catalog = () => {
               })
                 .filter(
                   ({ value }) =>
-                    !startMonth || parseInt(value) >= parseInt(startMonth)
+                    !filters.startMonth ||
+                    parseInt(value) >= parseInt(filters.startMonth),
                 )
                 .map(({ value, i }) => {
                   return (
@@ -996,8 +514,8 @@ const Catalog = () => {
 
           <select
             className="w-full border border-gray-300 rounded-md px-3 py-2 mt-4 disabled:bg-gray-200"
-            value={mileageStart}
-            onChange={(e) => setMileageStart(e.target.value)}
+            value={filters.mileageStart}
+            onChange={(e) => setField("mileageStart", e.target.value)}
           >
             <option value="">Пробег от</option>
             {mileageOptions.map((mileage) => (
@@ -1009,8 +527,8 @@ const Catalog = () => {
 
           <select
             className="w-full border border-gray-300 rounded-md px-3 py-2 mt-4 disabled:bg-gray-200"
-            value={mileageEnd}
-            onChange={(e) => setMileageEnd(e.target.value)}
+            value={filters.mileageEnd}
+            onChange={(e) => setField("mileageEnd", e.target.value)}
           >
             <option value="">Пробег До</option>
             {mileageOptions.map((mileage) => (
@@ -1023,18 +541,24 @@ const Catalog = () => {
           <div className="grid grid-cols-2 gap-3 mt-4">
             <select
               className="w-full border border-gray-300 rounded-md px-3 py-2"
-              value={priceStart}
+              value={filters.priceStart}
               onChange={(e) => {
                 const value = e.target.value
-                setPriceStart(value)
-                if (priceEnd && parseInt(value) > parseInt(priceEnd)) {
-                  setPriceEnd("")
+                setField("priceStart", value)
+                if (
+                  filters.priceEnd &&
+                  parseInt(value) > parseInt(filters.priceEnd)
+                ) {
+                  setField("priceEnd", "")
                 }
               }}
             >
               <option value="">Цена от</option>
               {priceOptions
-                .filter((price) => !priceEnd || price <= parseInt(priceEnd))
+                .filter(
+                  (price) =>
+                    !filters.priceEnd || price <= parseInt(filters.priceEnd),
+                )
                 .map((price) => (
                   <option key={price} value={price}>
                     ₩{(price * 10000).toLocaleString()}
@@ -1044,18 +568,25 @@ const Catalog = () => {
 
             <select
               className="w-full border border-gray-300 rounded-md px-3 py-2"
-              value={priceEnd}
+              value={filters.priceEnd}
               onChange={(e) => {
                 const value = e.target.value
-                setPriceEnd(value)
-                if (priceStart && parseInt(value) < parseInt(priceStart)) {
-                  setPriceStart("")
+                setField("priceEnd", value)
+                if (
+                  filters.priceStart &&
+                  parseInt(value) < parseInt(filters.priceStart)
+                ) {
+                  setField("priceStart", "")
                 }
               }}
             >
               <option value="">Цена до</option>
               {priceOptions
-                .filter((price) => !priceStart || price >= parseInt(priceStart))
+                .filter(
+                  (price) =>
+                    !filters.priceStart ||
+                    price >= parseInt(filters.priceStart),
+                )
                 .map((price) => (
                   <option key={price} value={price}>
                     ₩{(price * 10000).toLocaleString()}
@@ -1068,17 +599,17 @@ const Catalog = () => {
             type="text"
             placeholder="Поиск по номеру авто (например, 49сер0290)"
             className="w-full border border-gray-300 rounded-md px-3 py-2 mt-5"
-            value={searchByNumber}
+            value={filters.searchByNumber}
             onChange={(e) => {
-              setSearchByNumber(e.target.value)
-              setCurrentPage(1)
+              setField("searchByNumber", e.target.value)
+              setField("currentPage", 1)
             }}
           />
 
           <button
             className="w-full bg-avtoVitaGold text-black font-semibold py-2 px-4 mt-5 rounded hover:bg-avtoVitaGoldDark hover:text-white transition cursor-pointer"
             onClick={() => {
-              setCurrentPage(1)
+              setField("currentPage", 1)
               setFetchTrigger((prev) => prev + 1)
             }}
           >
@@ -1104,10 +635,10 @@ const Catalog = () => {
               </label>
               <select
                 className="border border-gray-300 rounded-md px-4 py-2 shadow-sm w-full"
-                value={sortOption}
+                value={filters.sortOption}
                 onChange={(e) => {
-                  setSortOption(e.target.value)
-                  setCurrentPage(1)
+                  setField("sortOption", e.target.value)
+                  setField("currentPage", 1)
                   setFetchTrigger((prev) => prev + 1)
                 }}
               >
@@ -1120,7 +651,7 @@ const Catalog = () => {
               </select>
             </div>
             {cars.map((car) => (
-              <CarCard key={car.Id} car={car} usdKrwRate={usdKrwRate} />
+              <CarCard key={car.Id} car={car} usdKrwRate={usdKrwRate || 1} />
             ))}
           </div>
         ) : (
