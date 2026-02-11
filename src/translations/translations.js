@@ -29,6 +29,7 @@ export function translateSmartly(text) {
 }
 
 const translations = {
+  슈팅브레이크: "Shooting Brake",
   살룬: "Saloon",
   스펙: "Spec",
   최고급형: "Top of the line",
