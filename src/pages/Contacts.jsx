@@ -129,7 +129,7 @@ const Contacts = () => {
 					<a
 						target="_blank"
 						rel="noopener noreferrer"
-						href="https://instagram.com/avtovita"
+						href="https://www.instagram.com/_yugay_vitaliy_olegovich/"
 						className="text-[#a330f0] hover:text-[#0e2cc2] transition-transform transform hover:scale-110"
 					>
 						<FaInstagram />

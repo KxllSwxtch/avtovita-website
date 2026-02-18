@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { FaPhone, FaWhatsapp, FaTelegram, FaInstagram, FaYoutube } from 'react-icons/fa'
+import { FaPhone, FaWhatsapp, FaTelegram, FaInstagram } from 'react-icons/fa'
 
 const contacts = [
 	{
@@ -22,7 +22,7 @@ const contacts = [
 const socials = [
 	{
 		icon: FaWhatsapp,
-		href: 'https://wa.me/821012345678',
+		href: 'https://wa.me/821093441782',
 		label: 'WhatsApp',
 	},
 	{
@@ -32,13 +32,8 @@ const socials = [
 	},
 	{
 		icon: FaInstagram,
-		href: 'https://instagram.com/avtovita',
+		href: 'https://www.instagram.com/_yugay_vitaliy_olegovich/',
 		label: 'Instagram',
-	},
-	{
-		icon: FaYoutube,
-		href: 'https://youtube.com/avtovita',
-		label: 'YouTube',
 	},
 ]
 

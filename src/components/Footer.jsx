@@ -1,4 +1,4 @@
-import { FaWhatsapp, FaTelegram, FaInstagram, FaYoutube } from 'react-icons/fa'
+import { FaWhatsapp, FaTelegram, FaInstagram } from 'react-icons/fa'
 
 const Footer = () => {
 	return (
@@ -93,7 +93,7 @@ const Footer = () => {
 					</h2>
 					<div className="flex justify-center md:justify-end gap-4 text-2xl">
 						<a
-							href="https://wa.me/821012345678"
+							href="https://wa.me/821093441782"
 							className="text-green-500 hover:text-green-600 transition"
 						>
 							<FaWhatsapp />
@@ -105,16 +105,10 @@ const Footer = () => {
 							<FaTelegram />
 						</a>
 						<a
-							href="https://instagram.com/avtovita"
+							href="https://www.instagram.com/_yugay_vitaliy_olegovich/"
 							className="text-pink-500 hover:text-pink-600 transition"
 						>
 							<FaInstagram />
-						</a>
-						<a
-							href="https://youtube.com/avtovita"
-							className="text-red-500 hover:text-red-600 transition"
-						>
-							<FaYoutube />
 						</a>
 					</div>
 				</div>
