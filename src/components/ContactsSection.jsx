@@ -27,7 +27,7 @@ const socials = [
 	},
 	{
 		icon: FaTelegram,
-		href: 'https://t.me/avtovita',
+		href: 'https://t.me/+821093441782',
 		label: 'Telegram',
 	},
 	{

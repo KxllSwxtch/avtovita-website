@@ -121,7 +121,7 @@ const Contacts = () => {
 					<a
 						target="_blank"
 						rel="noopener noreferrer"
-						href="https://t.me/avtovita"
+						href="https://t.me/+821093441782"
 						className="text-[#0e2cc2] hover:text-[#a330f0] transition-transform transform hover:scale-110"
 					>
 						<FaTelegram />
