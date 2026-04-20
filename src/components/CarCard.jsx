@@ -14,11 +14,13 @@ const CarCard = ({ car, usdKrwRate }) => {
 
 	return (
 		<div className='rounded-2xl shadow-xl bg-white overflow-hidden border border-gray-200 flex flex-col'>
-			<div className='relative w-full overflow-hidden'>
+			<div className='relative w-full aspect-[1400/696] overflow-hidden bg-gray-100'>
 				<img
 					src={`https://ci.encar.com${car.Photo}001.jpg?impolicy=heightRate&rh=696&cw=1400&ch=696&cg=Center&wtmk=https://ci.encar.com/wt_mark/w_mark_04.png&t=20250401111058`}
 					alt={`${car.Manufacturer} ${car.Model}`}
-					className='object-cover object-center'
+					width='1400'
+					height='696'
+					className='w-full h-full object-cover object-center'
 					loading='lazy'
 				/>
 			</div>

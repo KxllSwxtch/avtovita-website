@@ -4,9 +4,110 @@ import { transformBadgeValue } from '../utils'
 
 const BASE_URL = 'https://encar-proxy-main.onrender.com/api/nav'
 const NAV_PARAMS = 'count=true&inav=%7CMetadata%7CSort'
+export const CASCADE_STALE_TIME = 5 * 60 * 1000
 
 function findSelected(facets) {
   return facets?.find((item) => item.IsSelected === true)
+}
+
+async function fetchNav(q, signal) {
+  const { data } = await axios.get(`${BASE_URL}?${NAV_PARAMS}&q=${q}`, { signal })
+  return data
+}
+
+export const modelGroupsKey = (mfr) => ['filterNav', 'modelGroups', mfr]
+export const fetchModelGroups = (mfr) => async ({ signal } = {}) => {
+  const q = `(And.Hidden.N._.SellType.%EC%9D%BC%EB%B0%98._.(C.CarType.A._.Manufacturer.${mfr}.))`
+  const data = await fetchNav(q, signal)
+  const allManufacturers =
+    data?.iNav?.Nodes[2]?.Facets[0]?.Refinements?.Nodes[0]?.Facets || []
+  const filteredManufacturer = findSelected(allManufacturers)
+  const modelGroups =
+    filteredManufacturer?.Refinements?.Nodes[0]?.Facets || []
+  const totalCars = data?.Count || 0
+  return { modelGroups, totalCars }
+}
+
+export const modelsKey = (mfr, mg) => ['filterNav', 'models', mfr, mg]
+export const fetchModels = (mfr, mg) => async ({ signal } = {}) => {
+  const q = `(And.Hidden.N._.SellType.%EC%9D%BC%EB%B0%98._.(C.CarType.A._.(C.Manufacturer.${mfr}._.ModelGroup.${mg}.)))`
+  const data = await fetchNav(q, signal)
+  const allManufacturers =
+    data?.iNav?.Nodes[2]?.Facets[0]?.Refinements?.Nodes[0]?.Facets || []
+  const filteredManufacturer = findSelected(allManufacturers)
+  const modelGroup =
+    filteredManufacturer?.Refinements?.Nodes[0]?.Facets || []
+  const filteredModel = findSelected(modelGroup)
+  const models = filteredModel?.Refinements?.Nodes[0]?.Facets || []
+  const totalCars = data?.Count || 0
+  return { models, totalCars }
+}
+
+export const configurationsKey = (mfr, mg, m) => ['filterNav', 'configurations', mfr, mg, m]
+export const fetchConfigurations = (mfr, mg, m) => async ({ signal } = {}) => {
+  const q = `(And.Hidden.N._.(C.CarType.A._.(C.Manufacturer.${mfr}._.(C.ModelGroup.${mg}._.Model.${m}.))))`
+  const data = await fetchNav(q, signal)
+  const allManufacturers =
+    data?.iNav?.Nodes[1]?.Facets[0]?.Refinements?.Nodes[0]?.Facets || []
+  const filteredManufacturer = findSelected(allManufacturers)
+  const modelGroup =
+    filteredManufacturer?.Refinements?.Nodes[0]?.Facets || []
+  const filteredModel = findSelected(modelGroup)
+  const models = filteredModel?.Refinements?.Nodes[0]?.Facets || []
+  const filteredConfiguration = findSelected(models)
+  const configurations =
+    filteredConfiguration?.Refinements?.Nodes[0]?.Facets || []
+  const totalCars = data?.Count || 0
+  return { configurations, totalCars }
+}
+
+export const badgesKey = (mfr, mg, m, c) => ['filterNav', 'badges', mfr, mg, m, c]
+export const fetchBadges = (mfr, mg, m, c) => async ({ signal } = {}) => {
+  const q = `(And.Hidden.N._.(C.CarType.A._.(C.Manufacturer.${mfr}._.(C.ModelGroup.${mg}._.(C.Model.${m}._.BadgeGroup.${c}.)))))`
+  const data = await fetchNav(q, signal)
+  const allManufacturers =
+    data?.iNav?.Nodes[1]?.Facets[0]?.Refinements?.Nodes[0]?.Facets || []
+  const filteredManufacturer = findSelected(allManufacturers)
+  const modelGroup =
+    filteredManufacturer?.Refinements?.Nodes[0]?.Facets || []
+  const filteredModel = findSelected(modelGroup)
+  const models = filteredModel?.Refinements?.Nodes[0]?.Facets || []
+  const filteredConfiguration = findSelected(models)
+  const configurations =
+    filteredConfiguration?.Refinements?.Nodes[0]?.Facets || []
+  const filteredBadgeGroup = findSelected(configurations)
+  const badges = filteredBadgeGroup?.Refinements?.Nodes[0]?.Facets || []
+  const totalCars = data?.Count || 0
+  return { badges, totalCars }
+}
+
+export const badgeDetailsKey = (mfr, mg, m, c, b) => ['filterNav', 'badgeDetails', mfr, mg, m, c, b]
+export const fetchBadgeDetails = (mfr, mg, m, c, b) => async ({ signal } = {}) => {
+  const q = `(And.Hidden.N._.SellType.%EC%9D%BC%EB%B0%98._.(C.CarType.A._.(C.Manufacturer.${mfr}._.(C.ModelGroup.${mg}._.(C.Model.${m}._.(C.BadgeGroup.${c}._.Badge.${transformBadgeValue(b)}.))))))`
+  const data = await fetchNav(q, signal)
+  const allManufacturers =
+    data?.iNav?.Nodes[2]?.Facets[0]?.Refinements?.Nodes[0]?.Facets || []
+  const filteredManufacturer = findSelected(allManufacturers)
+  const modelGroup =
+    filteredManufacturer?.Refinements?.Nodes[0]?.Facets || []
+  const filteredModel = findSelected(modelGroup)
+  const models = filteredModel?.Refinements?.Nodes[0]?.Facets || []
+  const filteredConfiguration = findSelected(models)
+  const configurations =
+    filteredConfiguration?.Refinements?.Nodes[0]?.Facets || []
+  const filteredBadgeGroup = findSelected(configurations)
+  const badges = filteredBadgeGroup?.Refinements?.Nodes[0]?.Facets || []
+  const filteredBadge = findSelected(badges)
+  const badgeDetails =
+    filteredBadge?.Refinements?.Nodes[0]?.Facets || []
+  const totalCars = data?.Count || 0
+  return { badgeDetails, totalCars }
+}
+
+const cascadeOptions = {
+  staleTime: CASCADE_STALE_TIME,
+  keepPreviousData: true,
+  retry: 0,
 }
 
 export const useFilterCascade = (filters) => {
@@ -18,137 +119,54 @@ export const useFilterCascade = (filters) => {
     selectedBadge,
   } = filters
 
-  // Level 1: Fetch model groups when manufacturer is selected
   const modelGroupsQuery = useQuery(
-    ['filterNav', 'modelGroups', selectedManufacturer],
-    async ({ signal }) => {
-      const q = `(And.Hidden.N._.SellType.%EC%9D%BC%EB%B0%98._.(C.CarType.A._.Manufacturer.${selectedManufacturer}.))`
-      const { data } = await axios.get(`${BASE_URL}?${NAV_PARAMS}&q=${q}`, { signal })
-
-      const allManufacturers =
-        data?.iNav?.Nodes[2]?.Facets[0]?.Refinements?.Nodes[0]?.Facets || []
-      const filteredManufacturer = findSelected(allManufacturers)
-      const modelGroups =
-        filteredManufacturer?.Refinements?.Nodes[0]?.Facets || []
-      const totalCars = data?.Count || 0
-
-      return { modelGroups, totalCars }
-    },
-    {
-      enabled: !!selectedManufacturer,
-      staleTime: 5 * 60 * 1000,
-    }
+    modelGroupsKey(selectedManufacturer),
+    fetchModelGroups(selectedManufacturer),
+    { ...cascadeOptions, enabled: !!selectedManufacturer }
   )
 
-  // Level 2: Fetch models when model group is selected
   const modelsQuery = useQuery(
-    ['filterNav', 'models', selectedManufacturer, selectedModelGroup],
-    async ({ signal }) => {
-      const q = `(And.Hidden.N._.SellType.%EC%9D%BC%EB%B0%98._.(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.ModelGroup.${selectedModelGroup}.)))`
-      const { data } = await axios.get(`${BASE_URL}?${NAV_PARAMS}&q=${q}`, { signal })
-
-      const allManufacturers =
-        data?.iNav?.Nodes[2]?.Facets[0]?.Refinements?.Nodes[0]?.Facets || []
-      const filteredManufacturer = findSelected(allManufacturers)
-      const modelGroup =
-        filteredManufacturer?.Refinements?.Nodes[0]?.Facets || []
-      const filteredModel = findSelected(modelGroup)
-      const models = filteredModel?.Refinements?.Nodes[0]?.Facets || []
-      const totalCars = data?.Count || 0
-
-      return { models, totalCars }
-    },
+    modelsKey(selectedManufacturer, selectedModelGroup),
+    fetchModels(selectedManufacturer, selectedModelGroup),
     {
+      ...cascadeOptions,
       enabled: !!selectedManufacturer && !!selectedModelGroup,
-      staleTime: 5 * 60 * 1000,
     }
   )
 
-  // Level 3: Fetch configurations when model is selected
   const configurationsQuery = useQuery(
-    ['filterNav', 'configurations', selectedManufacturer, selectedModelGroup, selectedModel],
-    async ({ signal }) => {
-      const q = `(And.Hidden.N._.(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.(C.ModelGroup.${selectedModelGroup}._.Model.${selectedModel}.))))`
-      const { data } = await axios.get(`${BASE_URL}?${NAV_PARAMS}&q=${q}`, { signal })
-
-      const allManufacturers =
-        data?.iNav?.Nodes[1]?.Facets[0]?.Refinements?.Nodes[0]?.Facets || []
-      const filteredManufacturer = findSelected(allManufacturers)
-      const modelGroup =
-        filteredManufacturer?.Refinements?.Nodes[0]?.Facets || []
-      const filteredModel = findSelected(modelGroup)
-      const models = filteredModel?.Refinements?.Nodes[0]?.Facets || []
-      const filteredConfiguration = findSelected(models)
-      const configurations =
-        filteredConfiguration?.Refinements?.Nodes[0]?.Facets || []
-      const totalCars = data?.Count || 0
-
-      return { configurations, totalCars }
-    },
+    configurationsKey(selectedManufacturer, selectedModelGroup, selectedModel),
+    fetchConfigurations(selectedManufacturer, selectedModelGroup, selectedModel),
     {
+      ...cascadeOptions,
       enabled: !!selectedManufacturer && !!selectedModelGroup && !!selectedModel,
-      staleTime: 5 * 60 * 1000,
     }
   )
 
-  // Level 4: Fetch badges when configuration is selected
   const badgesQuery = useQuery(
-    ['filterNav', 'badges', selectedManufacturer, selectedModelGroup, selectedModel, selectedConfiguration],
-    async ({ signal }) => {
-      const q = `(And.Hidden.N._.(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.(C.ModelGroup.${selectedModelGroup}._.(C.Model.${selectedModel}._.BadgeGroup.${selectedConfiguration}.)))))`
-      const { data } = await axios.get(`${BASE_URL}?${NAV_PARAMS}&q=${q}`, { signal })
-
-      const allManufacturers =
-        data?.iNav?.Nodes[1]?.Facets[0]?.Refinements?.Nodes[0]?.Facets || []
-      const filteredManufacturer = findSelected(allManufacturers)
-      const modelGroup =
-        filteredManufacturer?.Refinements?.Nodes[0]?.Facets || []
-      const filteredModel = findSelected(modelGroup)
-      const models = filteredModel?.Refinements?.Nodes[0]?.Facets || []
-      const filteredConfiguration = findSelected(models)
-      const configurations =
-        filteredConfiguration?.Refinements?.Nodes[0]?.Facets || []
-      const filteredBadgeGroup = findSelected(configurations)
-      const badges = filteredBadgeGroup?.Refinements?.Nodes[0]?.Facets || []
-      const totalCars = data?.Count || 0
-
-      return { badges, totalCars }
-    },
+    badgesKey(selectedManufacturer, selectedModelGroup, selectedModel, selectedConfiguration),
+    fetchBadges(selectedManufacturer, selectedModelGroup, selectedModel, selectedConfiguration),
     {
-      enabled: !!selectedManufacturer && !!selectedModelGroup && !!selectedModel && !!selectedConfiguration,
-      staleTime: 5 * 60 * 1000,
+      ...cascadeOptions,
+      enabled:
+        !!selectedManufacturer &&
+        !!selectedModelGroup &&
+        !!selectedModel &&
+        !!selectedConfiguration,
     }
   )
 
-  // Level 5: Fetch badge details when badge is selected
   const badgeDetailsQuery = useQuery(
-    ['filterNav', 'badgeDetails', selectedManufacturer, selectedModelGroup, selectedModel, selectedConfiguration, selectedBadge],
-    async ({ signal }) => {
-      const q = `(And.Hidden.N._.SellType.%EC%9D%BC%EB%B0%98._.(C.CarType.A._.(C.Manufacturer.${selectedManufacturer}._.(C.ModelGroup.${selectedModelGroup}._.(C.Model.${selectedModel}._.(C.BadgeGroup.${selectedConfiguration}._.Badge.${transformBadgeValue(selectedBadge)}.))))))`
-      const { data } = await axios.get(`${BASE_URL}?${NAV_PARAMS}&q=${q}`, { signal })
-
-      const allManufacturers =
-        data?.iNav?.Nodes[2]?.Facets[0]?.Refinements?.Nodes[0]?.Facets || []
-      const filteredManufacturer = allManufacturers?.find((item) => item.IsSelected)
-      const modelGroup =
-        filteredManufacturer?.Refinements?.Nodes[0]?.Facets || []
-      const filteredModel = modelGroup?.find((item) => item.IsSelected)
-      const models = filteredModel?.Refinements?.Nodes[0]?.Facets || []
-      const filteredConfiguration = models?.find((item) => item.IsSelected)
-      const configurations =
-        filteredConfiguration?.Refinements?.Nodes[0]?.Facets || []
-      const filteredBadgeGroup = configurations?.find((item) => item.IsSelected)
-      const badges = filteredBadgeGroup?.Refinements?.Nodes[0]?.Facets || []
-      const filteredBadge = badges?.find((item) => item.IsSelected)
-      const badgeDetails =
-        filteredBadge?.Refinements?.Nodes[0]?.Facets || []
-      const totalCars = data?.Count || 0
-
-      return { badgeDetails, totalCars }
-    },
+    badgeDetailsKey(selectedManufacturer, selectedModelGroup, selectedModel, selectedConfiguration, selectedBadge),
+    fetchBadgeDetails(selectedManufacturer, selectedModelGroup, selectedModel, selectedConfiguration, selectedBadge),
     {
-      enabled: !!selectedManufacturer && !!selectedModelGroup && !!selectedModel && !!selectedConfiguration && !!selectedBadge,
-      staleTime: 5 * 60 * 1000,
+      ...cascadeOptions,
+      enabled:
+        !!selectedManufacturer &&
+        !!selectedModelGroup &&
+        !!selectedModel &&
+        !!selectedConfiguration &&
+        !!selectedBadge,
     }
   )
 

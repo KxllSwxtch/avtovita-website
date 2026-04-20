@@ -123,15 +123,12 @@ function buildCatalogQuery(filters) {
   )
 }
 
-export const useCatalogSearch = (filters, fetchTrigger) => {
-  const { currentPage, sortOption } = filters
-
-  const queryKey = ['catalog', fetchTrigger]
-
+export const useCatalogSearch = (appliedFilters) => {
   return useQuery(
-    queryKey,
+    ['catalog', appliedFilters],
     async ({ signal }) => {
-      const query = buildCatalogQuery(filters)
+      const { currentPage, sortOption } = appliedFilters
+      const query = buildCatalogQuery(appliedFilters)
       const encodedQuery = encodeURIComponent(query)
       const itemsPerPage = 20
       const offset = (currentPage - 1) * itemsPerPage
@@ -154,7 +151,7 @@ export const useCatalogSearch = (filters, fetchTrigger) => {
       }
     },
     {
-      enabled: fetchTrigger > 0,
+      enabled: appliedFilters !== null,
       keepPreviousData: true,
       staleTime: 2 * 60 * 1000,
       onSuccess: () => {

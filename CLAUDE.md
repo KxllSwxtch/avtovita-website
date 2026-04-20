@@ -56,11 +56,16 @@ src/
 
 All API URLs are **hardcoded** — no environment variables.
 
-### EnCAR Proxy (car catalog)
+### ENCAR Proxy (car catalog)
 - Base: `https://encar-proxy-main.onrender.com`
 - `/api/nav` — manufacturer/model/config navigation with query params
 - `/api/catalog` — search results with filters, sorting, pagination
+- `/health` — proxy status endpoint (no upstream call; safe for keep-alive pings)
 - Used in: `ExportCatalog.jsx`
+- Hosted on Render free tier: **sleeps after 15 min idle** (cold-start ≈ 25–60s).
+  - Mitigation A (server-side, primary): UptimeRobot HTTP monitor on `/health`, every 5 min (free tier). Keeps the dyno warm. **Action required: set this up in UptimeRobot — the proxy code already exposes the endpoint.**
+  - Mitigation B (client-side): `src/main.jsx` issues a fire-and-forget warmup `fetch` to `/health` at app boot.
+  - If UptimeRobot stops, the catalog page shows a "Сервер просыпается" hint after 4s so users know what's happening.
 
 ### EnCAR Direct (car details & inspection)
 - Base: `https://api.encar.com/v1/readside`

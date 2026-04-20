@@ -1,15 +1,27 @@
 import { useState, useEffect, useRef, useCallback, useMemo, memo } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
+import { useQueryClient } from "react-query"
 import { translations, translateSmartly } from "../translations"
 import { formatDate } from "../utils"
-import { Loader } from "../components"
-import { CarCard as BaseCarCard } from "../components"
+import { CarCard as BaseCarCard, CarCardSkeleton } from "../components"
 import {
   useCurrencyRate,
   useManufacturers,
   useCatalogSearch,
   useFilterCascade,
   useCatalogFilters,
+  initialFilterState,
+  CASCADE_STALE_TIME,
+  modelGroupsKey,
+  fetchModelGroups,
+  modelsKey,
+  fetchModels,
+  configurationsKey,
+  fetchConfigurations,
+  badgesKey,
+  fetchBadges,
+  badgeDetailsKey,
+  fetchBadgeDetails,
 } from "../hooks"
 
 // Memoize CarCard to prevent unnecessary re-renders
@@ -35,15 +47,13 @@ const useDebounce = (value, delay) => {
 const Catalog = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const urlParams = useRef({
-    manufacturer: null,
-    modelGroup: null,
-    model: null,
-  })
-  const isInitialMount = useRef(true)
-  const pendingUrlParams = useRef(false)
+  const queryClient = useQueryClient()
 
-  const [fetchTrigger, setFetchTrigger] = useState(0)
+  // Snapshot of filters used for the active catalog search.
+  // null = no search yet (initial mount before init effect runs).
+  // Updated only on Apply / pagination / sort / reset / URL-param init,
+  // so the live filter UI can change without triggering refetches.
+  const [appliedFilters, setAppliedFilters] = useState(null)
 
   // Get saved page from localStorage
   const savedPage = useRef(
@@ -54,6 +64,7 @@ const Catalog = () => {
   const {
     filters,
     setField,
+    initFromUrl,
     setManufacturer,
     setModelGroup,
     setModel,
@@ -78,9 +89,10 @@ const Catalog = () => {
   const cascade = useFilterCascade(filters)
   const {
     data: catalogData,
-    isLoading: loading,
+    isFetching,
     error: catalogError,
-  } = useCatalogSearch(searchFilters, fetchTrigger)
+    refetch: refetchCatalog,
+  } = useCatalogSearch(appliedFilters)
 
   // Derived data
   const manufacturers = manufacturersData?.manufacturers || null
@@ -108,67 +120,142 @@ const Catalog = () => {
     return () => clearTimeout(timeoutId)
   }, [filters.currentPage])
 
-  // Handle URL params on mount
+  // Escalating "server waking up" hint. Render free tier sleeps after 15 min
+  // idle; cold start is 25-60s. Stage 0 = quick hint (1.5s), stage 1 = honest
+  // cold-start explanation (10s), stage 2 = offer manual retry (30s).
+  const [wakingStage, setWakingStage] = useState(0)
+  const showingSkeletons = isFetching && !catalogData
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search)
-    urlParams.current = {
-      manufacturer: searchParams.get("manufacturer"),
-      modelGroup: searchParams.get("modelGroup"),
-      model: searchParams.get("model"),
+    if (!showingSkeletons) {
+      setWakingStage(0)
+      return
+    }
+    const t1 = setTimeout(() => setWakingStage(1), 1500)
+    const t2 = setTimeout(() => setWakingStage(2), 10000)
+    const t3 = setTimeout(() => setWakingStage(3), 30000)
+    return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
+      clearTimeout(t3)
+    }
+  }, [showingSkeletons])
+
+  // Speculatively prefetch modelGroups for the top 3 manufacturers (ranked by
+  // listing count). The vast majority of selections land on these brands, so
+  // paying 3 background requests at boot trades a negligible cost for an
+  // instant "Модель" dropdown on the common path.
+  const didSpeculativePrefetch = useRef(false)
+  useEffect(() => {
+    if (didSpeculativePrefetch.current) return
+    if (!manufacturers || manufacturers.length === 0) return
+    didSpeculativePrefetch.current = true
+    const top = [...manufacturers]
+      .filter((m) => m.Count > 0)
+      .sort((a, b) => b.Count - a.Count)
+      .slice(0, 3)
+    top.forEach((m) => {
+      queryClient
+        .prefetchQuery(modelGroupsKey(m.Value), fetchModelGroups(m.Value), {
+          staleTime: CASCADE_STALE_TIME,
+        })
+        .catch(() => {})
+    })
+  }, [manufacturers, queryClient])
+
+  // Prefetch handlers — fire on hover/focus so the dropdown is warm before
+  // the user even opens it. Each is a no-op if the relevant parent filter
+  // isn't set yet (React Query will ignore the duplicate if already cached).
+  const prefetchModelGroups = useCallback(() => {
+    const mfr = filters.selectedManufacturer
+    if (!mfr) return
+    queryClient
+      .prefetchQuery(modelGroupsKey(mfr), fetchModelGroups(mfr), {
+        staleTime: CASCADE_STALE_TIME,
+      })
+      .catch(() => {})
+  }, [filters.selectedManufacturer, queryClient])
+
+  const prefetchModels = useCallback(() => {
+    const { selectedManufacturer: mfr, selectedModelGroup: mg } = filters
+    if (!mfr || !mg) return
+    queryClient
+      .prefetchQuery(modelsKey(mfr, mg), fetchModels(mfr, mg), {
+        staleTime: CASCADE_STALE_TIME,
+      })
+      .catch(() => {})
+  }, [filters, queryClient])
+
+  const prefetchConfigurations = useCallback(() => {
+    const {
+      selectedManufacturer: mfr,
+      selectedModelGroup: mg,
+      selectedModel: m,
+    } = filters
+    if (!mfr || !mg || !m) return
+    queryClient
+      .prefetchQuery(
+        configurationsKey(mfr, mg, m),
+        fetchConfigurations(mfr, mg, m),
+        { staleTime: CASCADE_STALE_TIME }
+      )
+      .catch(() => {})
+  }, [filters, queryClient])
+
+  const prefetchBadges = useCallback(() => {
+    const {
+      selectedManufacturer: mfr,
+      selectedModelGroup: mg,
+      selectedModel: m,
+      selectedConfiguration: c,
+    } = filters
+    if (!mfr || !mg || !m || !c) return
+    queryClient
+      .prefetchQuery(badgesKey(mfr, mg, m, c), fetchBadges(mfr, mg, m, c), {
+        staleTime: CASCADE_STALE_TIME,
+      })
+      .catch(() => {})
+  }, [filters, queryClient])
+
+  const prefetchBadgeDetails = useCallback(() => {
+    const {
+      selectedManufacturer: mfr,
+      selectedModelGroup: mg,
+      selectedModel: m,
+      selectedConfiguration: c,
+      selectedBadge: b,
+    } = filters
+    if (!mfr || !mg || !m || !c || !b) return
+    queryClient
+      .prefetchQuery(
+        badgeDetailsKey(mfr, mg, m, c, b),
+        fetchBadgeDetails(mfr, mg, m, c, b),
+        { staleTime: CASCADE_STALE_TIME }
+      )
+      .catch(() => {})
+  }, [filters, queryClient])
+
+  // Mount-time init: read URL params atomically, set both the filter UI state
+  // and the appliedFilters snapshot in one pass. The catalog search fires
+  // immediately with the URL-supplied filters; the cascade `/api/nav` queries
+  // run in parallel to populate child dropdowns for further user navigation.
+  useEffect(() => {
+    const sp = new URLSearchParams(location.search)
+    const urlMfr = sp.get("manufacturer") || ""
+    const urlMg = sp.get("modelGroup") || ""
+    const urlModel = sp.get("model") || ""
+
+    if (urlMfr) {
+      initFromUrl({ manufacturer: urlMfr, modelGroup: urlMg, model: urlModel })
     }
 
-    if (urlParams.current.manufacturer) {
-      pendingUrlParams.current = true
-      setManufacturer(urlParams.current.manufacturer)
-    } else {
-      setFetchTrigger((prev) => prev + 1)
-    }
-
-    isInitialMount.current = false
+    setAppliedFilters({
+      ...initialFilterState,
+      currentPage: savedPage.current,
+      selectedManufacturer: urlMfr,
+      selectedModelGroup: urlMg,
+      selectedModel: urlModel,
+    })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Handle URL param cascade: apply modelGroup when modelGroups load
-  useEffect(() => {
-    if (
-      urlParams.current.modelGroup &&
-      !filters.selectedModelGroup &&
-      modelGroups
-    ) {
-      const modelExists = modelGroups?.some(
-        (m) => m.Value === urlParams.current.modelGroup,
-      )
-      if (modelExists) {
-        setModelGroup(urlParams.current.modelGroup)
-      }
-      if (!urlParams.current.model) {
-        pendingUrlParams.current = false
-        setFetchTrigger((prev) => prev + 1)
-      }
-    } else if (
-      pendingUrlParams.current &&
-      !urlParams.current.modelGroup &&
-      modelGroups
-    ) {
-      pendingUrlParams.current = false
-      setFetchTrigger((prev) => prev + 1)
-    }
-  }, [modelGroups]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Handle URL param cascade: apply model when models load
-  useEffect(() => {
-    if (urlParams.current.model && !filters.selectedModel && models) {
-      const modelExists = models?.some(
-        (m) => m.Value === urlParams.current.model,
-      )
-      if (modelExists) {
-        setModel(urlParams.current.model)
-      }
-      // Reset URL params after they've been processed
-      urlParams.current = { manufacturer: null, modelGroup: null, model: null }
-      pendingUrlParams.current = false
-      setFetchTrigger((prev) => prev + 1)
-    }
-  }, [models]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleManufacturerChange = useCallback(
     (e) => {
@@ -214,9 +301,33 @@ const Catalog = () => {
 
   const resetFilters = useCallback(() => {
     resetAll()
-    setFetchTrigger((prev) => prev + 1)
+    setAppliedFilters({ ...initialFilterState })
     navigate("/catalog")
   }, [navigate, resetAll])
+
+  const applyFilters = useCallback(() => {
+    setField("currentPage", 1)
+    setAppliedFilters({ ...searchFilters, currentPage: 1 })
+  }, [searchFilters, setField])
+
+  const goToPage = useCallback(
+    (page) => {
+      setField("currentPage", page)
+      setAppliedFilters((prev) => (prev ? { ...prev, currentPage: page } : prev))
+    },
+    [setField],
+  )
+
+  const changeSort = useCallback(
+    (value) => {
+      setField("sortOption", value)
+      setField("currentPage", 1)
+      setAppliedFilters((prev) =>
+        prev ? { ...prev, sortOption: value, currentPage: 1 } : prev,
+      )
+    },
+    [setField],
+  )
 
   // Memoize select options to prevent recalculations on every render
   const yearOptions = useMemo(() => {
@@ -283,10 +394,7 @@ const Catalog = () => {
         <div className="flex flex-wrap justify-center items-center gap-2 px-4 max-w-full">
           {filters.currentPage > 1 && (
             <button
-              onClick={() => {
-                setField("currentPage", filters.currentPage - 1)
-                setFetchTrigger((prev) => prev + 1)
-              }}
+              onClick={() => goToPage(filters.currentPage - 1)}
               className="cursor-pointer w-10 h-10 flex items-center justify-center border rounded-md text-sm font-medium shadow-sm bg-white text-gray-800 hover:bg-gray-100"
             >
               ‹
@@ -295,10 +403,7 @@ const Catalog = () => {
           {visiblePages.map((page) => (
             <button
               key={page}
-              onClick={() => {
-                setField("currentPage", page)
-                setFetchTrigger((prev) => prev + 1)
-              }}
+              onClick={() => goToPage(page)}
               className={`cursor-pointer w-10 h-10 flex items-center justify-center border rounded-md text-sm font-medium shadow-sm transition-all duration-200 ${
                 filters.currentPage === page
                   ? "bg-black text-white"
@@ -310,10 +415,7 @@ const Catalog = () => {
           ))}
           {filters.currentPage < lastPage && (
             <button
-              onClick={() => {
-                setField("currentPage", filters.currentPage + 1)
-                setFetchTrigger((prev) => prev + 1)
-              }}
+              onClick={() => goToPage(filters.currentPage + 1)}
               className="cursor-pointer w-10 h-10 flex items-center justify-center border rounded-md text-sm font-medium shadow-sm bg-white text-gray-800 hover:bg-gray-100"
             >
               ›
@@ -322,7 +424,7 @@ const Catalog = () => {
         </div>
       </div>
     )
-  }, [cars.length, catalogTotal, filters.currentPage, setField])
+  }, [cars.length, catalogTotal, filters.currentPage, goToPage])
 
   return (
     <div className="md:mt-40 mt-35 px-6">
@@ -331,11 +433,7 @@ const Catalog = () => {
         <select
           className="border border-gray-300 rounded-md px-4 py-2 shadow-sm"
           value={filters.sortOption}
-          onChange={(e) => {
-            setField("sortOption", e.target.value)
-            setField("currentPage", 1)
-            setFetchTrigger((prev) => prev + 1)
-          }}
+          onChange={(e) => changeSort(e.target.value)}
         >
           <option value="newest">Сначала новые</option>
           <option value="priceAsc">Цена: по возрастанию</option>
@@ -363,12 +461,22 @@ const Catalog = () => {
               ))}
           </select>
           <select
-            disabled={filters.selectedManufacturer.length === 0}
+            disabled={
+              filters.selectedManufacturer.length === 0 ||
+              (cascade.modelGroupsQuery.isLoading &&
+                !cascade.modelGroupsQuery.data)
+            }
             className="w-full border border-gray-300 rounded-md px-3 py-2 mt-4 disabled:bg-gray-200"
             value={filters.selectedModelGroup}
             onChange={handleModelGroupChange}
+            onMouseEnter={prefetchModelGroups}
+            onFocus={prefetchModelGroups}
           >
-            <option value="">Модель</option>
+            <option value="">
+              {cascade.modelGroupsQuery.isLoading && !modelGroups
+                ? "Загрузка..."
+                : "Модель"}
+            </option>
             {modelGroups
               ?.filter((modelGroup) => modelGroup.Count > 0)
               .map((modelGroup, index) => (
@@ -379,12 +487,21 @@ const Catalog = () => {
               ))}
           </select>
           <select
-            disabled={filters.selectedModelGroup.length === 0}
+            disabled={
+              filters.selectedModelGroup.length === 0 ||
+              (cascade.modelsQuery.isLoading && !cascade.modelsQuery.data)
+            }
             className="w-full border border-gray-300 rounded-md px-3 py-2 mt-4 disabled:bg-gray-200"
             value={filters.selectedModel}
             onChange={handleModelChange}
+            onMouseEnter={prefetchModels}
+            onFocus={prefetchModels}
           >
-            <option value="">Поколение</option>
+            <option value="">
+              {cascade.modelsQuery.isLoading && !models
+                ? "Загрузка..."
+                : "Поколение"}
+            </option>
             {models
               ?.filter((model) => model.Count > 0)
               .map((model, index) => (
@@ -399,12 +516,22 @@ const Catalog = () => {
               ))}
           </select>
           <select
-            disabled={filters.selectedModel.length === 0}
+            disabled={
+              filters.selectedModel.length === 0 ||
+              (cascade.configurationsQuery.isLoading &&
+                !cascade.configurationsQuery.data)
+            }
             className="w-full border border-gray-300 rounded-md px-3 py-2 mt-4 disabled:bg-gray-200"
             value={filters.selectedConfiguration}
             onChange={handleConfigurationChange}
+            onMouseEnter={prefetchConfigurations}
+            onFocus={prefetchConfigurations}
           >
-            <option value="">Конфигурация</option>
+            <option value="">
+              {cascade.configurationsQuery.isLoading && !configurations
+                ? "Загрузка..."
+                : "Конфигурация"}
+            </option>
             {configurations
               ?.filter((configuration) => configuration.Count > 0)
               .map((configuration, index) => (
@@ -415,12 +542,21 @@ const Catalog = () => {
               ))}
           </select>
           <select
-            disabled={filters.selectedConfiguration.length === 0}
+            disabled={
+              filters.selectedConfiguration.length === 0 ||
+              (cascade.badgesQuery.isLoading && !cascade.badgesQuery.data)
+            }
             className="w-full border border-gray-300 rounded-md px-3 py-2 mt-4 disabled:bg-gray-200"
             value={filters.selectedBadge}
             onChange={handleBadgeChange}
+            onMouseEnter={prefetchBadges}
+            onFocus={prefetchBadges}
           >
-            <option value="">Выберите конфигурацию</option>
+            <option value="">
+              {cascade.badgesQuery.isLoading && !badges
+                ? "Загрузка..."
+                : "Выберите конфигурацию"}
+            </option>
             {badges
               ?.filter((badge) => badge.Count > 0)
               .map((badge, index) => (
@@ -431,12 +567,22 @@ const Catalog = () => {
           </select>
 
           <select
-            disabled={filters.selectedBadge.length === 0}
+            disabled={
+              filters.selectedBadge.length === 0 ||
+              (cascade.badgeDetailsQuery.isLoading &&
+                !cascade.badgeDetailsQuery.data)
+            }
             className="w-full border border-gray-300 rounded-md px-3 py-2 mt-4 disabled:bg-gray-200"
             value={filters.selectedBadgeDetails}
             onChange={handleBadgeDetailsChange}
+            onMouseEnter={prefetchBadgeDetails}
+            onFocus={prefetchBadgeDetails}
           >
-            <option value="">Выберите комплектацию</option>
+            <option value="">
+              {cascade.badgeDetailsQuery.isLoading && !badgeDetails
+                ? "Загрузка..."
+                : "Выберите комплектацию"}
+            </option>
             {badgeDetails
               ?.filter((badgeDetails) => badgeDetails.Count > 0)
               .map((badgeDetail, index) => (
@@ -607,13 +753,17 @@ const Catalog = () => {
           />
 
           <button
-            className="w-full bg-avtoVitaGold text-black font-semibold py-2 px-4 mt-5 rounded hover:bg-avtoVitaGoldDark hover:text-white transition cursor-pointer"
-            onClick={() => {
-              setField("currentPage", 1)
-              setFetchTrigger((prev) => prev + 1)
-            }}
+            className="w-full bg-avtoVitaGold text-black font-semibold py-2 px-4 mt-5 rounded hover:bg-avtoVitaGoldDark hover:text-white transition cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-wait"
+            onClick={applyFilters}
+            disabled={isFetching}
           >
-            Применить
+            {isFetching && (
+              <span
+                className="inline-block h-4 w-4 rounded-full border-2 border-black border-t-transparent animate-spin"
+                aria-hidden="true"
+              />
+            )}
+            {isFetching ? "Загрузка..." : "Применить"}
           </button>
           <button
             className="w-full bg-red-500 text-white py-2 px-4 mt-5 rounded hover:bg-red-600 transition cursor-pointer"
@@ -623,44 +773,89 @@ const Catalog = () => {
           </button>
         </div>
 
-        {loading ? (
-          <div className="flex justify-center items-center h-screen">
-            <Loader />
-          </div>
-        ) : cars.length > 0 ? (
-          <div className="md:col-span-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8">
-            <div className="w-full md:hidden">
-              <label htmlFor="sortOptions" className="mb-2 block text-center">
-                Сортировать по
-              </label>
-              <select
-                className="border border-gray-300 rounded-md px-4 py-2 shadow-sm w-full"
-                value={filters.sortOption}
-                onChange={(e) => {
-                  setField("sortOption", e.target.value)
-                  setField("currentPage", 1)
-                  setFetchTrigger((prev) => prev + 1)
-                }}
-              >
-                <option value="newest">Сначала новые</option>
-                <option value="priceAsc">Цена: по возрастанию</option>
-                <option value="priceDesc">Цена: по убыванию</option>
-                <option value="mileageAsc">Пробег: по возрастанию</option>
-                <option value="mileageDesc">Пробег: по убыванию</option>
-                <option value="yearDesc">Год: от новых</option>
-              </select>
+        <div className="md:col-span-4 mt-8">
+          {wakingStage >= 1 && showingSkeletons && (
+            <div className="mb-4 px-4 py-3 rounded-md bg-yellow-50 border border-yellow-200 text-yellow-900 text-sm">
+              {wakingStage === 1 && (
+                <div className="text-center">
+                  Загружаем каталог… это может занять несколько секунд.
+                </div>
+              )}
+              {wakingStage === 2 && (
+                <div className="text-center">
+                  Сервер просыпается после простоя. Первая загрузка занимает до
+                  30 секунд — спасибо за терпение.
+                </div>
+              )}
+              {wakingStage >= 3 && (
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <span>
+                    Загрузка занимает дольше обычного. Попробуйте ещё раз.
+                  </span>
+                  <button
+                    onClick={() => refetchCatalog()}
+                    className="px-3 py-1 rounded-md bg-yellow-200 hover:bg-yellow-300 text-yellow-900 text-sm font-medium transition cursor-pointer"
+                  >
+                    Повторить
+                  </button>
+                </div>
+              )}
             </div>
-            {cars.map((car) => (
-              <CarCard key={car.Id} car={car} usdKrwRate={usdKrwRate || 1} />
-            ))}
-          </div>
-        ) : (
-          <div className="flex justify-center items-center h-32">
-            <p className="text-xl font-semibold text-gray-700">
-              {error || "Автомобили не найдены"}
-            </p>
-          </div>
-        )}
+          )}
+
+          {!showingSkeletons && error && (
+            <div className="mb-4 px-4 py-3 rounded-md bg-red-50 border border-red-200 text-red-800 text-sm flex flex-col sm:flex-row items-center justify-center gap-3 text-center">
+              <span>{error}</span>
+              <button
+                onClick={() => refetchCatalog()}
+                className="px-3 py-1 rounded-md bg-red-100 hover:bg-red-200 text-red-800 text-sm font-medium transition cursor-pointer"
+              >
+                Повторить
+              </button>
+            </div>
+          )}
+
+          {showingSkeletons ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <CarCardSkeleton key={i} />
+              ))}
+            </div>
+          ) : cars.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="w-full md:hidden">
+                <label htmlFor="sortOptions" className="mb-2 block text-center">
+                  Сортировать по
+                </label>
+                <select
+                  className="border border-gray-300 rounded-md px-4 py-2 shadow-sm w-full"
+                  value={filters.sortOption}
+                  onChange={(e) => changeSort(e.target.value)}
+                >
+                  <option value="newest">Сначала новые</option>
+                  <option value="priceAsc">Цена: по возрастанию</option>
+                  <option value="priceDesc">Цена: по убыванию</option>
+                  <option value="mileageAsc">Пробег: по возрастанию</option>
+                  <option value="mileageDesc">Пробег: по убыванию</option>
+                  <option value="yearDesc">Год: от новых</option>
+                </select>
+              </div>
+              {cars.map((car) => (
+                <CarCard
+                  key={car.Id}
+                  car={car}
+                  usdKrwRate={usdKrwRate || 1}
+                />
+              ))}
+            </div>
+          ) : !error ? (
+            <div className="flex justify-center items-center h-32">
+              <p className="text-xl font-semibold text-gray-700">
+                Автомобили не найдены
+              </p>
+            </div>
+          ) : null}
+        </div>
       </div>
       {renderPagination}
     </div>

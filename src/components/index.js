@@ -12,6 +12,7 @@ import WhyUsSection from './WhyUsSection'
 import ImageSlider from './ImageSlider'
 import Calculator from './Calculator'
 import CarCard from './CarCard'
+import CarCardSkeleton from './CarCardSkeleton'
 import CarInspection from './CarInspection'
 
 export {
@@ -29,5 +30,6 @@ export {
 	Calculator,
 	Loader,
 	CarCard,
+	CarCardSkeleton,
 	CarInspection,
 }

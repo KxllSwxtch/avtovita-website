@@ -1,6 +1,6 @@
 import { useReducer, useCallback } from 'react'
 
-const initialState = {
+export const initialFilterState = {
   selectedManufacturer: '',
   selectedModelGroup: '',
   selectedModel: '',
@@ -24,6 +24,16 @@ function filterReducer(state, action) {
   switch (action.type) {
     case 'SET_FIELD':
       return { ...state, [action.field]: action.value }
+    case 'INIT_FROM_URL':
+      return {
+        ...state,
+        selectedManufacturer: action.value.manufacturer || '',
+        selectedModelGroup: action.value.modelGroup || '',
+        selectedModel: action.value.model || '',
+        selectedConfiguration: '',
+        selectedBadge: '',
+        selectedBadgeDetails: '',
+      }
     case 'SET_MANUFACTURER':
       return {
         ...state,
@@ -76,7 +86,7 @@ function filterReducer(state, action) {
         currentPage: 1,
       }
     case 'RESET_ALL':
-      return { ...initialState }
+      return { ...initialFilterState }
     default:
       return state
   }
@@ -84,12 +94,16 @@ function filterReducer(state, action) {
 
 export const useCatalogFilters = (savedPage) => {
   const [state, dispatch] = useReducer(filterReducer, {
-    ...initialState,
+    ...initialFilterState,
     currentPage: savedPage || 1,
   })
 
   const setField = useCallback((field, value) => {
     dispatch({ type: 'SET_FIELD', field, value })
+  }, [])
+
+  const initFromUrl = useCallback((value) => {
+    dispatch({ type: 'INIT_FROM_URL', value })
   }, [])
 
   const setManufacturer = useCallback((value) => {
@@ -123,6 +137,7 @@ export const useCatalogFilters = (savedPage) => {
   return {
     filters: state,
     setField,
+    initFromUrl,
     setManufacturer,
     setModelGroup,
     setModel,
