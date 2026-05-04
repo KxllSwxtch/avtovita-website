@@ -1,0 +1,456 @@
+{
+  "generatedAt": "2026-05-04T04:48:50.705722+00:00",
+  "totalCars": 218538,
+  "manufacturers": [
+    {
+      "Value": "현대",
+      "DisplayValue": "현대",
+      "Count": 53932,
+      "IsSelected": false
+    },
+    {
+      "Value": "제네시스",
+      "DisplayValue": "제네시스",
+      "Count": 14702,
+      "IsSelected": false
+    },
+    {
+      "Value": "기아",
+      "DisplayValue": "기아",
+      "Count": 57298,
+      "IsSelected": false
+    },
+    {
+      "Value": "쉐보레(GM대우)",
+      "DisplayValue": "쉐보레(GM대우)",
+      "Count": 10722,
+      "IsSelected": false
+    },
+    {
+      "Value": "르노코리아(삼성)",
+      "DisplayValue": "르노코리아(삼성)",
+      "Count": 7958,
+      "IsSelected": false
+    },
+    {
+      "Value": "KG모빌리티(쌍용)",
+      "DisplayValue": "KG모빌리티(쌍용)",
+      "Count": 10970,
+      "IsSelected": false
+    },
+    {
+      "Value": "기타 제조사",
+      "DisplayValue": "기타 제조사",
+      "Count": 70,
+      "IsSelected": false
+    },
+    {
+      "Value": "BMW",
+      "DisplayValue": "BMW",
+      "Count": 15847,
+      "IsSelected": false
+    },
+    {
+      "Value": "BYD",
+      "DisplayValue": "BYD",
+      "Count": 22,
+      "IsSelected": false
+    },
+    {
+      "Value": "GMC",
+      "DisplayValue": "GMC",
+      "Count": 65,
+      "IsSelected": false
+    },
+    {
+      "Value": "닛산",
+      "DisplayValue": "닛산",
+      "Count": 329,
+      "IsSelected": false
+    },
+    {
+      "Value": "다이하쯔",
+      "DisplayValue": "다이하쯔",
+      "Count": 18,
+      "IsSelected": false
+    },
+    {
+      "Value": "닷지",
+      "DisplayValue": "닷지",
+      "Count": 98,
+      "IsSelected": false
+    },
+    {
+      "Value": "도요타",
+      "DisplayValue": "도요타",
+      "Count": 782,
+      "IsSelected": false
+    },
+    {
+      "Value": "동풍소콘",
+      "DisplayValue": "동풍소콘",
+      "Count": 36,
+      "IsSelected": false
+    },
+    {
+      "Value": "람보르기니",
+      "DisplayValue": "람보르기니",
+      "Count": 98,
+      "IsSelected": false
+    },
+    {
+      "Value": "랜드로버",
+      "DisplayValue": "랜드로버",
+      "Count": 2449,
+      "IsSelected": false
+    },
+    {
+      "Value": "렉서스",
+      "DisplayValue": "렉서스",
+      "Count": 973,
+      "IsSelected": false
+    },
+    {
+      "Value": "MG로버",
+      "DisplayValue": "MG로버",
+      "Count": 0,
+      "IsSelected": false
+    },
+    {
+      "Value": "로터스",
+      "DisplayValue": "로터스",
+      "Count": 17,
+      "IsSelected": false
+    },
+    {
+      "Value": "롤스로이스",
+      "DisplayValue": "롤스로이스",
+      "Count": 140,
+      "IsSelected": false
+    },
+    {
+      "Value": "르노",
+      "DisplayValue": "르노",
+      "Count": 1,
+      "IsSelected": false
+    },
+    {
+      "Value": "링컨",
+      "DisplayValue": "링컨",
+      "Count": 710,
+      "IsSelected": false
+    },
+    {
+      "Value": "마세라티",
+      "DisplayValue": "마세라티",
+      "Count": 615,
+      "IsSelected": false
+    },
+    {
+      "Value": "마이바흐",
+      "DisplayValue": "마이바흐",
+      "Count": 10,
+      "IsSelected": false
+    },
+    {
+      "Value": "마쯔다",
+      "DisplayValue": "마쯔다",
+      "Count": 6,
+      "IsSelected": false
+    },
+    {
+      "Value": "맥라렌",
+      "DisplayValue": "맥라렌",
+      "Count": 44,
+      "IsSelected": false
+    },
+    {
+      "Value": "머큐리",
+      "DisplayValue": "머큐리",
+      "Count": 1,
+      "IsSelected": false
+    },
+    {
+      "Value": "미니",
+      "DisplayValue": "미니",
+      "Count": 2945,
+      "IsSelected": false
+    },
+    {
+      "Value": "미쯔비시",
+      "DisplayValue": "미쯔비시",
+      "Count": 13,
+      "IsSelected": false
+    },
+    {
+      "Value": "미쯔오까",
+      "DisplayValue": "미쯔오까",
+      "Count": 6,
+      "IsSelected": false
+    },
+    {
+      "Value": "벤츠",
+      "DisplayValue": "벤츠",
+      "Count": 16375,
+      "IsSelected": false
+    },
+    {
+      "Value": "벤틀리",
+      "DisplayValue": "벤틀리",
+      "Count": 281,
+      "IsSelected": false
+    },
+    {
+      "Value": "볼보",
+      "DisplayValue": "볼보",
+      "Count": 2060,
+      "IsSelected": false
+    },
+    {
+      "Value": "부가티",
+      "DisplayValue": "부가티",
+      "Count": 0,
+      "IsSelected": false
+    },
+    {
+      "Value": "북기은상",
+      "DisplayValue": "북기은상",
+      "Count": 8,
+      "IsSelected": false
+    },
+    {
+      "Value": "뷰익",
+      "DisplayValue": "뷰익",
+      "Count": 0,
+      "IsSelected": false
+    },
+    {
+      "Value": "사브",
+      "DisplayValue": "사브",
+      "Count": 20,
+      "IsSelected": false
+    },
+    {
+      "Value": "사이언",
+      "DisplayValue": "사이언",
+      "Count": 1,
+      "IsSelected": false
+    },
+    {
+      "Value": "신위안",
+      "DisplayValue": "신위안",
+      "Count": 6,
+      "IsSelected": false
+    },
+    {
+      "Value": "새턴",
+      "DisplayValue": "새턴",
+      "Count": 0,
+      "IsSelected": false
+    },
+    {
+      "Value": "쉐보레",
+      "DisplayValue": "쉐보레",
+      "Count": 120,
+      "IsSelected": false
+    },
+    {
+      "Value": "스마트",
+      "DisplayValue": "스마트",
+      "Count": 44,
+      "IsSelected": false
+    },
+    {
+      "Value": "스바루",
+      "DisplayValue": "스바루",
+      "Count": 21,
+      "IsSelected": false
+    },
+    {
+      "Value": "스즈키",
+      "DisplayValue": "스즈키",
+      "Count": 47,
+      "IsSelected": false
+    },
+    {
+      "Value": "시트로엥/DS",
+      "DisplayValue": "시트로엥/DS",
+      "Count": 136,
+      "IsSelected": false
+    },
+    {
+      "Value": "아우디",
+      "DisplayValue": "아우디",
+      "Count": 5435,
+      "IsSelected": false
+    },
+    {
+      "Value": "알파 로메오",
+      "DisplayValue": "알파 로메오",
+      "Count": 3,
+      "IsSelected": false
+    },
+    {
+      "Value": "애스턴마틴",
+      "DisplayValue": "애스턴마틴",
+      "Count": 38,
+      "IsSelected": false
+    },
+    {
+      "Value": "어큐라",
+      "DisplayValue": "어큐라",
+      "Count": 2,
+      "IsSelected": false
+    },
+    {
+      "Value": "오펠",
+      "DisplayValue": "오펠",
+      "Count": 0,
+      "IsSelected": false
+    },
+    {
+      "Value": "올즈모빌",
+      "DisplayValue": "올즈모빌",
+      "Count": 0,
+      "IsSelected": false
+    },
+    {
+      "Value": "이네오스",
+      "DisplayValue": "이네오스",
+      "Count": 7,
+      "IsSelected": false
+    },
+    {
+      "Value": "이스즈",
+      "DisplayValue": "이스즈",
+      "Count": 0,
+      "IsSelected": false
+    },
+    {
+      "Value": "인피니티",
+      "DisplayValue": "인피니티",
+      "Count": 408,
+      "IsSelected": false
+    },
+    {
+      "Value": "재규어",
+      "DisplayValue": "재규어",
+      "Count": 520,
+      "IsSelected": false
+    },
+    {
+      "Value": "지리",
+      "DisplayValue": "지리",
+      "Count": 8,
+      "IsSelected": false
+    },
+    {
+      "Value": "지프",
+      "DisplayValue": "지프",
+      "Count": 2033,
+      "IsSelected": false
+    },
+    {
+      "Value": "캐딜락",
+      "DisplayValue": "캐딜락",
+      "Count": 511,
+      "IsSelected": false
+    },
+    {
+      "Value": "코닉세그",
+      "DisplayValue": "코닉세그",
+      "Count": 0,
+      "IsSelected": false
+    },
+    {
+      "Value": "크라이슬러",
+      "DisplayValue": "크라이슬러",
+      "Count": 82,
+      "IsSelected": false
+    },
+    {
+      "Value": "테슬라",
+      "DisplayValue": "테슬라",
+      "Count": 727,
+      "IsSelected": false
+    },
+    {
+      "Value": "파가니",
+      "DisplayValue": "파가니",
+      "Count": 0,
+      "IsSelected": false
+    },
+    {
+      "Value": "페라리",
+      "DisplayValue": "페라리",
+      "Count": 118,
+      "IsSelected": false
+    },
+    {
+      "Value": "포드",
+      "DisplayValue": "포드",
+      "Count": 1854,
+      "IsSelected": false
+    },
+    {
+      "Value": "포르쉐",
+      "DisplayValue": "포르쉐",
+      "Count": 2729,
+      "IsSelected": false
+    },
+    {
+      "Value": "포톤",
+      "DisplayValue": "포톤",
+      "Count": 0,
+      "IsSelected": false
+    },
+    {
+      "Value": "폭스바겐",
+      "DisplayValue": "폭스바겐",
+      "Count": 2621,
+      "IsSelected": false
+    },
+    {
+      "Value": "폰티악",
+      "DisplayValue": "폰티악",
+      "Count": 0,
+      "IsSelected": false
+    },
+    {
+      "Value": "폴스타",
+      "DisplayValue": "폴스타",
+      "Count": 82,
+      "IsSelected": false
+    },
+    {
+      "Value": "푸조",
+      "DisplayValue": "푸조",
+      "Count": 534,
+      "IsSelected": false
+    },
+    {
+      "Value": "피아트",
+      "DisplayValue": "피아트",
+      "Count": 83,
+      "IsSelected": false
+    },
+    {
+      "Value": "험머",
+      "DisplayValue": "험머",
+      "Count": 31,
+      "IsSelected": false
+    },
+    {
+      "Value": "혼다",
+      "DisplayValue": "혼다",
+      "Count": 697,
+      "IsSelected": false
+    },
+    {
+      "Value": "기타 수입차",
+      "DisplayValue": "기타 수입차",
+      "Count": 19,
+      "IsSelected": false
+    }
+  ]
+}

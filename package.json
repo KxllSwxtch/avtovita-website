@@ -8,7 +8,8 @@
 		"dev": "vite",
 		"build": "vite build",
 		"lint": "eslint .",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"snapshot:manufacturers": "node scripts/generate-manufacturers-snapshot.mjs"
 	},
 	"dependencies": {
 		"@heroicons/react": "^2.2.0",
