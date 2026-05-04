@@ -5,7 +5,6 @@ import { translations, translateSmartly } from "../translations"
 import { formatDate } from "../utils"
 import { CarCard as BaseCarCard, CarCardSkeleton } from "../components"
 import {
-  useCurrencyRate,
   useManufacturers,
   useCatalogSearch,
   useFilterCascade,
@@ -84,7 +83,6 @@ const Catalog = () => {
   )
 
   // React Query hooks
-  const { data: usdKrwRate } = useCurrencyRate()
   const { data: manufacturersData } = useManufacturers()
   const cascade = useFilterCascade(filters)
   const {
@@ -120,9 +118,10 @@ const Catalog = () => {
     return () => clearTimeout(timeoutId)
   }, [filters.currentPage])
 
-  // Escalating "server waking up" hint. Render free tier sleeps after 15 min
-  // idle; cold start is 25-60s. Stage 0 = quick hint (1.5s), stage 1 = honest
-  // cold-start explanation (10s), stage 2 = offer manual retry (30s).
+  // Two-stage loading hint: short message after 1.5 s ("loading catalog…"),
+  // and an explicit retry option after 30 s if something is genuinely stuck.
+  // The previous middle "server is waking up" stage was removed — the proxy
+  // is kept warm, so that explanation no longer matches reality.
   const [wakingStage, setWakingStage] = useState(0)
   const showingSkeletons = isFetching && !catalogData
   useEffect(() => {
@@ -131,11 +130,9 @@ const Catalog = () => {
       return
     }
     const t1 = setTimeout(() => setWakingStage(1), 1500)
-    const t2 = setTimeout(() => setWakingStage(2), 10000)
     const t3 = setTimeout(() => setWakingStage(3), 30000)
     return () => {
       clearTimeout(t1)
-      clearTimeout(t2)
       clearTimeout(t3)
     }
   }, [showingSkeletons])
@@ -330,6 +327,74 @@ const Catalog = () => {
   )
 
   // Memoize select options to prevent recalculations on every render
+  // Pre-translate dropdown options once per data change.
+  // Avoids re-running .filter().map() + translateSmartly() on every render.
+  const manufacturerOptions = useMemo(
+    () =>
+      manufacturers
+        ?.filter((m) => m.Count > 0)
+        .map((m) => ({
+          value: m.Value,
+          label: `${translateSmartly(m.Value)} (${m.Count} автомобилей)`,
+        })) || [],
+    [manufacturers],
+  )
+
+  const modelGroupOptions = useMemo(
+    () =>
+      modelGroups
+        ?.filter((mg) => mg.Count > 0)
+        .map((mg) => ({
+          value: mg.Value,
+          label: `${translateSmartly(mg.Value)} (${mg.Count} автомобилей)`,
+        })) || [],
+    [modelGroups],
+  )
+
+  const modelOptions = useMemo(
+    () =>
+      models
+        ?.filter((m) => m.Count > 0)
+        .map((m) => ({
+          value: m.Value,
+          label: `${translations[m.Value] || translateSmartly(m.Value) || m.Value} (${formatDate(m?.Metadata?.ModelStartDate?.[0])} - ${formatDate(m?.Metadata?.ModelEndDate?.[0])}) (${m.Count} автомобилей )`,
+        })) || [],
+    [models],
+  )
+
+  const configurationOptions = useMemo(
+    () =>
+      configurations
+        ?.filter((c) => c.Count > 0)
+        .map((c) => ({
+          value: c.Value,
+          label: `${translateSmartly(c.Value)} (${c.Count})`,
+        })) || [],
+    [configurations],
+  )
+
+  const badgeOptions = useMemo(
+    () =>
+      badges
+        ?.filter((b) => b.Count > 0)
+        .map((b) => ({
+          value: b.Value,
+          label: `${translateSmartly(b.Value)} (${b.Count})`,
+        })) || [],
+    [badges],
+  )
+
+  const badgeDetailOptions = useMemo(
+    () =>
+      badgeDetails
+        ?.filter((bd) => bd.Count > 0)
+        .map((bd) => ({
+          value: bd.Value,
+          label: `${translateSmartly(bd.Value)} (${bd.Count})`,
+        })) || [],
+    [badgeDetails],
+  )
+
   const yearOptions = useMemo(() => {
     const endYearValue = filters.endYear || new Date().getFullYear()
     return Array.from(
@@ -375,6 +440,33 @@ const Catalog = () => {
     () => Array.from({ length: 100 }, (_, i) => (i + 1) * 100),
     [],
   )
+
+  // Filtered end-month options: skip months earlier than startMonth so the
+  // user can't pick an inconsistent range. Pre-computed instead of inlined
+  // .filter().map() in JSX (which ran every render with parseInt per element).
+  const endMonthOptions = useMemo(() => {
+    const start = filters.startMonth ? parseInt(filters.startMonth, 10) : 0
+    const out = []
+    for (let i = 0; i < 12; i++) {
+      const value = (i + 1).toString().padStart(2, "0")
+      if (parseInt(value, 10) >= start) {
+        out.push({ value, label: monthNames[i] })
+      }
+    }
+    return out
+  }, [filters.startMonth, monthNames])
+
+  // Pre-filter price options by counterpart constraint (avoids per-render
+  // .filter() chain with parseInt per element on a 100-element array).
+  const priceStartOptions = useMemo(() => {
+    const max = filters.priceEnd ? parseInt(filters.priceEnd, 10) : Infinity
+    return priceOptions.filter((p) => p <= max)
+  }, [filters.priceEnd, priceOptions])
+
+  const priceEndOptions = useMemo(() => {
+    const min = filters.priceStart ? parseInt(filters.priceStart, 10) : 0
+    return priceOptions.filter((p) => p >= min)
+  }, [filters.priceStart, priceOptions])
 
   const renderPagination = useMemo(() => {
     if (!(cars.length > 0 && catalogTotal > 20)) return null
@@ -451,14 +543,11 @@ const Catalog = () => {
             onChange={handleManufacturerChange}
           >
             <option value="">Марка</option>
-            {manufacturers
-              ?.filter((manufacturer) => manufacturer.Count > 0)
-              .map((manufacturer, index) => (
-                <option key={index} value={manufacturer.Value}>
-                  {translateSmartly(manufacturer.Value)} ({manufacturer.Count}{" "}
-                  автомобилей)
-                </option>
-              ))}
+            {manufacturerOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </select>
           <select
             disabled={
@@ -477,14 +566,11 @@ const Catalog = () => {
                 ? "Загрузка..."
                 : "Модель"}
             </option>
-            {modelGroups
-              ?.filter((modelGroup) => modelGroup.Count > 0)
-              .map((modelGroup, index) => (
-                <option key={index} value={modelGroup.Value}>
-                  {translateSmartly(modelGroup.Value)} ({modelGroup.Count}{" "}
-                  автомобилей)
-                </option>
-              ))}
+            {modelGroupOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </select>
           <select
             disabled={
@@ -502,18 +588,11 @@ const Catalog = () => {
                 ? "Загрузка..."
                 : "Поколение"}
             </option>
-            {models
-              ?.filter((model) => model.Count > 0)
-              .map((model, index) => (
-                <option key={index} value={model.Value}>
-                  {translations[model.Value] ||
-                    translateSmartly(model.Value) ||
-                    model.Value}{" "}
-                  ({formatDate(model?.Metadata?.ModelStartDate[0])} -{" "}
-                  {formatDate(model?.Metadata?.ModelEndDate[0])}) ({model.Count}{" "}
-                  автомобилей )
-                </option>
-              ))}
+            {modelOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </select>
           <select
             disabled={
@@ -532,14 +611,11 @@ const Catalog = () => {
                 ? "Загрузка..."
                 : "Конфигурация"}
             </option>
-            {configurations
-              ?.filter((configuration) => configuration.Count > 0)
-              .map((configuration, index) => (
-                <option key={index} value={configuration.Value}>
-                  {translateSmartly(configuration.Value)} ({configuration.Count}
-                  )
-                </option>
-              ))}
+            {configurationOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </select>
           <select
             disabled={
@@ -557,13 +633,11 @@ const Catalog = () => {
                 ? "Загрузка..."
                 : "Выберите конфигурацию"}
             </option>
-            {badges
-              ?.filter((badge) => badge.Count > 0)
-              .map((badge, index) => (
-                <option key={index} value={badge.Value}>
-                  {translateSmartly(badge.Value)} ({badge.Count})
-                </option>
-              ))}
+            {badgeOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </select>
 
           <select
@@ -583,13 +657,11 @@ const Catalog = () => {
                 ? "Загрузка..."
                 : "Выберите комплектацию"}
             </option>
-            {badgeDetails
-              ?.filter((badgeDetails) => badgeDetails.Count > 0)
-              .map((badgeDetail, index) => (
-                <option key={index} value={badgeDetail.Value}>
-                  {translateSmartly(badgeDetail.Value)} ({badgeDetail.Count})
-                </option>
-              ))}
+            {badgeDetailOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </select>
 
           <div className="grid grid-cols-2 gap-3">
@@ -639,22 +711,11 @@ const Catalog = () => {
               onChange={(e) => setField("endMonth", e.target.value)}
             >
               <option value="">Месяц до</option>
-              {Array.from({ length: 12 }, (_, i) => {
-                const value = (i + 1).toString().padStart(2, "0")
-                return { value, i }
-              })
-                .filter(
-                  ({ value }) =>
-                    !filters.startMonth ||
-                    parseInt(value) >= parseInt(filters.startMonth),
-                )
-                .map(({ value, i }) => {
-                  return (
-                    <option key={value} value={value}>
-                      {monthNames[i]}
-                    </option>
-                  )
-                })}
+              {endMonthOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -700,16 +761,11 @@ const Catalog = () => {
               }}
             >
               <option value="">Цена от</option>
-              {priceOptions
-                .filter(
-                  (price) =>
-                    !filters.priceEnd || price <= parseInt(filters.priceEnd),
-                )
-                .map((price) => (
-                  <option key={price} value={price}>
-                    ₩{(price * 10000).toLocaleString()}
-                  </option>
-                ))}
+              {priceStartOptions.map((price) => (
+                <option key={price} value={price}>
+                  ₩{(price * 10000).toLocaleString()}
+                </option>
+              ))}
             </select>
 
             <select
@@ -727,17 +783,11 @@ const Catalog = () => {
               }}
             >
               <option value="">Цена до</option>
-              {priceOptions
-                .filter(
-                  (price) =>
-                    !filters.priceStart ||
-                    price >= parseInt(filters.priceStart),
-                )
-                .map((price) => (
-                  <option key={price} value={price}>
-                    ₩{(price * 10000).toLocaleString()}
-                  </option>
-                ))}
+              {priceEndOptions.map((price) => (
+                <option key={price} value={price}>
+                  ₩{(price * 10000).toLocaleString()}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -776,15 +826,9 @@ const Catalog = () => {
         <div className="md:col-span-4 mt-8">
           {wakingStage >= 1 && showingSkeletons && (
             <div className="mb-4 px-4 py-3 rounded-md bg-yellow-50 border border-yellow-200 text-yellow-900 text-sm">
-              {wakingStage === 1 && (
+              {wakingStage >= 1 && wakingStage < 3 && (
                 <div className="text-center">
                   Загружаем каталог… это может занять несколько секунд.
-                </div>
-              )}
-              {wakingStage === 2 && (
-                <div className="text-center">
-                  Сервер просыпается после простоя. Первая загрузка занимает до
-                  30 секунд — спасибо за терпение.
                 </div>
               )}
               {wakingStage >= 3 && (
@@ -841,11 +885,7 @@ const Catalog = () => {
                 </select>
               </div>
               {cars.map((car) => (
-                <CarCard
-                  key={car.Id}
-                  car={car}
-                  usdKrwRate={usdKrwRate || 1}
-                />
+                <CarCard key={car.Id} car={car} />
               ))}
             </div>
           ) : !error ? (

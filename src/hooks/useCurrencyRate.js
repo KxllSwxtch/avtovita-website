@@ -8,7 +8,7 @@ export const useCurrencyRate = () => {
     )
     return data.usd.krw
   }, {
-    staleTime: 30 * 60 * 1000,
-    cacheTime: 60 * 60 * 1000,
+    staleTime: 6 * 60 * 60 * 1000,
+    cacheTime: 12 * 60 * 60 * 1000,
   })
 }

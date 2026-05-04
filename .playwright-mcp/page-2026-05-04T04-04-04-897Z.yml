@@ -1,0 +1,81 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - paragraph [ref=e5]: "Факс: 031-8084-7144"
+    - generic [ref=e6]:
+      - link "AVTOVITA Logo" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - img "AVTOVITA Logo" [ref=e8]
+      - navigation [ref=e9]:
+        - link "Каталог" [ref=e10] [cursor=pointer]:
+          - /url: /catalog
+        - link "О нас" [ref=e11] [cursor=pointer]:
+          - /url: /about
+        - link "Контакты" [ref=e12] [cursor=pointer]:
+          - /url: /contacts
+    - generic [ref=e13]:
+      - button [ref=e14]:
+        - img [ref=e15]
+      - navigation [ref=e17]:
+        - link "Каталог" [ref=e18] [cursor=pointer]:
+          - /url: /catalog
+        - link "О нас" [ref=e19] [cursor=pointer]:
+          - /url: /about
+        - link "Контакты" [ref=e20] [cursor=pointer]:
+          - /url: /contacts
+        - paragraph [ref=e21]: "Факс: 031-8084-7144"
+  - main [ref=e22]:
+    - generic [ref=e25]:
+      - img [ref=e27]
+      - generic [ref=e30]:
+        - generic [ref=e31]: Загрузка
+        - generic [ref=e32]: .
+        - generic [ref=e33]: .
+        - generic [ref=e34]: .
+  - contentinfo [ref=e35]:
+    - generic [ref=e36]:
+      - generic [ref=e37]:
+        - img "AvtoVita Logo" [ref=e38]
+        - paragraph [ref=e39]: Ваш надежный партнер по покупке автомобилей из Южной Кореи. Мы предлагаем широкий выбор машин и гарантируем честные цены.
+      - generic [ref=e40]:
+        - heading "Быстрые ссылки" [level=2] [ref=e41]
+        - list [ref=e42]:
+          - listitem [ref=e43]:
+            - link "Главная" [ref=e44] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=e45]:
+            - link "О компании" [ref=e46] [cursor=pointer]:
+              - /url: /about
+          - listitem [ref=e47]:
+            - link "Каталог автомобилей" [ref=e48] [cursor=pointer]:
+              - /url: /catalog
+          - listitem [ref=e49]:
+            - link "Контакты" [ref=e50] [cursor=pointer]:
+              - /url: /contacts
+      - generic [ref=e51]:
+        - heading "Контакты" [level=2] [ref=e52]
+        - paragraph [ref=e53]:
+          - text: "Югай Виталий:"
+          - link "+82 (10)-9344-1782" [ref=e54] [cursor=pointer]:
+            - /url: tel:+821093441782
+        - paragraph [ref=e55]:
+          - text: "Ким Евгений:"
+          - link "+82 (10)-4225-2627" [ref=e56] [cursor=pointer]:
+            - /url: tel:+821042252627
+        - paragraph [ref=e57]:
+          - text: "Шек Роман:"
+          - link "+82 (10)-7921-1421" [ref=e58] [cursor=pointer]:
+            - /url: tel:+821079211421
+      - generic [ref=e59]:
+        - heading "Мы в соцсетях" [level=2] [ref=e60]
+        - generic [ref=e61]:
+          - link [ref=e62] [cursor=pointer]:
+            - /url: https://wa.me/821093441782
+            - img [ref=e63]
+          - link [ref=e65] [cursor=pointer]:
+            - /url: https://t.me/+821093441782
+            - img [ref=e66]
+          - link [ref=e68] [cursor=pointer]:
+            - /url: https://www.instagram.com/_yugay_vitaliy_olegovich/
+            - img [ref=e69]
+    - separator [ref=e71]
+    - generic [ref=e72]: © 2026 AvtoVita. Все права защищены.

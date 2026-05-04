@@ -155,7 +155,10 @@ export const useCatalogSearch = (appliedFilters) => {
       keepPreviousData: true,
       staleTime: 2 * 60 * 1000,
       onSuccess: () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        // Instant scroll — smooth scroll blocks the main thread for ~300 ms
+        // during the animation, which is wasted budget while the user is
+        // already focused on the new results.
+        window.scrollTo(0, 0)
       },
     }
   )

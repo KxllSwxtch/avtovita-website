@@ -1,0 +1,481 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - paragraph [ref=e5]: "Факс: 031-8084-7144"
+    - generic [ref=e6]:
+      - link "AVTOVITA Logo" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - img "AVTOVITA Logo" [ref=e8]
+      - navigation [ref=e9]:
+        - link "Каталог" [ref=e10] [cursor=pointer]:
+          - /url: /catalog
+        - link "О нас" [ref=e11] [cursor=pointer]:
+          - /url: /about
+        - link "Контакты" [ref=e12] [cursor=pointer]:
+          - /url: /contacts
+    - generic [ref=e13]:
+      - button [ref=e14]:
+        - img [ref=e15]
+      - navigation [ref=e17]:
+        - link "Каталог" [ref=e18] [cursor=pointer]:
+          - /url: /catalog
+        - link "О нас" [ref=e19] [cursor=pointer]:
+          - /url: /about
+        - link "Контакты" [ref=e20] [cursor=pointer]:
+          - /url: /contacts
+        - paragraph [ref=e21]: "Факс: 031-8084-7144"
+  - main [ref=e22]:
+    - generic [ref=e73]:
+      - generic [ref=e74]:
+        - generic [ref=e75]: Сортировать по
+        - combobox [ref=e76] [cursor=pointer]:
+          - option "Сначала новые" [selected]
+          - 'option "Цена: по возрастанию"'
+          - 'option "Цена: по убыванию"'
+          - 'option "Пробег: по возрастанию"'
+          - 'option "Пробег: по убыванию"'
+          - 'option "Год: от новых"'
+      - generic [ref=e77]:
+        - generic [ref=e78]:
+          - combobox [ref=e79] [cursor=pointer]:
+            - option "Марка" [selected]
+          - combobox [disabled] [ref=e80] [cursor=pointer]:
+            - option "Модель" [selected]
+          - combobox [disabled] [ref=e81] [cursor=pointer]:
+            - option "Поколение" [selected]
+          - combobox [disabled] [ref=e82] [cursor=pointer]:
+            - option "Конфигурация" [selected]
+          - combobox [disabled] [ref=e83] [cursor=pointer]:
+            - option "Выберите конфигурацию" [selected]
+          - combobox [disabled] [ref=e84] [cursor=pointer]:
+            - option "Выберите комплектацию" [selected]
+          - generic [ref=e85]:
+            - combobox [ref=e86] [cursor=pointer]:
+              - option "Год от" [selected]
+              - option "2026"
+              - option "2025"
+              - option "2024"
+              - option "2023"
+              - option "2022"
+              - option "2021"
+              - option "2020"
+              - option "2019"
+              - option "2018"
+              - option "2017"
+              - option "2016"
+              - option "2015"
+              - option "2014"
+              - option "2013"
+              - option "2012"
+              - option "2011"
+              - option "2010"
+              - option "2009"
+              - option "2008"
+              - option "2007"
+              - option "2006"
+              - option "2005"
+              - option "2004"
+              - option "2003"
+              - option "2002"
+              - option "2001"
+              - option "2000"
+              - option "1999"
+              - option "1998"
+              - option "1997"
+              - option "1996"
+              - option "1995"
+              - option "1994"
+              - option "1993"
+              - option "1992"
+              - option "1991"
+              - option "1990"
+              - option "1989"
+              - option "1988"
+              - option "1987"
+              - option "1986"
+              - option "1985"
+              - option "1984"
+              - option "1983"
+              - option "1982"
+              - option "1981"
+              - option "1980"
+            - combobox [ref=e87] [cursor=pointer]:
+              - option "Месяц от" [selected]
+              - option "Январь"
+              - option "Февраль"
+              - option "Март"
+              - option "Апрель"
+              - option "Май"
+              - option "Июнь"
+              - option "Июль"
+              - option "Август"
+              - option "Сентябрь"
+              - option "Октябрь"
+              - option "Ноябрь"
+              - option "Декабрь"
+          - generic [ref=e88]:
+            - combobox [ref=e89] [cursor=pointer]:
+              - option "Год до" [selected]
+              - option "2026"
+              - option "2025"
+              - option "2024"
+              - option "2023"
+              - option "2022"
+              - option "2021"
+              - option "2020"
+              - option "2019"
+              - option "2018"
+              - option "2017"
+              - option "2016"
+              - option "2015"
+              - option "2014"
+              - option "2013"
+              - option "2012"
+              - option "2011"
+              - option "2010"
+              - option "2009"
+              - option "2008"
+              - option "2007"
+              - option "2006"
+              - option "2005"
+              - option "2004"
+              - option "2003"
+              - option "2002"
+              - option "2001"
+              - option "2000"
+              - option "1999"
+              - option "1998"
+              - option "1997"
+              - option "1996"
+              - option "1995"
+              - option "1994"
+              - option "1993"
+              - option "1992"
+              - option "1991"
+              - option "1990"
+              - option "1989"
+              - option "1988"
+              - option "1987"
+              - option "1986"
+              - option "1985"
+              - option "1984"
+              - option "1983"
+              - option "1982"
+              - option "1981"
+              - option "1980"
+            - combobox [ref=e90] [cursor=pointer]:
+              - option "Месяц до" [selected]
+              - option "Январь"
+              - option "Февраль"
+              - option "Март"
+              - option "Апрель"
+              - option "Май"
+              - option "Июнь"
+              - option "Июль"
+              - option "Август"
+              - option "Сентябрь"
+              - option "Октябрь"
+              - option "Ноябрь"
+              - option "Декабрь"
+          - combobox [ref=e91] [cursor=pointer]:
+            - option "Пробег от" [selected]
+            - option "10,000 км"
+            - option "20,000 км"
+            - option "30,000 км"
+            - option "40,000 км"
+            - option "50,000 км"
+            - option "60,000 км"
+            - option "70,000 км"
+            - option "80,000 км"
+            - option "90,000 км"
+            - option "100,000 км"
+            - option "110,000 км"
+            - option "120,000 км"
+            - option "130,000 км"
+            - option "140,000 км"
+            - option "150,000 км"
+            - option "160,000 км"
+            - option "170,000 км"
+            - option "180,000 км"
+            - option "190,000 км"
+            - option "200,000 км"
+          - combobox [ref=e92] [cursor=pointer]:
+            - option "Пробег До" [selected]
+            - option "10,000 км"
+            - option "20,000 км"
+            - option "30,000 км"
+            - option "40,000 км"
+            - option "50,000 км"
+            - option "60,000 км"
+            - option "70,000 км"
+            - option "80,000 км"
+            - option "90,000 км"
+            - option "100,000 км"
+            - option "110,000 км"
+            - option "120,000 км"
+            - option "130,000 км"
+            - option "140,000 км"
+            - option "150,000 км"
+            - option "160,000 км"
+            - option "170,000 км"
+            - option "180,000 км"
+            - option "190,000 км"
+            - option "200,000 км"
+          - generic [ref=e93]:
+            - combobox [ref=e94] [cursor=pointer]:
+              - option "Цена от" [selected]
+              - option "₩1,000,000"
+              - option "₩2,000,000"
+              - option "₩3,000,000"
+              - option "₩4,000,000"
+              - option "₩5,000,000"
+              - option "₩6,000,000"
+              - option "₩7,000,000"
+              - option "₩8,000,000"
+              - option "₩9,000,000"
+              - option "₩10,000,000"
+              - option "₩11,000,000"
+              - option "₩12,000,000"
+              - option "₩13,000,000"
+              - option "₩14,000,000"
+              - option "₩15,000,000"
+              - option "₩16,000,000"
+              - option "₩17,000,000"
+              - option "₩18,000,000"
+              - option "₩19,000,000"
+              - option "₩20,000,000"
+              - option "₩21,000,000"
+              - option "₩22,000,000"
+              - option "₩23,000,000"
+              - option "₩24,000,000"
+              - option "₩25,000,000"
+              - option "₩26,000,000"
+              - option "₩27,000,000"
+              - option "₩28,000,000"
+              - option "₩29,000,000"
+              - option "₩30,000,000"
+              - option "₩31,000,000"
+              - option "₩32,000,000"
+              - option "₩33,000,000"
+              - option "₩34,000,000"
+              - option "₩35,000,000"
+              - option "₩36,000,000"
+              - option "₩37,000,000"
+              - option "₩38,000,000"
+              - option "₩39,000,000"
+              - option "₩40,000,000"
+              - option "₩41,000,000"
+              - option "₩42,000,000"
+              - option "₩43,000,000"
+              - option "₩44,000,000"
+              - option "₩45,000,000"
+              - option "₩46,000,000"
+              - option "₩47,000,000"
+              - option "₩48,000,000"
+              - option "₩49,000,000"
+              - option "₩50,000,000"
+              - option "₩51,000,000"
+              - option "₩52,000,000"
+              - option "₩53,000,000"
+              - option "₩54,000,000"
+              - option "₩55,000,000"
+              - option "₩56,000,000"
+              - option "₩57,000,000"
+              - option "₩58,000,000"
+              - option "₩59,000,000"
+              - option "₩60,000,000"
+              - option "₩61,000,000"
+              - option "₩62,000,000"
+              - option "₩63,000,000"
+              - option "₩64,000,000"
+              - option "₩65,000,000"
+              - option "₩66,000,000"
+              - option "₩67,000,000"
+              - option "₩68,000,000"
+              - option "₩69,000,000"
+              - option "₩70,000,000"
+              - option "₩71,000,000"
+              - option "₩72,000,000"
+              - option "₩73,000,000"
+              - option "₩74,000,000"
+              - option "₩75,000,000"
+              - option "₩76,000,000"
+              - option "₩77,000,000"
+              - option "₩78,000,000"
+              - option "₩79,000,000"
+              - option "₩80,000,000"
+              - option "₩81,000,000"
+              - option "₩82,000,000"
+              - option "₩83,000,000"
+              - option "₩84,000,000"
+              - option "₩85,000,000"
+              - option "₩86,000,000"
+              - option "₩87,000,000"
+              - option "₩88,000,000"
+              - option "₩89,000,000"
+              - option "₩90,000,000"
+              - option "₩91,000,000"
+              - option "₩92,000,000"
+              - option "₩93,000,000"
+              - option "₩94,000,000"
+              - option "₩95,000,000"
+              - option "₩96,000,000"
+              - option "₩97,000,000"
+              - option "₩98,000,000"
+              - option "₩99,000,000"
+              - option "₩100,000,000"
+            - combobox [ref=e95] [cursor=pointer]:
+              - option "Цена до" [selected]
+              - option "₩1,000,000"
+              - option "₩2,000,000"
+              - option "₩3,000,000"
+              - option "₩4,000,000"
+              - option "₩5,000,000"
+              - option "₩6,000,000"
+              - option "₩7,000,000"
+              - option "₩8,000,000"
+              - option "₩9,000,000"
+              - option "₩10,000,000"
+              - option "₩11,000,000"
+              - option "₩12,000,000"
+              - option "₩13,000,000"
+              - option "₩14,000,000"
+              - option "₩15,000,000"
+              - option "₩16,000,000"
+              - option "₩17,000,000"
+              - option "₩18,000,000"
+              - option "₩19,000,000"
+              - option "₩20,000,000"
+              - option "₩21,000,000"
+              - option "₩22,000,000"
+              - option "₩23,000,000"
+              - option "₩24,000,000"
+              - option "₩25,000,000"
+              - option "₩26,000,000"
+              - option "₩27,000,000"
+              - option "₩28,000,000"
+              - option "₩29,000,000"
+              - option "₩30,000,000"
+              - option "₩31,000,000"
+              - option "₩32,000,000"
+              - option "₩33,000,000"
+              - option "₩34,000,000"
+              - option "₩35,000,000"
+              - option "₩36,000,000"
+              - option "₩37,000,000"
+              - option "₩38,000,000"
+              - option "₩39,000,000"
+              - option "₩40,000,000"
+              - option "₩41,000,000"
+              - option "₩42,000,000"
+              - option "₩43,000,000"
+              - option "₩44,000,000"
+              - option "₩45,000,000"
+              - option "₩46,000,000"
+              - option "₩47,000,000"
+              - option "₩48,000,000"
+              - option "₩49,000,000"
+              - option "₩50,000,000"
+              - option "₩51,000,000"
+              - option "₩52,000,000"
+              - option "₩53,000,000"
+              - option "₩54,000,000"
+              - option "₩55,000,000"
+              - option "₩56,000,000"
+              - option "₩57,000,000"
+              - option "₩58,000,000"
+              - option "₩59,000,000"
+              - option "₩60,000,000"
+              - option "₩61,000,000"
+              - option "₩62,000,000"
+              - option "₩63,000,000"
+              - option "₩64,000,000"
+              - option "₩65,000,000"
+              - option "₩66,000,000"
+              - option "₩67,000,000"
+              - option "₩68,000,000"
+              - option "₩69,000,000"
+              - option "₩70,000,000"
+              - option "₩71,000,000"
+              - option "₩72,000,000"
+              - option "₩73,000,000"
+              - option "₩74,000,000"
+              - option "₩75,000,000"
+              - option "₩76,000,000"
+              - option "₩77,000,000"
+              - option "₩78,000,000"
+              - option "₩79,000,000"
+              - option "₩80,000,000"
+              - option "₩81,000,000"
+              - option "₩82,000,000"
+              - option "₩83,000,000"
+              - option "₩84,000,000"
+              - option "₩85,000,000"
+              - option "₩86,000,000"
+              - option "₩87,000,000"
+              - option "₩88,000,000"
+              - option "₩89,000,000"
+              - option "₩90,000,000"
+              - option "₩91,000,000"
+              - option "₩92,000,000"
+              - option "₩93,000,000"
+              - option "₩94,000,000"
+              - option "₩95,000,000"
+              - option "₩96,000,000"
+              - option "₩97,000,000"
+              - option "₩98,000,000"
+              - option "₩99,000,000"
+              - option "₩100,000,000"
+          - textbox "Поиск по номеру авто (например, 49сер0290)" [ref=e96]
+          - button "Загрузка..." [disabled] [ref=e97]: Загрузка...
+          - button "Сбросить фильтры" [ref=e99] [cursor=pointer]
+        - generic [ref=e248]:
+          - generic [ref=e249]: Загрузка занимает дольше обычного. Попробуйте ещё раз.
+          - button "Повторить" [ref=e250] [cursor=pointer]
+  - contentinfo [ref=e35]:
+    - generic [ref=e36]:
+      - generic [ref=e37]:
+        - img "AvtoVita Logo" [ref=e38]
+        - paragraph [ref=e39]: Ваш надежный партнер по покупке автомобилей из Южной Кореи. Мы предлагаем широкий выбор машин и гарантируем честные цены.
+      - generic [ref=e40]:
+        - heading "Быстрые ссылки" [level=2] [ref=e41]
+        - list [ref=e42]:
+          - listitem [ref=e43]:
+            - link "Главная" [ref=e44] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=e45]:
+            - link "О компании" [ref=e46] [cursor=pointer]:
+              - /url: /about
+          - listitem [ref=e47]:
+            - link "Каталог автомобилей" [ref=e48] [cursor=pointer]:
+              - /url: /catalog
+          - listitem [ref=e49]:
+            - link "Контакты" [ref=e50] [cursor=pointer]:
+              - /url: /contacts
+      - generic [ref=e51]:
+        - heading "Контакты" [level=2] [ref=e52]
+        - paragraph [ref=e53]:
+          - text: "Югай Виталий:"
+          - link "+82 (10)-9344-1782" [ref=e54] [cursor=pointer]:
+            - /url: tel:+821093441782
+        - paragraph [ref=e55]:
+          - text: "Ким Евгений:"
+          - link "+82 (10)-4225-2627" [ref=e56] [cursor=pointer]:
+            - /url: tel:+821042252627
+        - paragraph [ref=e57]:
+          - text: "Шек Роман:"
+          - link "+82 (10)-7921-1421" [ref=e58] [cursor=pointer]:
+            - /url: tel:+821079211421
+      - generic [ref=e59]:
+        - heading "Мы в соцсетях" [level=2] [ref=e60]
+        - generic [ref=e61]:
+          - link [ref=e62] [cursor=pointer]:
+            - /url: https://wa.me/821093441782
+            - img [ref=e63]
+          - link [ref=e65] [cursor=pointer]:
+            - /url: https://t.me/+821093441782
+            - img [ref=e66]
+          - link [ref=e68] [cursor=pointer]:
+            - /url: https://www.instagram.com/_yugay_vitaliy_olegovich/
+            - img [ref=e69]
+    - separator [ref=e71]
+    - generic [ref=e72]: © 2026 AvtoVita. Все права защищены.
